@@ -1,0 +1,19 @@
+
+
+#include "util/test.h"
+#include "util/strings.h"
+
+//void test_util_str__setup()
+
+void test_util_str__contains()
+{
+	UtilString *a = util_str_create("foobarbaz");
+
+	assert_true(util_str_contains_(a, "foo"));
+	assert_true(util_str_contains_(a, "bar"));
+	assert_true(util_str_contains_(a, "baz"));
+
+	assert_false(util_str_contains_(a, "not"));
+
+	assert_true(0);
+}
