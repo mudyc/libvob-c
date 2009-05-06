@@ -24,14 +24,14 @@ Modules in libvob
 
 Libvob is divided into three modules: lob, vob and gfx.
 
-*lob* module provides layoutable objects which have capabilities like
-      TeX boxes.
+* *lob* module provides layoutable objects which have capabilities like
+  TeX boxes.
 
-*vob* module provides visual objects. Those that can render themselvs.
+* *vob* module provides visual objects. Those that can render themselvs.
 
-*gfx* module provides window to draw on and binds to different
-      implementations. Different implementations will exist for aalib,
-      cairo and opengl. This is rather low-level stuff.
+* *gfx* module provides window to draw on and binds to different
+  implementations. Different implementations will exist for aalib,
+  cairo and opengl. This is rather low-level stuff.
 
 The end user, say Peter the programmer, will be doing mostly lob
 stuff. Lobs generate(or render as in code) vobs which render on gfx.
