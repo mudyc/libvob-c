@@ -4,11 +4,11 @@
 #include "vob/api.h"
 #include "vob/scene.h"
 
-struct vob_rect {
+struct _vob_rect {
 	Vob base;
 	float r, g, b;
 };
-typedef struct vob_rect Rect;
+typedef struct _vob_rect Rect;
 
 Vob1 *vob_rect(Scene *vs, float r, float g, float b);
 

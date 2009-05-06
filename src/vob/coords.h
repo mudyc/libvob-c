@@ -3,7 +3,7 @@
 #ifndef VOB_COORDS_H
 #define VOB_COORDS_H
 
-// we just need a esittely
+// we just need the prototypes
 #include "vob/api.h"
 //struct vob_scene;
 //#define Scene struct vob_scene
@@ -54,6 +54,8 @@ Coordsys *vob_coords_ortho(Scene *vs, Coordsys *into,
 			   float sx, float sy);
 
 
+float vob_coords_w(Coordsys *cs);
+float vob_coords_h(Coordsys *cs);
 
 
 #endif

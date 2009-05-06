@@ -7,7 +7,7 @@
 #include <glib.h>
 
 //#include "util/strings.h"
-#include "util/hashtable.h"
+//#include "util/hashtable.h"
 
 
 #define REGION_ID(ID, NAME) \

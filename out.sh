@@ -74,6 +74,10 @@ gcc $CFLAGS -DGFX_API_OPENGL \
     -o bin/gfx/opengl/opengl.o -c src/gfx/opengl/opengl.c
 gcc $CFLAGS -DGFX_API_OPENGL \
     -o bin/gfx/opengl/render.o -c src/gfx/opengl/render.c
+gcc $CFLAGS \
+    -o bin/gfx/opengl/coords.o -c src/gfx/opengl/coords.c
+gcc $CFLAGS \
+    -o bin/gfx/opengl/vobs.o -c src/gfx/opengl/vobs.c
 
 
 
@@ -98,6 +102,8 @@ gcc -rdynamic -shared -o libvob-c.so \
     bin/gfx/cairo/cairo.o \
     bin/gfx/opengl/opengl.o \
     bin/gfx/opengl/render.o \
+    bin/gfx/opengl/coords.o \
+    bin/gfx/opengl/vobs.o \
    `pkg-config --libs x11 cairo glib-2.0` -lGL -lrt
 
 gcc -rdynamic -shared -o libvob-c-test.so \

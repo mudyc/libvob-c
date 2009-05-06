@@ -8,6 +8,8 @@
 #include <GL/glx.h> 
 #undef Region
 
+#include <glib.h>
+
 #include "gfx/gfx_api.h"
 
 // for opengl/render
@@ -22,6 +24,8 @@ struct impl {
 	int height;
 	struct gfx_callbacks cb;
 	struct window *delegate_win;
+
+	GHashTable *id2impl;
 };
 
 

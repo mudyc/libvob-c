@@ -52,12 +52,9 @@ static void rect_render(Lob *this, Coordsys *into,
 
 Lob *lob_rect(Region *reg, float r, float g, float b)
 {
-	static RegionId rect_id = { .id = NULL };
-	if (rect_id.id == NULL)
-		util_regs_id_init(&rect_id, "lob.Rect");
-
+	REGION_ID(id, "lob.Rect");
 	struct lob_rect *ret = (struct lob_rect*) 
-		util_regs_instantiate(reg, &rect_id, sizeof(struct lob_rect));
+		util_regs_instantiate(reg, &id, sizeof(struct lob_rect));
 
 	ret->lob.min_size = &lob_min_size;
 	ret->lob.pref_size = &lob_pref_size;

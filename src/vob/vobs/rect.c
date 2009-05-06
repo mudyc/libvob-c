@@ -8,14 +8,12 @@
 
 Vob1 *vob_rect(Scene *vs, float r, float g, float b)
 {
-	static char vobid[] = "vob.vobs.Rect";
-
-	REGION_ID(id, vobid);
+	REGION_ID(id, "vob.vobs.Rect");
 	Rect *ret = (Rect*) 
 		util_regs_instantiate(vs->reg, &id, sizeof(Rect));
 
 	ret->base.type = VOB1;
-	ret->base.id = vobid;
+	ret->base.id = id.id;
 
 	ret->r = r;
 	ret->g = g;

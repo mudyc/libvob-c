@@ -2,7 +2,8 @@
 #include "vob/coords.h"
 #include "util/regions.h"
 #include "vob/scene.h"
-
+#include <stdbool.h>
+#include <err.h>
 
 RootCS *vob_coords_root(Scene *vs)
 {
@@ -34,7 +35,7 @@ Coordsys *vob_coords_ortho(Scene *vs, Coordsys *into,
 	REGION_ID(id, "vob.coords.Ortho");
 	OrthoCS *ret = (OrthoCS*)
 		util_regs_instantiate(vs->reg, &id, sizeof(OrthoCS));
-	ret->base.type = CS_BOX;
+	ret->base.type = CS_ORTHO;
 	ret->parent = into;
 	ret->x = x;
 	ret->y = y;
@@ -42,4 +43,28 @@ Coordsys *vob_coords_ortho(Scene *vs, Coordsys *into,
 	ret->sx = sx;
 	ret->sy = sy;
 	return (Coordsys*) ret;
+}
+
+
+static float wh(Coordsys *cs, bool w) 
+{
+	switch (cs->type) {
+	case CS_ROOT:
+		return 1;
+	case CS_BOX: {
+		BoxCS *p = (BoxCS*)cs;
+		return w?p->w:p->h;
+	}
+	case CS_ORTHO:
+		return wh(((OrthoCS*)cs)->parent, w);
+	default:
+		errx(1, "No width or height implemented for cs: %d\n", 
+		     cs->type);
+	}
+}
+float vob_coords_w(Coordsys *cs) {
+	return wh(cs, TRUE);
+}
+float vob_coords_h(Coordsys *cs) {
+	return wh(cs, FALSE);
 }

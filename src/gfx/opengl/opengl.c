@@ -231,6 +231,7 @@ struct window* gfx_opengl_create_window(int x, int y, int w, int h)
 	imp->dpy = dpy;
 	imp->glxWin = glxWin;
 	memset(&(imp->cb), 0, sizeof(struct gfx_callbacks));
+	imp->id2impl = g_hash_table_new(NULL, NULL);
 
 	struct window *ret = malloc(sizeof(struct window));
 	
