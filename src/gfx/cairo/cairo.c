@@ -149,7 +149,8 @@ static int error_handler(Display *dpy, XErrorEvent *ev)
 {
 	char buf[256];
 	XGetErrorText(dpy, ev->error_code, (char*)&buf, 256);
-	printf("XError: %s\n", &buf);
+	printf("XError: %s\n", (char*)&buf);
+	return 1;
 }
 
 

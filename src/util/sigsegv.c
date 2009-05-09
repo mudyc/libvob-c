@@ -37,9 +37,9 @@
 #endif
 
 static void signal_segv(int signum, siginfo_t* info, void*ptr) {
-    static const char *si_codes[3] = {"", "SEGV_MAPERR", "SEGV_ACCERR"};
+	//static const char *si_codes[3] = {"", "SEGV_MAPERR", "SEGV_ACCERR"};
 
-    size_t i;
+    //size_t i;
     ucontext_t *ucontext = (ucontext_t*)ptr;
 
 #if defined(SIGSEGV_STACK_X86) || defined(SIGSEGV_STACK_IA64)

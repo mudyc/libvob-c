@@ -98,7 +98,7 @@ void gfx_render(struct window *w,
 
 	if (time_cmp(render->t0, render->t1) < 0 
 	    && time_cmp(render->t1, now) < 0) {
-		float d = get_anim_fract(render, &now);
+		/*float d = */get_anim_fract(render, &now);
 		//w->anim_render(w, d);
 	} else {
 		// no anim...
