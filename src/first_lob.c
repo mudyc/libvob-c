@@ -11,11 +11,11 @@
 static Lob* create_lob(Region *reg)
 {
 	Lob *l;
-  
+
 	printf("create Lob\n");
 
 	l = lob_rect(reg, 1.0, 0.5, 0.2);
-  
+
 	return l;
 }
 
