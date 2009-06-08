@@ -10,7 +10,7 @@ OpenGL
 ======
 
 OpenGL provides primitives for any kind of drawing but best it is
-known of painting trangles. This is something that I'll be using with
+known of painting triangles. This is something that I'll be using with
 libvob implementation.
 
 
@@ -18,6 +18,26 @@ Cairo
 =====
 
 I like cairo. It's not that fast with python but I can live with it.
+
+
+X11
+===
+
+X is not drawing library in sense but it's very fundamental part of
+current systems, even at some times I wonder why. For instance for
+embedded stuff it takes a bit too much energy to move pixmaps from
+client to server and then from server to kernel space.
+
+There are actually many ways to separate drawing operations from one
+single process (well we have X in the end). The best known is the
+client-server separation but X window may be embedded within another
+application and thus provide application-application separation.
+
+http://standards.freedesktop.org/xembed-spec/xembed-spec-latest.html
+
+The process separation shall be taken into consideration. It's very
+important part of robustness provided by the underlying operation
+system.
 
 
 Widget libraries
@@ -140,4 +160,29 @@ around. Yeks!  Not good for reading the code.
 
 Qt
 ==
+
+Widgets
+-------
+
+Widgets have a tender to grow in sense of functions as do GTK+ widgets
+too. It's a problem of C++ perhaps.
+
+I found it pitty that there are method to:
+
+- addWidget
+
+- addLayout
+
+- addItem
+
+while those do pretty much same thing: add X to Y.
+
+
+Layouting
+---------
+
+Layouting in Qt is nicely done as it uses boxes and streches. That
+applies also for GTK+ though. 
+
+
 
