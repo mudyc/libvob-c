@@ -185,4 +185,17 @@ Layouting in Qt is nicely done as it uses boxes and streches. That
 applies also for GTK+ though. 
 
 
+Minor things
+------------
+
+I have tried QtCreator but it's not that good. Eclipse is just way
+better for Java editing. Let me re-issue this after I get used to the
+editor.
+
+Second thing is that compiling takes ages. I had a small three source
+file project and it just takes forewer to start.
+
+Also I hate that I can not have small main in the UI file as it makes
+it very easy to start some window fast. This rant was for using Qt one
+day.
 
