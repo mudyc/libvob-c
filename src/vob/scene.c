@@ -46,7 +46,7 @@ struct cs_pair {
 
 void vob_scene_put2(Scene *vs, Vob2 *v, Coordsys *cs1, Coordsys *cs2)
 {
-	REGION_ID(id, "vob.scene.CoordsysPair");
+	static char *id = "vob.scene.CoordsysPair";
 	struct cs_pair *pair = (struct cs_pair*)
 		util_regs_instantiate(vs->reg, &id, sizeof(struct cs_pair));
 	pair->cs1 = cs1;

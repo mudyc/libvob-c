@@ -23,7 +23,8 @@ static void rect(Rect *r, Coordsys *cs) {
 }
 
 
-void gfx_opengl_vobs_render1(GHashTable *id2impl, Vob1 *v, Coordsys *cs)
+void gfx_opengl_vobs_render1(GHashTable *id2impl, 
+			     Vob1 *v, Coordsys *cs)
 {
 	gpointer key, value;
 	key = v->base.id;

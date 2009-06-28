@@ -5,6 +5,7 @@
 #include "gfx/gfx_api.h"
 #include "vob/scene.h"
 #include "lob/api.h"
+#include "lob/lobs.h"
 #include "util/regions.h"
 
 
@@ -14,7 +15,7 @@ static Lob* create_lob(Region *reg)
 
 	printf("create Lob\n");
 
-	l = lob_rect(reg, 1.0, 0.5, 0.2);
+	l = lob_comp_rect(reg, lob_comp_color(reg, 1.0, 0.5, 0.2));
 
 	return l;
 }

@@ -6,18 +6,6 @@
 #include "util/strings.h"
 
 
-void util_regs_id_init(RegionId *r, char *id)
-{
-        // http://www.informatics.susx.ac.uk/courses/dats/notes/html/node114.html
-        // http://computinglife.wordpress.com/2008/11/20/why-do-hash-functions-use-prime-numbers/
-	int i;
-	int len = strlen(id);
-	r->hash = 0;
-	r->id = id;
-	for (i=0; i<len; i++)
-		r->hash = 31*r->hash + id[i];
-}
-
 
 // ======================================
 // Fast array implementation
@@ -111,30 +99,31 @@ void util_fastarr_clear(FastArray *arr)
 // Region implementation
 // ======================================
 
-static guint f_hash(gconstpointer key) 
+/*
+void util_regs_id_init(Region *r, int *id, char *idstr)
 {
-	RegionId *k = (RegionId*) key;
-	return k->hash;
+        // http://www.informatics.susx.ac.uk/courses/dats/notes/html/node114.html
+        // http://computinglife.wordpress.com/2008/11/20/why-do-hash-functions-use-prime-numbers/
+	int i;
+	int len = strlen(id);
+	r->hash = 0;
+	r->id = id;
+	for (i=0; i<len; i++)
+		r->hash = 31*r->hash + id[i];
 }
-static gboolean f_eq(gconstpointer pa, gconstpointer pb) 
-{
-	RegionId *a = (RegionId*) pa;
-	RegionId *b = (RegionId*) pb;
-	if (a->hash != b->hash)
-		return false;
-	return strcmp(a->id, b->id) == 0;
-}
+*/
 
 Region *util_regs_create(char *name)
 {
 	Region *ret =  malloc(sizeof(Region));
-	ret->regid2fastarr = g_hash_table_new(&f_hash, &f_eq);
+	ret->regid2fastarr = g_hash_table_new(&g_direct_hash,
+					      &g_direct_equal);
 	ret->name = name;
 	return ret;
 }
 
 
-void *util_regs_instantiate(Region *reg, RegionId *id, size_t size)
+void *util_regs_instantiate(Region *reg, void *id, size_t size)
 {
 	FastArray *arr = g_hash_table_lookup(reg->regid2fastarr, id);
 	if (arr == NULL)

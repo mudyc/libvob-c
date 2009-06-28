@@ -32,7 +32,7 @@ typedef struct vob Vob;
  * e.g. back curtain painting.
  */
 struct vob0 {
-	struct vob base;
+	Vob base;
 };
 typedef struct vob0 Vob0;
 
@@ -40,7 +40,7 @@ typedef struct vob0 Vob0;
 /** A visual object that can be rendered with one coordinate system.
  */
 struct vob1 {
-	struct vob base;
+	Vob base;
 };
 typedef struct vob1 Vob1;
 
@@ -48,7 +48,7 @@ typedef struct vob1 Vob1;
 /** A visual object that can be rendered with two coordinate systems.
  */
 struct vob2 {
-	struct vob base;
+	Vob base;
 };
 typedef struct vob2 Vob2;
 

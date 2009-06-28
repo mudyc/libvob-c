@@ -10,20 +10,13 @@
 //#include "util/hashtable.h"
 
 
-#define REGION_ID(ID, NAME) \
-     	static RegionId ID = { .id = NULL }; \
-	if (ID.id == NULL) \
-		util_regs_id_init(&ID, NAME);
+#define REGION_ID(REG, ID, NAME) \
+        util_regs_id_init(REG, &ID, NAME);
 
 
-struct util_regs_id {
-	char *id;
-	int hash;
-};
-typedef struct util_regs_id RegionId;
 
-void util_regs_id_init(RegionId *r, char *id);
-
+#define REGION(REG, ID, TYPE) \
+        (TYPE *) util_regs_instantiate(REG, ID, sizeof(TYPE));
 
 
 struct util_fast_array {
@@ -77,7 +70,7 @@ Region *util_regs_create(char *name);
 /** Instantiate memory object in region.
  * @return A pointer to uninitialized memory structure.
  */
-void *util_regs_instantiate(Region *reg, RegionId *id, size_t size);
+void *util_regs_instantiate(Region *reg, void *id, size_t size);
 
 /** Marks all objects available for reuse within the region.
  */

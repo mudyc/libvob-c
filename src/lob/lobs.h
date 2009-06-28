@@ -11,12 +11,12 @@
 
 
 
-#include "lob/components/geometry.h"
+//#include "lob/components/geometry.h"
 // translate
 // rrotate
 // scale
 
-#include "lob/components/spatial_layout.h"
+//#include "lob/components/spatial_layout.h"
 // left, center, right
 // top, middle, bottom
 // margin
@@ -24,11 +24,12 @@
 // table, hlist, vlist
 // req_size, child_size
 
-#include "lob/components/stacking.h"
+//#include "lob/components/stacking.h"
 // stack
 // sandwitch
 
-#include "lob/components/draw_primitives.h"
+#include "lob/components/drawing_primitives.h"
+// color
 // rectangle
 // ellipse, circle
 
