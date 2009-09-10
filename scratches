@@ -1,0 +1,223 @@
+
+
+
+
+
+Just simple things to hack on..
+*******************************
+
+
+On future
+==========
+
+What's the thread wise method to do lobs in the first place?
+
+- just synchronize gfx_anim_chg()?!
+
+
+lob->life??
+
+
+C boolean
+=========
+
+http://en.wikipedia.org/wiki/Boolean_datatype#C
+
+Why are unit test frameworks mostly crap?
+=========================================
+
+- check: uses macros or some other stupid system.
+
+http://www.theparticle.com/files/txt/hacking/phrack/p58-03.txt
+
+Unit testing based on elf and export dynamic symbols
+======================================================
+
+
+lob_rect_set_up()
+lob_rect_test_that_foo_does_this();
+lob_rect_tear_down()
+
+lob_box_set_up()  [if exists]
+lob_box_test_simple();
+lob_box_tear_down() [if exists]
+
+
+How to execute the unit tests?
+- with continuum from segfault?-) http://www.theparticle.com/files/txt/hacking/phrack/p58-03.txt
+
+
+Some principles
+===============
+
+- No globals. No, none, ever.
+
+   - Makes hard to unit test.
+   - It's bad practise in any case.
+   - Function globals are used in some places..
+
+- No compromises
+
+   - Make it good and fast.
+
+Some coding things
+------------------
+
+- Try to follow Linux Coding Style
+
+- often used structs are typedef with CamelCase.
+
+- modules are located in /src/<module>/<component>.[ch]
+
+- global functions use <module>_<component>_<name> naming.
+
+- private(static) functions use <component>_<name> naming.
+
+- For example:
+
+  static int rect_id(Region *reg)
+  {
+
+  }
+
+  // constructor (no name)
+  Lob *lob_rect(Lob *l, float a, float b, float c)
+  {
+
+  }
+
+  // component name is minimized to regs from regions..
+  void util_regs_clear(Region *reg) {
+  }
+
+
+Classes
+-------
+
+Use inherited class name as "parent".
+
+struct Lob {
+	int a;
+	int b;
+}
+
+struct FooLob {
+	Lob lob;
+	char *str;
+}
+
+struct BarFooLob {
+	FooLob foo_lob;
+	char c;
+}
+
+struct TseBarFooLob {
+	BarFooLob bar_foo_lob;
+	char *try;
+}
+
+
+Some code
+----------
+
+Lob *buoy = create_src_lob(life);
+buoy = lob_translate3(buoy, s/2 - column, s/2 - row);
+
+Lob *buoy_edge = life;
+buoy_edge = lob_key(buoy_edge, "edge");
+buoy_edge = lob_request(buoy_edge, s, s);
+
+buoy = lob_paper_edge(buoyEdge, buoy, 1);
+buoy = lob_tray(lob_list2(lob_line("artefact id", "buoy", 1), buoy), false);
+buoy = lob_translate(buoy, -s/2, -s/2);
+l = lob_buoy(l, buoy, "RING", "artefact id", 0);
+
+
+
+Simple forms
+------------
+
+lob_rect();
+lob_filled_rect();
+lob_line();
+
+
+
+Geographics
+-----------
+
+lob_translate2(x, y);
+lob_translate3(x, y, z);
+lob_scale(x, y, z);
+
+lob_buoy
+
+Layout and size
+---------------
+
+/** 
+ */
+lob_no_grow();
+lob_child_request(Lob *child);
+lob_request(Lob *child, SizeReq *size);
+SizeReq *lob_size_req(life, xmin, xpref, xmax, \
+                   ymin, ypref, ymax);
+
+lob_hbox();
+lob_vbox();
+
+
+Animation
+---------
+
+lob_key();
+
+Misc
+----
+
+Lob *lob_margin();
+Lob *lob_align();
+
+
+lob_paper();
+lob_paper_edge();
+
+Images and icons
+----------------
+
+lob_image();
+
+
+Collections
+-----------
+
+lob_tray();
+lob_between(top, middle, bottom);
+
+
+
+
+
+How to do strings nicely?
+==============================
+
+Using immutable class style is nice in a way but..
+..how about the language itself, e.g. "Hello ?!"
+
+How about something like wrapping? It won't work for loops
+..or it would work but it would need a region.
+
+for (i=0; i<10; i++)
+	str_func(some_string, WRAPPER("foobar"));
+
+So, how about native utilizers, e.g.
+
+for (i=0; i<10; i++)
+	str_func_(some_string, "foobar");
+
+	or
+
+	str_func(some_string, other_string);
+
+..and we keep compiler type checking as well.
+
