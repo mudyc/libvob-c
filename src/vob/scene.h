@@ -27,7 +27,7 @@ struct vob_scene {
 };
 //typedef struct vob_scene Scene;
 
-Scene *vob_scene_create();
+Scene *vob_scene_create(void);
 void vob_scene_clear(Scene *sc);
 
 void vob_scene_put0(Scene *vs, Vob0 *vob);

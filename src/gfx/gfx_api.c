@@ -19,22 +19,22 @@
 #endif
 
 
-int gfx_height(struct window *w) 
+int gfx_height(struct gfx_window *w) 
 {
 	return w->height(w->impl);
 }
 
-int gfx_width(struct window *w) 
+int gfx_width(struct gfx_window *w) 
 {
 	return w->width(w->impl);
 }
 
-struct gfx_callbacks *gfx_callbacks(struct window *w)
+struct gfx_callbacks *gfx_callbacks(struct gfx_window *w)
 {
 	return w->callbacks(w->impl);
 }
 
-struct window* gfx_create_window(int x, int y, int w, int h)
+struct gfx_window* gfx_create_window(int x, int y, int w, int h)
 {
 	struct window *ret = NULL;
 
