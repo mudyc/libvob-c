@@ -55,7 +55,7 @@ static float get_anim_fract(struct gfx_render *render, struct timespec *now)
 	return ret;
 }
 
-void gfx_render(struct window *w, 
+void gfx_render(struct gfx_window *w, 
 		enum GFX_ANIM_TYPE chg, 
 		long anim_time)
 {

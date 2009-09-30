@@ -19,24 +19,24 @@
 #endif
 
 
-int gfx_height(struct window *w) 
+int gfx_height(struct gfx_window *w) 
 {
 	return w->height(w->impl);
 }
 
-int gfx_width(struct window *w) 
+int gfx_width(struct gfx_window *w) 
 {
 	return w->width(w->impl);
 }
 
-struct gfx_callbacks *gfx_callbacks(struct window *w)
+struct gfx_callbacks *gfx_callbacks(struct gfx_window *w)
 {
 	return w->callbacks(w->impl);
 }
 
-struct window* gfx_create_window(int x, int y, int w, int h)
+struct gfx_window* gfx_create_window(int x, int y, int w, int h)
 {
-	struct window *ret = NULL;
+	struct gfx_window *ret = NULL;
 
 	char *api = getenv("VOB_API");
 	if (api == NULL)
@@ -71,7 +71,7 @@ struct window* gfx_create_window(int x, int y, int w, int h)
 }
 
 static char buff[64]; 
-void gfx_main_loop(struct window *win) 
+void gfx_main_loop(struct gfx_window *win) 
 {
 	int gui_fd = win->gui_fd(win->impl);
 	int gfx_chg_fd = win->anim->pipe_fd[0];

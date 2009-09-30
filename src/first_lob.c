@@ -33,7 +33,7 @@ static void key_released()
 
 int main(int argc, char **argv) 
 {
-	struct window *win = gfx_create_window(0, 0, 320, 240);
+	struct gfx_window *win = gfx_create_window(0, 0, 320, 240);
 
 	struct gfx_callbacks *cb = gfx_callbacks(win);
 	cb->create_lob = &create_lob;

@@ -32,7 +32,7 @@ struct container {
 	// some stuff
 	int width, height;
 
-	struct window *delegate_win;
+	struct gfx_window *delegate_win;
 };
 
 static void paint(cairo_surface_t *cs, int w, int h)
@@ -154,7 +154,7 @@ static int error_handler(Display *dpy, XErrorEvent *ev)
 }
 
 
-struct window* gfx_cairo_create_window(int x, int y, int w, int h)
+struct gfx_window* gfx_cairo_create_window(int x, int y, int w, int h)
 {
  	Display *dpy;
 	int screen;
@@ -203,7 +203,7 @@ struct window* gfx_cairo_create_window(int x, int y, int w, int h)
 	c->height = h;
 	
 	
-	struct window *ret = malloc(sizeof(struct window));
+	struct gfx_window *ret = malloc(sizeof(struct gfx_window));
 	ret->impl = c;
 	ret->event_handler = (void(*)(void *)) &event_handler;
 	ret->callbacks = (struct gfx_callbacks *(*)(void *))&callbacks;

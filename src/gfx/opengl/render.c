@@ -31,7 +31,7 @@ static void post_render_scene(struct impl *c)
 }
 
 
-void gfx_opengl_single_render(struct window *w, Scene *vs)
+void gfx_opengl_single_render(struct gfx_window *w, Scene *vs)
 {
 
 	struct impl *c = (struct impl *) w->impl;

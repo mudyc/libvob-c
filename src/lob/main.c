@@ -4,7 +4,7 @@
 #include "vob/scene.h"
 #include "util/dbg.h"
 
-Scene* lob_main_generate_vob_scene(struct window *win) {
+Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
 	// Reserving the scenes in here limits the implementation 
 	// to one window. Who cares..
 

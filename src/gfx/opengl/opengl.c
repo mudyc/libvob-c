@@ -17,7 +17,7 @@
 #include "gfx/opengl/opengl.h"
 
 
-void gfx_opengl_single_render(struct window *w, Scene *vs);
+void gfx_opengl_single_render(struct gfx_window *w, Scene *vs);
 
 /*
 static void paint(Display *dpy, GLXWindow glxWin)
@@ -152,7 +152,7 @@ static Bool WaitForNotify(Display *dpy, XEvent *event, XPointer arg) {
 }
 
 // http://www.opengl.org/sdk/docs/man/xhtml/glXIntro.xml
-struct window* gfx_opengl_create_window(int x, int y, int w, int h)
+struct gfx_window* gfx_opengl_create_window(int x, int y, int w, int h)
 {
 	Display *dpy;
 	int screen;
@@ -233,7 +233,7 @@ struct window* gfx_opengl_create_window(int x, int y, int w, int h)
 	memset(&(imp->cb), 0, sizeof(struct gfx_callbacks));
 	imp->id2impl = g_hash_table_new(NULL, NULL);
 
-	struct window *ret = malloc(sizeof(struct window));
+	struct gfx_window *ret = malloc(sizeof(struct gfx_window));
 	
 	ret->impl = imp;
 	imp->delegate_win = ret;

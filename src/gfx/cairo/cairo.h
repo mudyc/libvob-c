@@ -3,7 +3,7 @@
 
 #include "gfx/gfx_api.h"
 
-struct window* gfx_cairo_create_window(int x, int y, int w, int h);
+struct gfx_window* gfx_cairo_create_window(int x, int y, int w, int h);
 
 
 

@@ -11,16 +11,16 @@
  * grafix implementation and lob/vob system.
  */
 
-struct window;
+struct gfx_window;
 
 struct gfx_callbacks {
-	Scene *(*generate_scene)(struct window *);
+	Scene *(*generate_scene)(struct gfx_window *);
 	Lob *(*create_lob)(Region *lobs_reg);
-	void (*key_pressed)();
-	void (*key_released)();
+	void (*key_pressed)(void);
+	void (*key_released)(void);
 };
 
-struct window {
+struct gfx_window {
 	void *impl; // pointer to implementation.
 
 	/* All below this are internal function pointers implemented
@@ -32,7 +32,7 @@ struct window {
 	int (*height)(void *);
 	int (*gui_fd)(void *);
 
-	void (*single_render)(struct window *w, Scene *vs);
+	void (*single_render)(struct gfx_window *w, Scene *vs);
 	void (*anim_render)(Scene *vs, float fract);
 
 	struct gfx_animation *anim;
@@ -43,16 +43,16 @@ struct window {
 
 
 
-struct window* gfx_create_window(int x, int y, int w, int h);
-void gfx_delete_window();
+struct gfx_window* gfx_create_window(int x, int y, int w, int h);
+void gfx_delete_window(struct gfx_window *win);
 
-struct gfx_callbacks *gfx_callbacks(struct window *w);
+struct gfx_callbacks *gfx_callbacks(struct gfx_window *w);
 //void gfx_handle_events(struct window *w);
 
-int gfx_height(struct window *w);
-int gfx_width(struct window *w);
+int gfx_height(struct gfx_window *w);
+int gfx_width(struct gfx_window *w);
 
-void gfx_main_loop(struct window *w);
+void gfx_main_loop(struct gfx_window *w);
 
 
 #endif

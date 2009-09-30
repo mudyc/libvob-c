@@ -15,7 +15,7 @@ struct gfx_render {
 
 struct gfx_render *gfx_render_create();
 
-void gfx_render(struct window *w, 
+void gfx_render(struct gfx_window *w, 
 		enum GFX_ANIM_TYPE chg,
 		long anim_time
 		);

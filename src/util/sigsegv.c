@@ -129,7 +129,9 @@ int setup_sigsegv() {
 }
 
 #ifndef SIGSEGV_NO_AUTO_INIT
+/**
 static void __attribute((constructor)) init(void) {
     setup_sigsegv();
 }
+*/
 #endif

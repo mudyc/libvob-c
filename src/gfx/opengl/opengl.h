@@ -23,14 +23,14 @@ struct impl {
 	int width;
 	int height;
 	struct gfx_callbacks cb;
-	struct window *delegate_win;
+	struct gfx_window *delegate_win;
 
 	GHashTable *id2impl;
 };
 
 
 
-struct window* gfx_opengl_create_window(int x, int y, int w, int h);
+struct gfx_window* gfx_opengl_create_window(int x, int y, int w, int h);
 
 
 
