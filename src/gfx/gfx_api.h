@@ -44,11 +44,7 @@ struct gfx_window {
 
 
 struct gfx_window* gfx_create_window(int x, int y, int w, int h);
-<<<<<<< .merge_file_tuJFSt
 void gfx_delete_window(struct gfx_window *win);
-=======
-//void gfx_delete_window(struct gfx_window *w);
->>>>>>> .merge_file_NXFCit
 
 struct gfx_callbacks *gfx_callbacks(struct gfx_window *w);
 //void gfx_handle_events(struct window *w);

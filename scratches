@@ -191,7 +191,7 @@ lob_image();
 Collections
 -----------
 
-lob_tray();
+lob_tray(); -> lob_stack(Region *reg, ...);
 lob_between(top, middle, bottom);
 
 
