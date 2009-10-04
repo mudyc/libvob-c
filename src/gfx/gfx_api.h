@@ -24,7 +24,7 @@ struct gfx_window {
 	void *impl; // pointer to implementation.
 
 	/* All below this are internal function pointers implemented
-	 * by the real gfx, e.g. cairo.
+	 * by the real gfx, e.g. cairo or open gl.
 	 */
 	void (*event_handler)(void *);
 	struct gfx_callbacks *(*callbacks)(void *);
@@ -44,7 +44,11 @@ struct gfx_window {
 
 
 struct gfx_window* gfx_create_window(int x, int y, int w, int h);
+<<<<<<< .merge_file_tuJFSt
 void gfx_delete_window(struct gfx_window *win);
+=======
+//void gfx_delete_window(struct gfx_window *w);
+>>>>>>> .merge_file_NXFCit
 
 struct gfx_callbacks *gfx_callbacks(struct gfx_window *w);
 //void gfx_handle_events(struct window *w);
