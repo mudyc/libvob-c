@@ -1,6 +1,13 @@
+# This is simple makefile and it works for my machines.
+# If it won't work on your machine - then it's broken.
+# I really don't care that much. If you feel like 
+# autotools would fit in I'll pay your return ticket
+# from another planet.
+
 
 CFLAGS = -Wall -I src/ \
-	 -DGFX_API_CAIRO -DGFX_API_OPENGL \
+	 -DGFX_API_CAIRO \
+	 -DGFX_API_OPENGL \
 	 -DNO_CPP_DEMANGLE\
 	`pkg-config --cflags \
 		glib-2.0 \
