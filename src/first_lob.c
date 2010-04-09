@@ -15,7 +15,7 @@ static Lob* create_lob(Region *reg)
 
 	printf("create Lob\n");
 
-	l = lob_comp_rect(reg, lob_comp_color(reg, 1.0, 0.5, 0.2));
+	l = lob_rect(reg, lob_color(reg, 1.0, 0.5, 0.2));
 
 	return l;
 }

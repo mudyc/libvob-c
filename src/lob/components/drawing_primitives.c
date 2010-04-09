@@ -9,7 +9,7 @@
 // Color
 // -------------------------------------------
 
-LobColor *lob_comp_color(Region *reg, float r, float g, float b)
+LobColor *lob_color(Region *reg, float r, float g, float b)
 {
 	LobColor *ret = REGION(reg, "lob.component.Color", LobColor);
 	ret->r = r;
@@ -44,7 +44,7 @@ static void rect_render(Lob *this, Coordsys *into,
 
 }
 
-Lob *lob_comp_rect(Region *reg, LobColor *c_)
+Lob *lob_rect(Region *reg, LobColor *c_)
 {
 	LobRect *ret = REGION(reg, "lob.component.Rect", LobRect);
 

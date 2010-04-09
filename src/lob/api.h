@@ -10,11 +10,11 @@
 //#define LOB_INF  (1 << 30)
 float LOB_INF;
 
-struct size {
+struct lob_size_ {
 	float minw, natw, maxw;
 	float minh, nath, maxh;
 };
-typedef struct size Size;
+typedef struct lob_size_ Size;
 
 
 struct lob;

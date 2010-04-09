@@ -18,9 +18,9 @@ struct lob_rect {
 typedef struct lob_rect LobRect;
 
 
-LobColor *lob_comp_color(Region *reg, float r, float g, float b);
+LobColor *lob_color(Region *reg, float r, float g, float b);
 
-Lob *lob_comp_rect(Region *reg, LobColor *color);
+Lob *lob_rect(Region *reg, LobColor *color);
 
 
 //lob_color_

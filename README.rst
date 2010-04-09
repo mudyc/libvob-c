@@ -36,8 +36,30 @@ Libvob is divided into three modules: lob, vob and gfx.
 The end user, say Peter the programmer, will be doing mostly lob
 stuff. Lobs generate(or render as in code) vobs which render on gfx.
 
+Namespace pollution
+-------------------
+
 Module naming follows simply as:
 
    <module>_<function name> as in gfx_create_window(), or
    <module>_<sub module>_<function name> as in gfx_cairo_create_window().
 
+Structures are named as follows::
+
+   struct lob_color_ {
+   	float r, g, b;
+   };
+   typedef struct lob_color_ LobColor;
+
+   struct lob_rect_ {
+	Lob lob;
+	LobColor *color;
+   };
+   typedef struct lob_rect_ LobRect;
+
+And then we can use the constructor as::
+
+   LobColor *lob_color(Region *reg, float r, float g, float b);
+
+All kind of short names are used with CamelCase, e.g., FTP is Ftp, URI
+is Uri etc.
