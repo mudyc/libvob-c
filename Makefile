@@ -23,6 +23,7 @@ LIBS = -lGL -lrt \
 SRC = $(shell find src/ -name "*.c") 
 OBS = $(subst .c,.o, $(subst src/,bin/,$(SRC)))
 LIB_OBS = $(filter-out bin/first_lob.o,$(OBS))
+HDRS = $(shell find src/lob -name "*.h")
 DIRS = $(shell for i in $(OBS); do dirname $$i; done)
 
 
@@ -47,4 +48,6 @@ prepare:
 clean:
 	rm -rf bin/ first_lob libvob-c.so
 
-
+bind:
+	python py/bind.py $(HDRS)
+	echo "Done"
