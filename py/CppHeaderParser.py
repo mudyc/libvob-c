@@ -498,6 +498,7 @@ class CppHeader:
             raise Exception("Arg type must be either file or string")
         self.curClass = ""
         self.classes = {}
+        self.typedefs = {}
         self.enums = []
         self.nameStack = []
         self.nameSpaces = []
@@ -598,9 +599,12 @@ class CppHeader:
             if (debug): print "line ",lineno()
             self.curAccessSpecifier = "public"
             self.evaluate_class_stack()
+            if self.curClass in self.typedefs.keys():
+                self.classes[self.curClass]['typedef'] = self.typedefs[self.curClass]
         elif (self.nameStack[0] == "typedef"):
             if (debug): print "typedef line ",lineno()
             if len(self.nameStack) == 4 and self.nameStack[1] == 'struct':
+                self.typedefs[self.nameStack[2]] = self.nameStack[3]
                 self.classes[self.nameStack[2]]['typedef'] = self.nameStack[3]
         elif (len(self.curClass) == 0):
             if (debug): print "line ",lineno()

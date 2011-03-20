@@ -3,7 +3,7 @@
 
 #include "gfx/gfx_api.h"
 
-
+#include "py/gen_structs.c"
 
 /* *********************
  * pyRegion type 
@@ -219,6 +219,8 @@ initlibvob(void)
 {
     PyObject* m;
 
+#include "py/gen_init_types.c"
+
     if (PyType_Ready(&GfxWindowType) < 0)
         return;
 
@@ -232,6 +234,8 @@ initlibvob(void)
 
     if (m == NULL)
       return;
+
+#include "py/gen_add_obs.c"
 
     Py_INCREF(&GfxWindowType);
     PyModule_AddObject(m, "Window", (PyObject *)&GfxWindowType);
