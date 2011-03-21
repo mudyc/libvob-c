@@ -63,3 +63,9 @@ And then we can use the constructor as::
 
 All kind of short names are used with CamelCase, e.g., FTP is Ftp, URI
 is Uri etc.
+
+One thing I need to think of is library use of libvob-c. Lob or vob
+prefix is enough for those but there is this region struct used
+everywhere. Let it be for now I can fix it later (I don't like LRegion
+nor VRegion - UtilRegion would fit but it's used extensively thus I
+like something short).

@@ -47,7 +47,7 @@ AWT (Java)
 ==========
 
 I like the simple Graphics interface :) Unfortunately the interface is
-not "3D", AWT is a bit unstable and slow.
+not "3D" and AWT is a bit unstable and slow.
 
 
 Enlightenment
@@ -199,3 +199,18 @@ Also I hate that I can not have small main in the UI file as it makes
 it very easy to start some window fast. This rant was for using Qt one
 day.
 
+
+QML
+===
+
+Qml was a nice, new kind of toolkit. Animations were totally
+re-thought. Instead of writing animations to move x and y of an item,
+you can say whenever x changes (same for y) you use specific
+animation. Now every change to x and y is actually animated. Of course
+you could use specific setter to make immeadiate translation.
+
+This is something what I need to think of. Previous libvob used one
+kind of animation for all animations. I need to re-evaluate if this is
+good thing after all. In practise the developer would need to say to
+matcher if different animation is wanted. Or there could be specific
+lob for that.

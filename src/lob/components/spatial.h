@@ -12,7 +12,7 @@ Lob *lob_glue();
 Lob *lob_vglue();
 Lob *lob_hglue();
 
-Lob *
+//Lob *
 
 
 
