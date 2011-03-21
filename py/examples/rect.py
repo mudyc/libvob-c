@@ -7,6 +7,14 @@ def create_lob(reg):
     print 'create lob in python\n\n'
     return reg.comp_rect(reg.comp_color(1, .5, .2))
 
+# from libvob.lob import Rect, Color
+# def create_lob(reg):
+#     push_reg(reg)
+#     lob = Rect(Color(1, .5, .2))
+#     pop_reg()
+#     return lob
+
+
 def keypress(str):
     print 'key pressed', str
 
