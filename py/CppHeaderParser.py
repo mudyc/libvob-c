@@ -136,7 +136,7 @@ def t_error(v):
     print "Lex error: ", v
 
 lex.lex()
-debug = 0
+debug = 1
 
 supportedAccessSpecifier = [
     'public',
@@ -417,6 +417,20 @@ class CppVariable(dict):
             self["desc"] = kwargs["doxyVarDesc"][self["name"]]
         except: pass
 
+class FuncProto(dict):
+    def __init__(self, ret, name, params):
+        self['return'] = ret
+        self['name'] = name
+        self['parameters'] = params
+
+    def __repr__(self):
+        rtn = self['return']
+        rtn += " "+ self['name']+' ( '
+        for t in self['parameters']:
+            rtn += t['type']+" "+t['name']+', '
+        return rtn+") \n"
+
+
 class CppEnum(dict):
     """Takes a name stack and turns it into an Enum
     
@@ -499,6 +513,7 @@ class CppHeader:
         self.curClass = ""
         self.classes = {}
         self.typedefs = {}
+        self.func_protos = []
         self.enums = []
         self.nameStack = []
         self.nameSpaces = []
@@ -610,6 +625,8 @@ class CppHeader:
             if (debug): print "line ",lineno()
             if is_enum_namestack(self.nameStack):
                 self.evaluate_enum_stack()
+            elif self.is_func_proto(self.nameStack):
+                self.evaluate_func_proto()
             self.nameStack = []
             doxygenCommentCache = ""
             return
@@ -694,10 +711,30 @@ class CppHeader:
                 rtn += "::"
             i+=1
         return rtn
-    
+
+    def is_func_proto(self, stack):
+        return stack[1] == '*' \
+            and stack[2] in self.classes.keys() \
+            and stack[-1] == ')'
+
+    def evaluate_func_proto(self):
+        stack = self.nameStack[self.nameStack.index('(')+1:-1]
+        params = []
+        while len(stack) > 0:
+            if ',' in stack:
+                params.append(CppVariable(stack[:stack.index(',')]))
+                stack = stack[stack.index(',')+1:]
+            else:
+                params.append(CppVariable(stack))
+                stack = []
+
+        self.func_protos.append(FuncProto(self.nameStack[0], self.nameStack[2],
+            params))
     
     def __repr__(self):
         rtn = ""
         for className in self.classes.keys():
             rtn += repr(self.classes[className])
+        for func in self.func_protos:
+            rtn += repr(func)
         return rtn

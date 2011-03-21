@@ -217,7 +217,7 @@ static PyMethodDef module_methods[] = {
 PyMODINIT_FUNC
 initlibvob(void) 
 {
-    PyObject* m;
+    PyObject* libvob, lob, vob, m;
 
 #include "py/gen_init_types.c"
 
@@ -229,10 +229,14 @@ initlibvob(void)
         return;
 
 
-    m = Py_InitModule3("libvob", module_methods,
-                       "Python bindings for libvob-c library.");
+    libvob = Py_InitModule3("libvob", module_methods,
+			    "Python bindings for libvob-c library.");
+    lob = Py_InitModule3("lob", module_methods,
+			 "Layoutable objects module.");
+    vob = Py_InitModule3("vob", module_methods,
+			 "Visual objects module.");
 
-    if (m == NULL)
+    if (libvob == NULL || lob == NULL || vob == NULL)
       return;
 
 #include "py/gen_add_obs.c"
