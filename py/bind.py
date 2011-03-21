@@ -59,42 +59,68 @@ def gen(name, clzz, funcs):
 
     for f in funcs:
         if f['name'] == clzz['name']:
-            structs_and_types.append("""
-static int
-%s_init(%s *self, PyObject *args, PyObject *kwds)
+
+            types = ''
+            params = ''
+            s = ''
+            if len(f['parameters']) > 1 \
+                    and f['parameters'][0]['type'] == 'Region *':
+                structs_and_types.append("""
+PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-""" % (typee, name))
+    printf("%s_new\\n");
 
-            for param in f['parameters']:
-                print param
-                                     
-            structs_and_types.append("""
-    static char *kwlist[] = {"first", "last", "number", NULL};
+    %s *self;
 
-    //if (! PyArg_ParseTupleAndKeywords(args, kwds, "|OOi", kwlist, 
-    //                                  &first, &last, 
-    //                                  &self->number))
-    //    return -1;
+    self = (%s *)type->tp_alloc(type, 0);
+    if (self != NULL) {
+""" % (typee, struct, struct, struct))
 
-    // catch up region and create the object
-        
+                for idx in range(len(f['parameters'])):
+                    param = f['parameters'][idx]
+                    if idx == 0 and param['type'] == 'Region *':
+                        s += '        Region *p0 = region;\n'
+                    else:
+                        if param['type'] == 'float':
+                            s += '        float p'+str(idx)+';\n' 
+                            types += 'f'
+                            params += '&p'+str(idx)+', '
+                        elif param['type'].startswith('Lob'):
+                            s += '        PyLob *p'+str(idx)+';\n' 
+                            types += 'O'
+                            params += '&p'+str(idx)+', '
+                        else:
+                            print param
+                            raise 'asdf'
 
-    return 0;
-}
-""" % ())
+                s += '        if (! PyArg_ParseTuple(args, "%s", %s)) {\n' \
+                    %(types, params[:-2])
+                s += '            Py_DECREF(self);\n'
+                s += '            return NULL;\n'
+                s += '        }\n'
+                s += '        self->obj = '+f['name']+'('
+                for i in range(len(f['parameters'])): 
+                    if i > 0:
+                        s += ', '
+                    s+= 'p'+str(i)
+                    if f['parameters'][i]['type'].startswith('Lob'):
+                        s+= '->obj'
+                s += ');\n    }\n    return self;\n}\n\n'
+                structs_and_types.append(s)
 
-    for f in funcs:
-        if f['name'] == clzz['name']:
-            init_type_ready.append("""
-        %s.tp_init = %s_init;
-        """ % (typee, typee))
-
+                init_type_ready.append(
+                    "        %s.tp_new = %s_new;" % (typee, typee))
+            else:
+                init_type_ready.append(
+                    "        %s.tp_new = PyType_GenericNew;"\
+                        % (typee))
+                
 
     init_type_ready.append("""
-        %s.tp_new = PyType_GenericNew;
+        %s.tp_flags = Py_TPFLAGS_DEFAULT;
         if (PyType_Ready(&%s) < 0)
-            return;
-""" % (typee, typee))
+            return;\n
+""" % (typee,typee))
 
     init_add_objects.append("""
     Py_INCREF(&%s);

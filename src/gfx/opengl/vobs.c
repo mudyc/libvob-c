@@ -8,7 +8,7 @@
 
 
 static void rect(Rect *r, Coordsys *cs) {
-	glColor4f(r->r, r->g, r->b, 1);
+	glColor3f(r->r, r->g, r->b);
 	
 	float 
 		w = vob_coords_w(cs),

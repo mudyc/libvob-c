@@ -26,8 +26,11 @@ from libvob.lob import Rect, Color
 
 
 def create_lob(reg):
-    print 'create lob'
-    lob = Rect(Color(1, .2, .5))
+    print 'create lob in py'
+
+    color = Color(.3, .2, .5)
+    print 'color', color
+    lob = Rect(color)
     return lob
 
 

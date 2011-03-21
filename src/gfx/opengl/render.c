@@ -44,8 +44,7 @@ void gfx_opengl_single_render(struct gfx_window *w, Scene *vs)
 	pre_render_scene(c);
 
 	// iterate vobs
-	printf("iterate vobs..\n");
-	printf("%x\n", vs);
+	printf("iterate vobs %d..\n", vs->vobs_arr->size);
 	for (i=0; i<vs->vobs_arr->size; i++) {
 		glPushMatrix();
 

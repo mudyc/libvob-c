@@ -16,7 +16,7 @@
 // rrotate
 // scale
 
-//#include "lob/components/spatial_layout.h"
+#include "lob/components/spatial_layout.h"
 // left, center, right
 // top, middle, bottom
 // margin

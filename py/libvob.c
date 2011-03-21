@@ -8,31 +8,34 @@
 #include "lob/lobs.h"
 
 
+static Region *region;
+
+
 #include "gen_structs.c"
 
 
 
 /* *********************
- * pyRegion type 
+ * PyRegion type 
  ************************ */
 
 typedef struct {
     PyObject_HEAD
     Region *_reg;
-} pyRegion;
+} PyRegion;
 
 static void
-pyRegion_dealloc(pyRegion* self)
+PyRegion_dealloc(PyRegion* self)
 {
 	self->ob_type->tp_free((PyObject*)self);
 }
 
 
-static PyTypeObject pyRegionType = {
+static PyTypeObject PyRegionType = {
     PyObject_HEAD_INIT(NULL)
     0,                         /*ob_size*/
     "libvob.Region",             /*tp_name*/
-    sizeof(pyRegion),             /*tp_basicsize*/
+    sizeof(PyRegion),             /*tp_basicsize*/
     0,                         /*tp_itemsize*/
     0,                         /*tp_dealloc*/
     0,                         /*tp_print*/
@@ -64,6 +67,8 @@ typedef struct {
 	struct gfx_window *win;
 } GfxWindow;
 
+/** Global window instance.
+ */
 static GfxWindow *win_instance = NULL;
 
 
@@ -73,6 +78,9 @@ GfxWindow_dealloc(GfxWindow* self)
 	Py_XDECREF(self->create_lob);
 	self->ob_type->tp_free((PyObject*)self);
 }
+
+
+
 
 static PyObject *
 GfxWindow_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
@@ -92,26 +100,29 @@ static
 Lob *cb_create_lob(Region *lobs_reg)
 {
 	PyObject *result;
-	pyRegion *reg = PyType_GenericNew(&pyRegionType, NULL, NULL);
+	PyRegion *reg = PyType_GenericNew(&PyRegionType, NULL, NULL);
 
 	// push region should be called XXX
 
 	reg->_reg = lobs_reg;
+	region = lobs_reg;
 
+	//printf("eval\n", result);
 	result = PyEval_CallFunction(win_instance->create_lob, "(O)", reg);
 	if (PyErr_Occurred()) {
 		PyErr_Print();
 		abort();
-	}	
-
+	}
 	Py_XDECREF(reg);
 
+	//printf("create lob %d\n", result);
 	Lob *ret = NULL;
 	if (result != NULL /*&& PyType_isSubType(result, PyLob)*/) {
 		PyLob *py_lob = (PyLob *) result;
 		ret = py_lob->obj;
 	}
 	Py_XDECREF(result);
+	//printf("create lob done\n");
 	return ret;
 }
 
@@ -210,14 +221,14 @@ static PyTypeObject GfxWindowType = {
     GfxWindow_new,                 /* tp_new */
 };
 
+
+
+
+
 static PyObject *
 main_loop(PyObject *self, PyObject *win)
 {
 	GfxWindow *w = (GfxWindow *)win;
-
-	// put one change in queue so that user won't need to move mouse.
-	char buff[1] = { '*' };
-	write(w->win->anim->pipe_fd[1], buff, sizeof(buff));
 
 	gfx_main_loop(w->win);
 	return NULL;
@@ -227,10 +238,10 @@ static PyMethodDef module_methods[] = {
     {"main_loop", (PyCFunction)main_loop, METH_O,
      "Starts the main loop and never returns."
     },
-    {NULL}  /* Sentinel */
+    {NULL}
 };
 static PyMethodDef non_methods[] = {
-    {NULL}  /* Sentinel */
+    {NULL}
 };
 
 #ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
@@ -246,8 +257,8 @@ initlibvob(void)
     if (PyType_Ready(&GfxWindowType) < 0)
         return;
 
-    pyRegionType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&pyRegionType) < 0)
+    PyRegionType.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&PyRegionType) < 0)
         return;
 
 
@@ -255,7 +266,7 @@ initlibvob(void)
 			    "Python bindings for libvob-c library.");
     lob = Py_InitModule3("libvob.lob", non_methods,
 			 "Layoutable objects module.");
-    vob = Py_InitModule3("libvob.vob", module_methods,
+    vob = Py_InitModule3("libvob.vob", non_methods,
 			 "Visual objects module.");
 
     if (libvob == NULL || lob == NULL || vob == NULL)
@@ -269,8 +280,8 @@ initlibvob(void)
     Py_INCREF(&GfxWindowType);
     PyModule_AddObject(libvob, "Window", (PyObject *)&GfxWindowType);
 
-    Py_INCREF(&pyRegionType);
-    PyModule_AddObject(libvob, "Region", (PyObject *)&pyRegionType);
+    Py_INCREF(&PyRegionType);
+    PyModule_AddObject(libvob, "Region", (PyObject *)&PyRegionType);
 
     setup_sigsegv();
 }

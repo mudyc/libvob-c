@@ -18,5 +18,16 @@ Lob *lob_hglue();
 
 
 
+struct lob_vlist {
+	Lob base;
+	int list_items;
+};
+typedef struct lob_vlist LobVList;
+
+Lob *lob_vlist(Region *reg, ...);
+//Lob *lob_hlist();
+
+
+
 
 #endif

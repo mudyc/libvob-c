@@ -125,12 +125,13 @@ Region *util_regs_create(char *name)
 
 void *util_regs_instantiate(Region *reg, void *id, size_t size)
 {
+	//printf("util_regs_instantiate: %x %x %x\n", reg, id, size);
 	FastArray *arr = g_hash_table_lookup(reg->regid2fastarr, id);
 	if (arr == NULL)
 		g_hash_table_insert(reg->regid2fastarr, id, 
 				 arr = util_fastarr_create(size));
 
-	//printf("instantiate: %s %d\n", id->id, arr->index);
+	//printf("instantiate: %d\n", arr->index);
 	return array_next(arr);
 }
 
