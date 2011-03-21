@@ -41,8 +41,8 @@ Namespace pollution
 
 Module naming follows simply as:
 
-   <module>_<function name> as in gfx_create_window(), or
-   <module>_<sub module>_<function name> as in gfx_cairo_create_window().
+   <module>_<function name> e.g. gfx_create_window(), or
+   <module>_<sub module>_<function name> e.g. gfx_cairo_create_window().
 
 Structures are named as follows::
 

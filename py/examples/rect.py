@@ -1,11 +1,21 @@
 # Shows a rectangle in the window.
 
 import libvob
+print dir(libvob)
+
+import libvob.lob
+print dir(libvob.lob)
+
+import libvob.vob
+print dir(libvob.vob)
 
 
-def create_lob(reg):
-    print 'create lob in python\n\n'
-    return reg.comp_rect(reg.comp_color(1, .5, .2))
+from libvob.lob import Rect, Color
+
+
+#def create_lob(reg):
+#    print 'create lob in python\n\n'
+#    return reg.comp_rect(reg.comp_color(1, .5, .2))
 
 # from libvob.lob import Rect, Color
 # def create_lob(reg):
@@ -13,6 +23,12 @@ def create_lob(reg):
 #     lob = Rect(Color(1, .5, .2))
 #     pop_reg()
 #     return lob
+
+
+def create_lob(reg):
+    print 'create lob'
+    lob = Rect(Color(1, .2, .5))
+    return lob
 
 
 def keypress(str):

@@ -102,9 +102,8 @@ void gfx_render(struct gfx_window *w,
 		//w->anim_render(w, d);
 	} else {
 		// no anim...
+		printf("no anim\n");
 		w->single_render(w, render->current);
 	}
-
-
 
 }

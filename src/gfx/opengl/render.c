@@ -33,6 +33,10 @@ static void post_render_scene(struct impl *c)
 
 void gfx_opengl_single_render(struct gfx_window *w, Scene *vs)
 {
+	printf("opengl single render..\n");
+	if (vs == NULL)
+		return;
+
 
 	struct impl *c = (struct impl *) w->impl;
 	int i;
@@ -40,6 +44,8 @@ void gfx_opengl_single_render(struct gfx_window *w, Scene *vs)
 	pre_render_scene(c);
 
 	// iterate vobs
+	printf("iterate vobs..\n");
+	printf("%x\n", vs);
 	for (i=0; i<vs->vobs_arr->size; i++) {
 		glPushMatrix();
 

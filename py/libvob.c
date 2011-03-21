@@ -1,9 +1,16 @@
 #include <Python.h>
 #include "structmember.h"
 
+#include "util/sigsegv.h"
 #include "gfx/gfx_api.h"
+#include "gfx/animation.h"
+#include "lob/api.h"
+#include "lob/lobs.h"
 
-#include "py/gen_structs.c"
+
+#include "gen_structs.c"
+
+
 
 /* *********************
  * pyRegion type 
@@ -86,6 +93,9 @@ Lob *cb_create_lob(Region *lobs_reg)
 {
 	PyObject *result;
 	pyRegion *reg = PyType_GenericNew(&pyRegionType, NULL, NULL);
+
+	// push region should be called XXX
+
 	reg->_reg = lobs_reg;
 
 	result = PyEval_CallFunction(win_instance->create_lob, "(O)", reg);
@@ -95,9 +105,13 @@ Lob *cb_create_lob(Region *lobs_reg)
 	}	
 
 	Py_XDECREF(reg);
-	Py_XDECREF(result);
 
 	Lob *ret = NULL;
+	if (result != NULL /*&& PyType_isSubType(result, PyLob)*/) {
+		PyLob *py_lob = (PyLob *) result;
+		ret = py_lob->obj;
+	}
+	Py_XDECREF(result);
 	return ret;
 }
 
@@ -200,6 +214,11 @@ static PyObject *
 main_loop(PyObject *self, PyObject *win)
 {
 	GfxWindow *w = (GfxWindow *)win;
+
+	// put one change in queue so that user won't need to move mouse.
+	char buff[1] = { '*' };
+	write(w->win->anim->pipe_fd[1], buff, sizeof(buff));
+
 	gfx_main_loop(w->win);
 	return NULL;
 }
@@ -210,6 +229,9 @@ static PyMethodDef module_methods[] = {
     },
     {NULL}  /* Sentinel */
 };
+static PyMethodDef non_methods[] = {
+    {NULL}  /* Sentinel */
+};
 
 #ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
 #define PyMODINIT_FUNC void
@@ -217,9 +239,9 @@ static PyMethodDef module_methods[] = {
 PyMODINIT_FUNC
 initlibvob(void) 
 {
-    PyObject* libvob, lob, vob, m;
+    PyObject *libvob, *lob, *vob, *m;
 
-#include "py/gen_init_types.c"
+#include "gen_init_types.c"
 
     if (PyType_Ready(&GfxWindowType) < 0)
         return;
@@ -231,19 +253,24 @@ initlibvob(void)
 
     libvob = Py_InitModule3("libvob", module_methods,
 			    "Python bindings for libvob-c library.");
-    lob = Py_InitModule3("lob", module_methods,
+    lob = Py_InitModule3("libvob.lob", non_methods,
 			 "Layoutable objects module.");
-    vob = Py_InitModule3("vob", module_methods,
+    vob = Py_InitModule3("libvob.vob", module_methods,
 			 "Visual objects module.");
 
     if (libvob == NULL || lob == NULL || vob == NULL)
       return;
 
-#include "py/gen_add_obs.c"
+    PyModule_AddObject(libvob, "lob", lob);
+    PyModule_AddObject(libvob, "vob", vob);
+
+#include "gen_add_obs.c"
 
     Py_INCREF(&GfxWindowType);
-    PyModule_AddObject(m, "Window", (PyObject *)&GfxWindowType);
+    PyModule_AddObject(libvob, "Window", (PyObject *)&GfxWindowType);
 
     Py_INCREF(&pyRegionType);
-    PyModule_AddObject(m, "Region", (PyObject *)&pyRegionType);
+    PyModule_AddObject(libvob, "Region", (PyObject *)&pyRegionType);
+
+    setup_sigsegv();
 }

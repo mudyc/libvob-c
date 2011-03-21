@@ -46,8 +46,14 @@ prepare:
 	mkdir -p $(dir $(OBS))
 
 clean:
-	rm -rf bin/ first_lob libvob-c.so
+	rm -rf bin/ first_lob libvob-c.so py/build
 
 bind:
 	python py/bind.py $(HDRS)
+	(cd py && python setup.py build)
 	echo "Done"
+runpy:
+	mkdir -p py/build/lib.linux-i686-2.6/libvob/lob/
+	touch py/build/lib.linux-i686-2.6/libvob/lob.py
+	PYTHONPATH=py/build/lib.linux-i686-2.6/ python py/examples/rect.py
+

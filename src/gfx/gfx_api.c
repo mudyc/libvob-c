@@ -104,6 +104,7 @@ void gfx_main_loop(struct gfx_window *win)
 			int chg = gfx_anim_chg_reset(win->anim);
 			long anim = gfx_anim_time_reset(win->anim);
 			printf("chg: %d\n", chg);
+
 			//int chg = 213; // fetch/pop GFX_ANIM_CHG..
 
 			gfx_render(win, chg, anim);
