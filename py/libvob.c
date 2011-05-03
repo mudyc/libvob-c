@@ -272,6 +272,7 @@ initlibvob(void)
     if (libvob == NULL || lob == NULL || vob == NULL)
       return;
 
+    // Add lob and vob submodules to this.
     PyModule_AddObject(libvob, "lob", lob);
     PyModule_AddObject(libvob, "vob", vob);
 
