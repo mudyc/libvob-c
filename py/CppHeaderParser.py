@@ -713,6 +713,10 @@ class CppHeader:
         return rtn
 
     def is_func_proto(self, stack):
+        #print 'IS FUNC PROTO?', stack
+        if '(' in stack and ')' in stack:
+            return True
+        
         return stack[1] == '*' \
             and stack[2] in self.classes.keys() \
             and stack[-1] == ')'
@@ -728,7 +732,8 @@ class CppHeader:
                 params.append(CppVariable(stack))
                 stack = []
 
-        self.func_protos.append(FuncProto(self.nameStack[0], self.nameStack[2],
+        name = self.nameStack[self.nameStack.index('(')-1]
+        self.func_protos.append(FuncProto(self.nameStack[0], name,
             params))
     
     def __repr__(self):

@@ -110,6 +110,45 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 
                 init_type_ready.append(
                     "        %s.tp_new = %s_new;" % (typee, typee))
+            elif f['parameters'][0]['type'] == 'Region *' and \
+                 len(filter(lambda x: x['name'] == clzz['name']+'_add', funcs)) == 1:
+                structs_and_types.append("""
+PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    printf("%s_new\\n");
+
+    %s *self;
+
+    self = (%s *)type->tp_alloc(type, 0);
+    if (self != NULL) {
+        printf("create lob obj...\\n");
+        self->obj = %s(region);
+    
+        PyObject *list = NULL;
+        if (! PyArg_ParseTuple(args, "O", &list)) {
+            Py_DECREF(self);
+            return NULL;
+        }
+        if (list != NULL && PySequence_Check(list)) {
+            Py_ssize_t len = PySequence_Size(list);
+            Py_ssize_t idx = 0;
+            for (; idx<len; idx++) {
+                printf("got arg...%%i\\n", idx);
+                PyObject *lob = PySequence_GetItem(list, idx);
+                if (PyObject_TypeCheck(lob, &PyLobType))
+                    %s_add(region, self->obj, ((PyLob*)lob)->obj);
+            }
+        }
+    }
+    printf("return...\\n");
+    return self;
+}
+        
+""" % (typee, typee, struct, struct, clzz['name'], clzz['name']))
+
+                init_type_ready.append(
+                    "        %s.tp_new = %s_new;" % (typee, typee))
+                
             else:
                 init_type_ready.append(
                     "        %s.tp_new = PyType_GenericNew;"\

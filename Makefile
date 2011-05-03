@@ -52,8 +52,10 @@ bind:
 	python py/bind.py $(HDRS)
 	(cd py && python setup.py build)
 	echo "Done"
+
+PYTEST ?= py/examples/rect.py
 runpy:
 	mkdir -p py/build/lib.linux-i686-2.6/libvob/lob/
 	touch py/build/lib.linux-i686-2.6/libvob/lob.py
-	PYTHONPATH=py/build/lib.linux-i686-2.6/ python py/examples/rect.py
+	PYTHONPATH=py/build/lib.linux-i686-2.6/ python $(PYTEST)
 

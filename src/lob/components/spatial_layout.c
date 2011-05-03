@@ -6,15 +6,17 @@
 
 
 // -------------------------------------------
-// Lists
+// Lists - Boxes
 // -------------------------------------------
 
-LobVList *lob_vlist(Region *reg, ...)
+Lob *lob_vbox(Region *reg)
 {
-	LobVList *ret = REGION(reg, "lob.component.VList", LobVList);
-
-
-
+	LobVBox *ret = REGION(reg, "lob.component.VBox", LobVBox);
+	ret->items = util_arr_create(reg);
 	return ret;
 }
 
+void lob_vbox_add(Region *reg, LobVBox *vbox, Lob *lob)
+{
+	util_arr_add(reg, vbox, lob);
+}

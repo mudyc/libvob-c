@@ -6,9 +6,10 @@
 
 
 
-UtilArray *util_arr_create()
+UtilArray *util_arr_create(Region *reg)
 {
-	UtilArray *ret = malloc(sizeof(UtilArray));
+	UtilArray *ret = REGION(reg, "util.Array", UtilArray);
+	//UtilArray *ret = malloc(sizeof(UtilArray));
 	ret->data = NULL;
 	ret->size = 0;
 	ret->capacity = 0;
@@ -16,18 +17,19 @@ UtilArray *util_arr_create()
 }
 
 
-void util_arr_add(UtilArray *arr, void *data)
+void util_arr_add(Region *reg, UtilArray *arr, void *data)
 {
 	int i, inc;
 	if (arr->capacity <= arr->size) {
 		void **tmp = arr->data;
 		inc = arr->capacity*3/2;
 		inc = inc > 4? inc: 4;
-		arr->data = malloc(inc * sizeof(void *));
+		//arr->data = malloc(inc * sizeof(void *));
+		arr->data = REGION(reg, "util.Array.data", /*inc*sizeof(*/void */*)*/);
 		for (i=0; i<arr->capacity; i++)
 			arr->data[i] = tmp[i];
-		if (tmp != NULL)
-			free(tmp);
+		//if (tmp != NULL)
+		//	free(tmp);
 		arr->capacity = inc;
 	}
 	arr->data[arr->size++] = data;

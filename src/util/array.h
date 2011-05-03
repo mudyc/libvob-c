@@ -4,6 +4,7 @@
 #ifndef UTIL_ARRAY_H
 #define UTIL_ARRAY_H
 
+#include "util/regions.h"
 
 struct util_array {
 	int size;
@@ -13,10 +14,10 @@ struct util_array {
 typedef struct util_array UtilArray;
 
 
-UtilArray *util_arr_create();
+UtilArray *util_arr_create(Region *reg);
 
 
-void util_arr_add(UtilArray *arr, void *data);
+void util_arr_add(Region *reg, UtilArray *arr, void *data);
 
 /**
  * for (int i=0; i<arr->size; i++) {
