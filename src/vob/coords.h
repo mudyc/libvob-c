@@ -33,7 +33,7 @@ typedef struct vob_coordinate_system_root RootCS;
 struct vob_coordinate_system_box {
 	Coordsys base;
 	Coordsys *parent;
-	float w, h;
+	float x, y, w, h;
 };
 typedef struct vob_coordinate_system_box BoxCS;
 
@@ -48,7 +48,7 @@ typedef struct vob_coordinate_system_ortho OrthoCS;
 
 RootCS *vob_coords_root(Scene *vs);
 Coordsys *vob_coords_box(Scene *vs, Coordsys *into, 
-			 float w, float h);
+			 float x, float y, float w, float h);
 Coordsys *vob_coords_ortho(Scene *vs, Coordsys *into, 
 			   float x, float y, float z, 
 			   float sx, float sy);

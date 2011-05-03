@@ -37,7 +37,7 @@ static void rect_render(Lob *this, Coordsys *into,
 	Vob1 *vob = vob_rect(vs, r->color->r, r->color->g, r->color->b);
 
 	// create a sufficient transformation for the vob
-	Coordsys *cs = vob_coords_box(vs, into, w, h);
+	Coordsys *cs = vob_coords_box(vs, into, 0,0,w, h);
 
 	// bind vob to coordinate system
 	vob_scene_put1(vs, vob, cs);

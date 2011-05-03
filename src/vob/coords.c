@@ -14,13 +14,16 @@ RootCS *vob_coords_root(Scene *vs)
 	return ret;
 }
 
-Coordsys *vob_coords_box(Scene *vs, Coordsys *into, float w, float h) 
+Coordsys *vob_coords_box(Scene *vs, Coordsys *into, 
+			 float x, float y, float w, float h) 
 {
 	static char *id = "vob.coords.Box";
 	BoxCS *ret = (BoxCS*) 
 		util_regs_instantiate(vs->reg, id, sizeof(BoxCS));
 	ret->base.type = CS_BOX;
 	ret->parent = into;
+	ret->x = x;
+	ret->y = y;
 	ret->w = w;
 	ret->h = h;
 	//into->add(vs, ret);

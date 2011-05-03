@@ -68,7 +68,7 @@ def gen(name, clzz, funcs):
                 structs_and_types.append("""
 PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-    printf("%s_new\\n");
+    //printf("%s_new\\n");
 
     %s *self;
 
@@ -115,13 +115,12 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                 structs_and_types.append("""
 PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-    printf("%s_new\\n");
+    //printf("%s_new\\n");
 
     %s *self;
 
     self = (%s *)type->tp_alloc(type, 0);
     if (self != NULL) {
-        printf("create lob obj...\\n");
         self->obj = %s(region);
     
         PyObject *list = NULL;
@@ -135,12 +134,13 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
             for (; idx<len; idx++) {
                 printf("got arg...%%i\\n", idx);
                 PyObject *lob = PySequence_GetItem(list, idx);
-                if (PyObject_TypeCheck(lob, &PyLobType))
+                //if (PyObject_TypeCheck(lob, &PyLobType))
                     %s_add(region, self->obj, ((PyLob*)lob)->obj);
+                //else printf("asdf\\n");
+
             }
         }
     }
-    printf("return...\\n");
     return self;
 }
         

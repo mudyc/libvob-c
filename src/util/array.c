@@ -33,6 +33,7 @@ void util_arr_add(Region *reg, UtilArray *arr, void *data)
 		arr->capacity = inc;
 	}
 	arr->data[arr->size++] = data;
+	printf("array size is: %d\n", arr->size);
 }
 
 
@@ -41,6 +42,14 @@ void *util_arr_get(UtilArray *arr, int idx)
 	if (idx < 0 || idx >= arr->size)
 		return NULL;
 	return arr->data[idx];
+}
+
+void util_arr_set(UtilArray *arr, int idx, void *data)
+{
+	if (idx < 0 || idx >= arr->size)
+		arr->data[idx] = data;
+	else 
+		printf("FATAL: util array bounds check failed (0 <= %d < %d)!\n", idx, arr->size);
 }
 
 char *util_arr_get_str(UtilArray *arr, int idx)

@@ -23,6 +23,7 @@ Lob *lob_hglue();
 struct lob_vbox {
 	Lob base;
 	UtilArray *items;
+	Size *tmp_size;
 };
 typedef struct lob_vbox LobVBox;
 

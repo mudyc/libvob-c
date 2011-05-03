@@ -68,6 +68,7 @@ Region *util_regs_create(char *name);
 
 
 /** Instantiate memory object in region.
+ * @param size is the "class" size.
  * @return A pointer to uninitialized memory structure.
  */
 void *util_regs_instantiate(Region *reg, void *id, size_t size);

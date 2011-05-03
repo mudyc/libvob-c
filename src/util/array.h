@@ -25,6 +25,7 @@ void util_arr_add(Region *reg, UtilArray *arr, void *data);
  * }
  */
 void *util_arr_get(UtilArray *arr, int idx);
+void util_arr_set(UtilArray *arr, int idx, void *data);
 
 char *util_arr_get_str(UtilArray *arr, int idx);
 
