@@ -1,5 +1,6 @@
 
 #include <string.h>
+#include <mcheck.h>
 
 #include "util/regions.h"
 #include "util/dbg.h"
@@ -21,8 +22,8 @@ FastArray *util_fastarr_create(size_t size)
 	ret->blob_size = size;
 	ret->blobs_in_full_chunk = ARRAY_MAX / size;
 	ret->buff_size = 0;
-	ret->index = 0;
-	ret->size = 0;
+	ret->index = 0; // current index in units
+	ret->capacity = 0;  // capacity in units
 	ret->chunks = NULL;
 	return ret;
 }
@@ -34,15 +35,18 @@ static void *array_next(FastArray *arr)
 	int row = arr->index % arr->blobs_in_full_chunk;
 
 	//printf("col %d row %d\n", column, row);
+	//for (i=0; i<=column; i++)
+	//	if (arr->chunks != NULL)
+	//		printf("Mcheck: %d %d\n", i, mprobe(arr->chunks[i]));
 
-	if (arr->index >= arr->size) {
-
-
+	if (arr->index >= arr->capacity) {
 		if (row == 0) { // we need to increase chunks array
-			char **tmp = arr->chunks;
-			arr->chunks = malloc((1 + column)*sizeof(char*));
-			for (i=0; i<column; i++)
-				arr->chunks[i] = tmp[i];
+			//printf("inc chunks..\n");
+			void **tmp = arr->chunks;
+			arr->chunks = malloc((1 + column)*sizeof(void*));
+			memcpy(arr->chunks, tmp, column);
+			//for (i=0; i<column; i++)
+			//	arr->chunks[i] = tmp[i];
 			arr->chunks[column] = NULL;
 			if (tmp != NULL)
 				free(tmp);
@@ -50,29 +54,35 @@ static void *array_next(FastArray *arr)
 
 		// ok, we need to resize the slice..
 		int at_least = (1+row) * arr->blob_size;
+		//printf("at least: %d\n", at_least);
 		for (i=0; i<ARRAY_SIZES_N; i++) {
 			if (ARRAY_SIZES[i] >= at_least) {
 				char *tmp = arr->chunks[column];
-				arr->chunks[column] = malloc(ARRAY_SIZES[i]*sizeof(char));
+				void *data = NULL;
+				data = malloc(ARRAY_SIZES[i]*sizeof(char));
+				arr->chunks[column] = data;
 				char *new = arr->chunks[column];
+				//printf("malloced: %x %d\n", new, ARRAY_SIZES[i]);
 				if (tmp != NULL) {
 					for (j=0; j<ARRAY_SIZES[i-1]; j++)
 						new[j] = tmp[j];
 					free(tmp);
 				}
 				// update size info
-				arr->size = (column * arr->blobs_in_full_chunk) +
+				arr->capacity = (column * arr->blobs_in_full_chunk) +
 					(ARRAY_SIZES[i] / arr->blob_size); 
 				break;
 			}
 		}
 	}
 	arr->index++;
+	//printf("ret.. %d ", row * arr->blob_size);
 	return &arr->chunks[column][row * arr->blob_size];
 }
 
 void util_fastarr_add(FastArray *arr, void *data)
 {
+	//printf("util_fastarr_add\n");
 	void **ptr = array_next(arr);
 	ptr[0] = data;
 }
@@ -118,6 +128,8 @@ Region *util_regs_create(char *name)
 	Region *ret =  malloc(sizeof(Region));
 	ret->regid2fastarr = g_hash_table_new(&g_direct_hash,
 					      &g_direct_equal);
+	ret->owner2data = g_hash_table_new(&g_direct_hash,
+					   &g_direct_equal);
 	ret->name = name;
 	return ret;
 }
@@ -125,15 +137,39 @@ Region *util_regs_create(char *name)
 
 void *util_regs_instantiate(Region *reg, void *id, size_t size)
 {
-	//printf("util_regs_instantiate: %x %x %x\n", reg, id, size);
+	//printf("util_regs_instantiate: %s %x %x %x\n", id, reg, id, size);
+
 	FastArray *arr = g_hash_table_lookup(reg->regid2fastarr, id);
 	if (arr == NULL)
 		g_hash_table_insert(reg->regid2fastarr, id, 
 				 arr = util_fastarr_create(size));
 
-	//printf("instantiate: %d\n", arr->index);
-	return array_next(arr);
+	//printf("instantiate: %x %s %d %d\n", id, id, arr->index, size);
+	void *ret = array_next(arr);
+	//printf("instantiated: %s %x\n", id, ret);
+	return ret;
 }
+
+void *util_regs_data_increase(Region *reg, void *owner, void *curr_mem,
+			      int *capacity, size_t size)
+{
+	//printf("util_regs_inc %d\n");
+	void *data = g_hash_table_lookup(reg->owner2data, owner);
+	if (data != curr_mem) {
+		printf("FATAL: Region data increased with wrong data.");
+		exit(1);
+	}
+	void **tmp = &data;
+	data = malloc(size);
+	memcpy(&data, *tmp, *capacity);
+	//for (i=0; i<(*capacity); i++)
+	//	data[i] = tmp[i];
+	if (tmp != NULL)
+		free(*tmp);
+	g_hash_table_insert(reg->owner2data, owner, data);
+	return data;
+}
+
 
 void util_regs_clear(Region *reg)
 {

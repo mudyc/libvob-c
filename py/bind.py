@@ -132,10 +132,10 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
             Py_ssize_t len = PySequence_Size(list);
             Py_ssize_t idx = 0;
             for (; idx<len; idx++) {
-                printf("got arg...%%i\\n", idx);
+                //printf("got arg...%%i\\n", idx);
                 PyObject *lob = PySequence_GetItem(list, idx);
                 //if (PyObject_TypeCheck(lob, &PyLobType))
-                    %s_add(region, self->obj, ((PyLob*)lob)->obj);
+                    %s_add(region, ((%s*)self->obj)->items, ((PyLob*)lob)->obj);
                 //else printf("asdf\\n");
 
             }
@@ -144,7 +144,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     return self;
 }
         
-""" % (typee, typee, struct, struct, clzz['name'], clzz['name']))
+""" % (typee, typee, struct, struct, clzz['name'], clzz['name'], name))
 
                 init_type_ready.append(
                     "        %s.tp_new = %s_new;" % (typee, typee))

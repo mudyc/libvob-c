@@ -38,6 +38,7 @@ void vob_scene_put1(Scene *vs, Vob1 *v, Coordsys *cs)
 {
 	util_fastarr_add(vs->vobs_arr, v);
 	util_fastarr_add(vs->coords_arr, cs);
+	printf("vob_scene_put1 %d %d\n", vs->vobs_arr->index, vs->coords_arr->index);
 }
 
 struct cs_pair {

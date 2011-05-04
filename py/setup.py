@@ -7,7 +7,7 @@ module1 = Extension('libvob',
                                     '/usr/include/glib-2.0',
                                     '/usr/lib/glib-2.0/include' ],
                     library_dirs = ['../'],
-                    libraries = ['vob-c', 'glib-2.0'],
+                    libraries = ['vob-c', 'glib-2.0', 'mcheck'],
                     runtime_library_dirs = [os.path.abspath('..')],
                     )
 

@@ -14,7 +14,7 @@ CFLAGS = -Wall -I src/ \
 		x11 \
 		cairo`#
 
-LIBS = -lGL -lrt \
+LIBS = -lGL -lrt -lmcheck \
 	`pkg-config --libs \
 		x11 \
 		cairo \

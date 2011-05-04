@@ -17,9 +17,7 @@ RootCS *vob_coords_root(Scene *vs)
 Coordsys *vob_coords_box(Scene *vs, Coordsys *into, 
 			 float x, float y, float w, float h) 
 {
-	static char *id = "vob.coords.Box";
-	BoxCS *ret = (BoxCS*) 
-		util_regs_instantiate(vs->reg, id, sizeof(BoxCS));
+	BoxCS *ret = REGION(vs->reg, "vob.coords.Box", BoxCS); 
 	ret->base.type = CS_BOX;
 	ret->parent = into;
 	ret->x = x;
@@ -55,7 +53,7 @@ static float wh(Coordsys *cs, bool w)
 		return 1;
 	case CS_BOX: {
 		BoxCS *p = (BoxCS*)cs;
-		return w?p->w:p->h;
+		return w? p->w: p->h;
 	}
 	case CS_ORTHO:
 		return wh(((OrthoCS*)cs)->parent, w);

@@ -1,6 +1,7 @@
 // (c): Matti J. Katila
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "util/array.h"
 
@@ -19,21 +20,26 @@ UtilArray *util_arr_create(Region *reg)
 
 void util_arr_add(Region *reg, UtilArray *arr, void *data)
 {
-	int i, inc;
+	int inc;
+	//printf("util_arr_add %x %d %d \n", arr, arr->capacity, arr->size);
 	if (arr->capacity <= arr->size) {
-		void **tmp = arr->data;
+		//printf("util_arr_add inc\n");
 		inc = arr->capacity*3/2;
 		inc = inc > 4? inc: 4;
 		//arr->data = malloc(inc * sizeof(void *));
-		arr->data = REGION(reg, "util.Array.data", /*inc*sizeof(*/void */*)*/);
-		for (i=0; i<arr->capacity; i++)
-			arr->data[i] = tmp[i];
+		//arr->data = REGION(reg, "util.Array.data", /*inc*sizeof(*/void */*)*/);
+		arr->data = util_regs_data_increase(reg, arr, arr->data, 
+						    &arr->capacity,
+						    inc * sizeof(void *));
+		//for (i=0; i<arr->capacity; i++)
+		//	arr->data[i] = tmp[i];
 		//if (tmp != NULL)
 		//	free(tmp);
 		arr->capacity = inc;
 	}
+	//printf("util_arr_add ass\n");
 	arr->data[arr->size++] = data;
-	printf("array size is: %d\n", arr->size);
+	//printf("array size is: %d\n", arr->size);
 }
 
 

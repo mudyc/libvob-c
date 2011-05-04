@@ -48,6 +48,7 @@ Lob *lob_rect(Region *reg, LobColor *c_)
 {
 	LobRect *ret = REGION(reg, "lob.component.Rect", LobRect);
 
+	ret->lob.reg = reg;
 	ret->lob.size = &lob_size;
 	ret->lob.layout = &rect_layout;
 	ret->lob.render = &rect_render;
