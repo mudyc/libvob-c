@@ -158,12 +158,12 @@ Lob *lob_vbox(Region *reg)
 	ret->tmp_size = REGION(reg, "lob.Size", Size);
 	ret->tmp_size->minh = -1; // mark
 
-	return ret;
+	return (Lob*)ret;
 }
 
 void lob_vbox_add(Region *reg, LobVBox *vbox, Lob *lob)
 {
-	util_arr_add(reg, vbox, lob);
+	util_arr_add(reg, (void *)vbox, lob);
 }
 
 Lob *lob_hbox(Region *reg)
@@ -179,10 +179,10 @@ Lob *lob_hbox(Region *reg)
 	ret->tmp_size = REGION(reg, "lob.Size", Size);
 	ret->tmp_size->minh = -1; // mark
 
-	return ret;
+	return (Lob*)ret;
 }
 
 void lob_hbox_add(Region *reg, LobHBox *hbox, Lob *lob)
 {
-	util_arr_add(reg, hbox, lob);
+	util_arr_add(reg, (void*)hbox, lob);
 }

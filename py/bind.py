@@ -89,6 +89,10 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                             s += '        PyLob *p'+str(idx)+';\n' 
                             types += 'O'
                             params += '&p'+str(idx)+', '
+                        elif param['type'] == 'char *':
+                            s += '        const char *p'+str(idx)+';\n' 
+                            types += 's'
+                            params += '&p'+str(idx)+', '
                         else:
                             print param
                             raise 'asdf'
