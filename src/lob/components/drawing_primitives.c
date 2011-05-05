@@ -41,7 +41,6 @@ static void rect_render(Lob *this, Coordsys *into,
 
 	// bind vob to coordinate system
 	vob_scene_put1(vs, vob, cs);
-
 }
 
 Lob *lob_rect(Region *reg, LobColor *c_)

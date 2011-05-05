@@ -1,0 +1,211 @@
+// -*- c -*- 
+// (c) Matti Katila, 2011
+
+#include "util/regions.h"
+#include "util/test.h"
+
+typedef struct foo {
+	int a,b,c,d,e,f,g,h,i;
+} Foo;
+
+void test_util_regs_instantiate()
+{
+	static char *id = "test";
+
+	int i, j;
+	Region *reg = util_regs_create("t");
+	int nro=1;
+
+	for (i=0; i<1000; i++) {
+		Foo *f = REGION(reg, id, Foo);
+		f->a = nro++;
+		f->b = nro++;
+		f->c = nro++;
+		f->d = nro++;
+
+//		printf("%d %d %d %d %d\n", f->a, f->b, f->c, f->d, f->e);
+		for (j=0; j<10; j++) {
+			Foo *g = REGION(reg, "test.foo", Foo);
+			g->a = g->b = g->c = -2;
+		}
+
+		f->e = nro++;
+		f->f = nro++;
+		f->g = nro++;
+		f->h = nro++;
+		f->i = nro++;
+//		printf("%d %d %d %d %d\n", f->a, f->b, f->c, f->d, f->e);
+	}
+	GList *keys = g_hash_table_get_keys(reg->regid2fastarr);
+	while(keys != NULL) {
+		printf("key: %s\n", keys->data);
+		keys = g_list_next(keys);
+	}
+	GList *values = g_hash_table_get_values(reg->regid2fastarr);
+	while(values != NULL) {
+		printf("value: %p\n", values->data);
+		FastArray *arr = values->data;
+		printf("Array size: %d\n", arr->index);
+		int i;
+		for (i=0; i<arr->index; i++) {
+			int column = i / arr->blobs_in_full_chunk;
+			int row = i % arr->blobs_in_full_chunk;
+			void **ret = (void **) &arr->chunks[column][row * arr->blob_size];
+			Foo *f = (Foo *)ret;
+			//Foo *f = util_fastarr_get(arr, i);
+			printf("get f\n");
+			printf("%d ", f->a);
+		}
+		printf("\n");
+		values = g_list_next(values);
+	}
+
+	FastArray *arr = g_hash_table_lookup(reg->regid2fastarr, id);
+	printf("arr: %p\n", arr);
+	nro=1;
+	for (i=0; i<1000; i++) {
+		printf("index: %d\n", i);
+		int column = i / arr->blobs_in_full_chunk;
+		int row = i % arr->blobs_in_full_chunk;
+		void **ret = (void **) &arr->chunks[column][row * arr->blob_size];
+		Foo *f = (Foo *)ret;
+		//Foo *f = util_fastarr_get(arr, i);
+		printf("%d %d %d %d %d\n", f->a, f->b, f->c, f->d, f->e);
+
+		assert_true(f->a == nro++);
+		assert_true(f->b == nro++);
+		assert_true(f->c == nro++);
+		assert_true(f->d == nro++);
+		assert_true(f->e == nro++);
+		assert_true(f->f == nro++);
+		assert_true(f->g == nro++);
+		assert_true(f->h == nro++);
+		assert_true(f->i == nro++);
+	}
+}
+
+void test_util_regs_instantiate2()
+{
+	static char *id = "test";
+
+	int i;
+	Region *reg = util_regs_create("t");
+	int nro=1;
+
+	for (i=0; i<130; i++) {
+		Foo *f = REGION(reg, id, Foo);
+		f->a = nro++;
+		f->b = nro++;
+		f->c = nro++;
+		f->d = nro++;
+		f->e = nro++;
+		f->f = nro++;
+		f->g = nro++;
+		f->h = nro++;
+		f->i = nro++;
+	}
+/*
+	GList *keys = g_hash_table_get_keys(reg->regid2fastarr);
+	while(keys != NULL) {
+		printf("key: %s\n", keys->data);
+		keys = g_list_next(keys);
+	}
+	GList *values = g_hash_table_get_values(reg->regid2fastarr);
+	while(values != NULL) {
+		printf("value: %p\n", values->data);
+		FastArray *arr = values->data;
+		printf("Array size: %d\n", arr->index);
+		int i;
+		for (i=0; i<arr->index; i++) {
+			Foo *f = ()util_fastarr_get(arr, i);
+			printf("get f %p\n", f);
+			printf("%d ", f->a);
+		}
+		printf("\n");
+		values = g_list_next(values);
+	}
+*/
+	FastArray *arr = g_hash_table_lookup(reg->regid2fastarr, id);
+	printf("arr: %p\n", arr);
+	nro=1;
+	for (i=0; i<130; i++) {
+		printf("index: %d\n", i);
+		int column = i / arr->blobs_in_full_chunk;
+		int row = i % arr->blobs_in_full_chunk;
+		void **ret = (void **) &arr->chunks[column][row * arr->blob_size];
+		Foo *f = (Foo *)ret;
+		printf("%d %d %d %d %d\n", f->a, f->b, f->c, f->d, f->e);
+
+		assert_true(f->a == nro++);
+		assert_true(f->b == nro++);
+		assert_true(f->c == nro++);
+		assert_true(f->d == nro++);
+		assert_true(f->e == nro++);
+		assert_true(f->f == nro++);
+		assert_true(f->g == nro++);
+		assert_true(f->h == nro++);
+		assert_true(f->i == nro++);
+	}
+}
+
+
+
+void test_util_fastarr_add()
+{
+	int i;
+	FastArray *arr = util_fastarr_create(sizeof(void*));
+	int nro=1;
+
+	for (i=0; i<12000; i++) {
+		Foo *f = malloc(sizeof(Foo));
+		f->a = nro++;
+		f->b = nro++;
+		f->c = nro++;
+		f->d = nro++;
+		f->e = nro++;
+		f->f = nro++;
+		f->g = nro++;
+		f->h = nro++;
+		f->i = nro++;
+
+		util_fastarr_add(arr, f);
+	}
+
+	nro=1;
+	for (i=0; i<12000; i++) {
+		Foo *f = util_fastarr_get(arr, i);
+		assert_true(f->a == nro++);
+		assert_true(f->b == nro++);
+		assert_true(f->c == nro++);
+		assert_true(f->d == nro++);
+		assert_true(f->e == nro++);
+		assert_true(f->f == nro++);
+		assert_true(f->g == nro++);
+		assert_true(f->h == nro++);
+		assert_true(f->i == nro++);
+	}
+}
+
+void test_util_fastarr_add2()
+{
+	int i;
+	FastArray *arr = util_fastarr_create(sizeof(void*));
+
+	Foo *f1 = malloc(sizeof(Foo));
+	Foo *f2 = malloc(sizeof(Foo));
+	Foo *f3 = malloc(sizeof(Foo));
+	Foo *f4 = malloc(sizeof(Foo));
+	Foo *f5 = malloc(sizeof(Foo));
+	util_fastarr_add(arr, f1);
+	util_fastarr_add(arr, f2);
+	util_fastarr_add(arr, f3);
+	util_fastarr_add(arr, f4);
+	util_fastarr_add(arr, f5);
+
+	assert_true(f1 == util_fastarr_get(arr, 0));
+	assert_true(f2 == util_fastarr_get(arr, 1));
+	assert_true(f3 == util_fastarr_get(arr, 2));
+	assert_true(f4 == util_fastarr_get(arr, 3));
+	assert_true(f5 == util_fastarr_get(arr, 4));
+}
+

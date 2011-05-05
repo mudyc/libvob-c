@@ -20,9 +20,11 @@ LIBS = -lGL -lrt -lmcheck \
 		cairo \
 		glib-2.0`#
 
-SRC = $(shell find src/ -name "*.c") 
+SRC = $(filter-out src/util/tester.c, $(shell find src/ -name "*.c"))
+TEST = $(shell find src/ -name "*.test") 
 OBS = $(subst .c,.o, $(subst src/,bin/,$(SRC)))
 LIB_OBS = $(filter-out bin/first_lob.o,$(OBS))
+TEST_OBS = $(subst .test,_test.o, $(subst src/,bin/,$(TEST)))
 HDRS = $(shell find src/lob -name "*.h")
 DIRS = $(shell for i in $(OBS); do dirname $$i; done)
 
@@ -44,6 +46,14 @@ $(OBS):
 
 prepare:
 	mkdir -p $(dir $(OBS))
+
+$(TEST_OBS):
+	gcc -x c -c $(CFLAGS) -o $@ $(subst _test.o,.test, $(subst bin/,src/,$@))
+
+test: $(TEST_OBS)
+	gcc -shared -rdynamic -o libtest.so $(TEST_OBS) -L. -lvob-c $(LIBS)
+	gcc -o tester src/util/tester.c `pkg-config --cflags --libs glib-2.0 gmodule-2.0 libelf`
+	LD_LIBRARY_PATH=. ./tester libtest.so $(CTEST)
 
 clean:
 	rm -rf bin/ first_lob libvob-c.so py/build

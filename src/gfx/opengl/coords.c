@@ -12,7 +12,7 @@ void gfx_opengl_coords(Coordsys *cs)
 		break;
 	case CS_BOX: {// parent , x,y, w, h
 		BoxCS *p = (BoxCS *)cs;
-		printf("box: %d %d %dx%d\n", p->x, p->y, p->w, p->h);
+		printf("box: %f %f %fx%f %d\n", p->x, p->y, p->w, p->h, p->parent->type);
 		gfx_opengl_coords(p->parent);
 		if (p->x != 0 || p->y != 0)
 			glTranslatef(p->x, p->y, 0);

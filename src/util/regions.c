@@ -35,16 +35,19 @@ static void *array_next(FastArray *arr)
 	int row = arr->index % arr->blobs_in_full_chunk;
 
 	//printf("col %d row %d\n", column, row);
-	//for (i=0; i<=column; i++)
-	//	if (arr->chunks != NULL)
-	//		printf("Mcheck: %d %d\n", i, mprobe(arr->chunks[i]));
+/*	for (i=0; i<=column; i++)
+		if (arr->chunks != NULL)
+			printf("%p, ", arr->chunks[0]);
+	printf("\n");
+*/
+
 
 	if (arr->index >= arr->capacity) {
 		if (row == 0) { // we need to increase chunks array
 			//printf("inc chunks..\n");
 			void **tmp = arr->chunks;
 			arr->chunks = malloc((1 + column)*sizeof(void*));
-			memcpy(arr->chunks, tmp, column);
+			memcpy(arr->chunks, tmp, column*sizeof(void*));
 			//for (i=0; i<column; i++)
 			//	arr->chunks[i] = tmp[i];
 			arr->chunks[column] = NULL;
@@ -83,7 +86,9 @@ static void *array_next(FastArray *arr)
 void util_fastarr_add(FastArray *arr, void *data)
 {
 	//printf("util_fastarr_add\n");
-	void **ptr = array_next(arr);
+	void **ptr = (void **)array_next(arr);
+	//printf("fat arr add %p %p %d\n", ptr, data, arr->blob_size);
+	//memcpy(ptr, data, arr->blob_size);
 	ptr[0] = data;
 }
 
@@ -96,6 +101,7 @@ void *util_fastarr_get(FastArray *arr, int idx)
 	int column = idx / arr->blobs_in_full_chunk;
 	int row = idx % arr->blobs_in_full_chunk;
 	void **ret = (void **) &arr->chunks[column][row * arr->blob_size];
+	printf("fat arr get %p\n", ret);
 	return *ret;
 }
 
@@ -125,7 +131,7 @@ void util_regs_id_init(Region *r, int *id, char *idstr)
 
 Region *util_regs_create(char *name)
 {
-	Region *ret =  malloc(sizeof(Region));
+	Region *ret = malloc(sizeof(Region));
 	ret->regid2fastarr = g_hash_table_new(&g_direct_hash,
 					      &g_direct_equal);
 	ret->owner2data = g_hash_table_new(&g_direct_hash,
@@ -146,7 +152,7 @@ void *util_regs_instantiate(Region *reg, void *id, size_t size)
 
 	//printf("instantiate: %x %s %d %d\n", id, id, arr->index, size);
 	void *ret = array_next(arr);
-	//printf("instantiated: %s %x\n", id, ret);
+	//printf("instantiated: %s %p %p\n", id, ret, arr);
 	return ret;
 }
 
@@ -154,18 +160,17 @@ void *util_regs_data_increase(Region *reg, void *owner, void *curr_mem,
 			      int *capacity, size_t size)
 {
 	//printf("util_regs_inc %d\n");
-	void *data = g_hash_table_lookup(reg->owner2data, owner);
+	void **data = g_hash_table_lookup(reg->owner2data, owner);
 	if (data != curr_mem) {
 		printf("FATAL: Region data increased with wrong data.");
 		exit(1);
 	}
-	void **tmp = &data;
+	void **tmp = data;
 	data = malloc(size);
-	memcpy(&data, *tmp, *capacity);
-	//for (i=0; i<(*capacity); i++)
-	//	data[i] = tmp[i];
-	if (tmp != NULL)
-		free(*tmp);
+	if (tmp != NULL) {
+		memcpy(data, tmp, capacity);
+		free(tmp);
+	}
 	g_hash_table_insert(reg->owner2data, owner, data);
 	return data;
 }

@@ -37,13 +37,40 @@ Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
 	// do lobs
 	printf("lob.main.create_lob\n");
 	Lob *lob = cb->create_lob(reg);
+
 	printf("lob.main.layout\n");
 	lob = lob->layout(lob, gfx_width(win), gfx_height(win));
+
 	printf("lob.main.render\n");
 	lob->render(lob, scene0->rootCS,
 		    gfx_width(win), gfx_height(win), scene0);
 
-	util_regs_clear(reg);
+	//util_regs_clear(reg);
+
+	// dump scene info
+	int i;
+	printf("Scene info: %d\n", scene0->vobs_arr->index);
+	for (i=0; i<scene0->vobs_arr->index; i++) {
+		Vob *v = util_fastarr_get(scene0->vobs_arr, i);
+		
+		switch (v->type) {
+		case VOB0:
+			printf("vob0\n");
+			break;
+		case VOB1: {
+			printf("vob1 %s %p\n", v->id, v);
+			Coordsys *cs = util_fastarr_get(scene0->coords_arr, i);
+			printf("cs %p\n", cs);
+			vob_coords_dump(cs);
+			break;
+		}
+		case VOB2:
+		default:
+			printf("Vob type not implemented.\n");
+			break;
+		}
+	}
+
 
 
 	return scene0;

@@ -57,5 +57,6 @@ Coordsys *vob_coords_ortho(Scene *vs, Coordsys *into,
 float vob_coords_w(Coordsys *cs);
 float vob_coords_h(Coordsys *cs);
 
+void vob_coords_dump(Coordsys *cs);
 
 #endif

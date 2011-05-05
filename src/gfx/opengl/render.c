@@ -55,8 +55,11 @@ void gfx_opengl_single_render(struct gfx_window *w, Scene *vs)
 			printf("vob0\n");
 			break;
 		case VOB1: {
-			printf("vob1 %s\n", v->id);
+			printf("vob1 %s %p\n", v->id, v);
 			Coordsys *cs = util_fastarr_get(vs->coords_arr, i);
+			printf("cs %p\n", cs);
+			vob_coords_dump(cs);
+
 			gfx_opengl_vobs_render1(c->id2impl, (Vob1*)v, cs);
 			printf("vob1.. %s\n", v->id);
 			break;

@@ -95,11 +95,35 @@ static void vbox_render(Lob *this, Coordsys *into,
 			diff = dH * (shrink / totalShrink);
 		}
 		float h = is->nath + diff;
+		//printf("render %d %f %dx%f\n", i, y,w,h);
 		Coordsys *cs = vob_coords_box(vs, into, 0, y, w, h);
+		printf("render %d %f %dx%f\n", i, y,w,h);
 		y += h;
-		printf("render %d\n", i);
 		item->render(item, cs, w, h, vs);
 	}
+
+	printf("Scene info: %d\n", vs->vobs_arr->index);
+	for (i=0; i<vs->vobs_arr->index; i++) {
+		Vob *v = util_fastarr_get(vs->vobs_arr, i);
+		
+		switch (v->type) {
+		case VOB0:
+			printf("vob0\n");
+			break;
+		case VOB1: {
+			printf("vob1 %s %p\n", v->id, v);
+			Coordsys *cs = util_fastarr_get(vs->coords_arr, i);
+			printf("cs %p\n", cs);
+			vob_coords_dump(cs);
+			break;
+		}
+		case VOB2:
+		default:
+			printf("Vob type not implemented.\n");
+			break;
+		}
+	}
+
 }
 
 Lob *lob_vbox(Region *reg)

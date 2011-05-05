@@ -79,7 +79,7 @@ void *util_regs_instantiate(Region *reg, void *id, size_t size);
  */
 //void *util_regs_data_instantiate(Region *reg, void *owner, size_t size);
 void *util_regs_data_increase(Region *reg, void *owner, void *curr_mem,
-			      int *capasity, size_t size);
+			      int *capacity, size_t size);
 
 /** Marks all objects available for reuse within the region.
  */

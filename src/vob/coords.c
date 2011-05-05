@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <err.h>
 
+
+
 RootCS *vob_coords_root(Scene *vs)
 {
 	static char *id = "vob.coords.Root";
@@ -25,6 +27,7 @@ Coordsys *vob_coords_box(Scene *vs, Coordsys *into,
 	ret->w = w;
 	ret->h = h;
 	//into->add(vs, ret);
+	//printf("box %f %f %fx%f\n", x,y,w,h);
 	return (Coordsys*) ret;
 }
 
@@ -45,6 +48,24 @@ Coordsys *vob_coords_ortho(Scene *vs, Coordsys *into,
 	return (Coordsys*) ret;
 }
 
+
+void vob_coords_dump(Coordsys *cs)
+{
+	switch (cs->type) {
+	case CS_ROOT:
+		printf("-root\n");
+		break;
+	case CS_BOX: {
+		BoxCS *p = (BoxCS*)cs;
+		printf("-box\n");
+		vob_coords_dump(p->parent);
+		break;
+	}
+	case CS_ORTHO:
+	default:
+		errx(1, "Unknowm coordsys: %d\n", cs->type);
+	}	
+}
 
 static float wh(Coordsys *cs, bool w) 
 {
