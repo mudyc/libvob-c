@@ -13,8 +13,8 @@
 enum VOB_COORDINATE_SYSTEM_TYPE {
 	CS_ROOT = 1,
 	CS_BOX,
+	CS_TRANS,
 	CS_ORTHO,
-		
 };
 
 struct vob_coordinate_system {
@@ -37,6 +37,13 @@ struct vob_coordinate_system_box {
 };
 typedef struct vob_coordinate_system_box BoxCS;
 
+struct vob_coordinate_system_translate {
+	Coordsys base;
+	Coordsys *parent;
+	float x, y, z;
+};
+typedef struct vob_coordinate_system_translate TransCS;
+
 struct vob_coordinate_system_ortho {
 	Coordsys base;
 	Coordsys *parent;
@@ -49,6 +56,10 @@ typedef struct vob_coordinate_system_ortho OrthoCS;
 RootCS *vob_coords_root(Scene *vs);
 Coordsys *vob_coords_box(Scene *vs, Coordsys *into, 
 			 float x, float y, float w, float h);
+
+Coordsys *vob_coords_trans(Scene *vs, Coordsys *into, 
+			   float x, float y, float z);
+
 Coordsys *vob_coords_ortho(Scene *vs, Coordsys *into, 
 			   float x, float y, float z, 
 			   float sx, float sy);

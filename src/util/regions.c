@@ -13,6 +13,9 @@
 // ======================================
 
 static const int ARRAY_MAX = 4096;
+
+/* Stretching slices won't work as objects may have pointers!
+ */
 static const int ARRAY_SIZES[] = {0, 4, 16, 64, 256, 1024, 4096 };
 static const int ARRAY_SIZES_N = sizeof(ARRAY_SIZES) / sizeof (ARRAY_SIZES[0]);
 
@@ -54,7 +57,10 @@ static void *array_next(FastArray *arr)
 			if (tmp != NULL)
 				free(tmp);
 		}
-
+		arr->chunks[column] = malloc(ARRAY_MAX);
+		arr->capacity = (column * arr->blobs_in_full_chunk) +
+			(ARRAY_MAX / arr->blob_size);
+		/*
 		// ok, we need to resize the slice..
 		int at_least = (1+row) * arr->blob_size;
 		//printf("at least: %d\n", at_least);
@@ -65,10 +71,9 @@ static void *array_next(FastArray *arr)
 				data = malloc(ARRAY_SIZES[i]*sizeof(char));
 				arr->chunks[column] = data;
 				char *new = arr->chunks[column];
-				//printf("malloced: %x %d\n", new, ARRAY_SIZES[i]);
+				printf("malloced: %x %d\n", new, ARRAY_SIZES[i]);
 				if (tmp != NULL) {
-					for (j=0; j<ARRAY_SIZES[i-1]; j++)
-						new[j] = tmp[j];
+					memcpy(data, new, ARRAY_SIZES[i-1]);
 					free(tmp);
 				}
 				// update size info
@@ -77,6 +82,7 @@ static void *array_next(FastArray *arr)
 				break;
 			}
 		}
+		*/
 	}
 	arr->index++;
 	//printf("ret.. %d ", row * arr->blob_size);
@@ -85,10 +91,7 @@ static void *array_next(FastArray *arr)
 
 void util_fastarr_add(FastArray *arr, void *data)
 {
-	//printf("util_fastarr_add\n");
 	void **ptr = (void **)array_next(arr);
-	//printf("fat arr add %p %p %d\n", ptr, data, arr->blob_size);
-	//memcpy(ptr, data, arr->blob_size);
 	ptr[0] = data;
 }
 
@@ -101,7 +104,7 @@ void *util_fastarr_get(FastArray *arr, int idx)
 	int column = idx / arr->blobs_in_full_chunk;
 	int row = idx % arr->blobs_in_full_chunk;
 	void **ret = (void **) &arr->chunks[column][row * arr->blob_size];
-	printf("fat arr get %p\n", ret);
+	//printf("fat arr get %p\n", ret);
 	return *ret;
 }
 

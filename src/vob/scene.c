@@ -21,6 +21,32 @@ Scene *vob_scene_create()
 	return ret;
 }
 
+void vob_scene_dump(Scene *vs)
+{
+	int i;
+	printf("Scene dump: %d\n", vs->vobs_arr->index);
+	for (i=0; i<vs->vobs_arr->index; i++) {
+		Vob *v = util_fastarr_get(vs->vobs_arr, i);
+		
+		switch (v->type) {
+		case VOB0:
+			printf("vob0\n");
+			break;
+		case VOB1: {
+			printf("vob1 %s %p\n", v->id, v);
+			Coordsys *cs = util_fastarr_get(vs->coords_arr, i);
+			printf("cs %p\n", cs);
+			vob_coords_dump(cs);
+			break;
+		}
+		case VOB2:
+		default:
+			printf("Vob type not implemented.\n");
+			break;
+		}
+	}
+}
+
 void vob_scene_clear(Scene *sc) 
 {
 	util_regs_clear(sc->reg);

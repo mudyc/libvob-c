@@ -24,13 +24,13 @@ LobColor *lob_color(Region *reg, float r, float g, float b)
 // Rect
 // -------------------------------------------
 
-static Lob *rect_layout(Lob *this, int w, int h)
+static Lob *rect_layout(Lob *this, float w, float h)
 {
 	return this;
 }
 
 static void rect_render(Lob *this, Coordsys *into, 
-			int w, int h, Scene *vs)
+			float w, float h, Scene *vs)
 {
 	// compose needed vobs from this lob.
 	LobRect *r = (LobRect *) this;

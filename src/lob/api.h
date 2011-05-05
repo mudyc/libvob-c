@@ -24,8 +24,8 @@ struct lob {
 	Region *reg;
 
 	Size *(*size)(Lob *l);
-	Lob * (*layout)(Lob *l, int w, int h);
-	void (*render)(Lob *l, Coordsys *into, int w, int h, Scene *vs);
+	Lob * (*layout)(Lob *l, float w, float h);
+	void (*render)(Lob *l, Coordsys *into, float w, float h, Scene *vs);
 };
 
 

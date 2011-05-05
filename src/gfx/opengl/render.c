@@ -22,6 +22,8 @@ static void pre_render_scene(struct impl *c)
 	glClearColor(drand48(), drand48(), drand48(), 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	//glTranslatef(c->width/2,c->height/2,0);
+	//glScalef(0.1f, 0.1f, 1.0f);
 }
 
 static void post_render_scene(struct impl *c)
@@ -57,8 +59,6 @@ void gfx_opengl_single_render(struct gfx_window *w, Scene *vs)
 		case VOB1: {
 			printf("vob1 %s %p\n", v->id, v);
 			Coordsys *cs = util_fastarr_get(vs->coords_arr, i);
-			printf("cs %p\n", cs);
-			vob_coords_dump(cs);
 
 			gfx_opengl_vobs_render1(c->id2impl, (Vob1*)v, cs);
 			printf("vob1.. %s\n", v->id);

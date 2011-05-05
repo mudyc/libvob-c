@@ -4,6 +4,7 @@
 #include "vob/coords.h"
 #include "gfx/opengl/coords.h"
 
+#include <GL/gl.h> 
 
 void gfx_opengl_coords(Coordsys *cs)
 {
@@ -12,10 +13,19 @@ void gfx_opengl_coords(Coordsys *cs)
 		break;
 	case CS_BOX: {// parent , x,y, w, h
 		BoxCS *p = (BoxCS *)cs;
-		printf("box: %f %f %fx%f %d\n", p->x, p->y, p->w, p->h, p->parent->type);
 		gfx_opengl_coords(p->parent);
-		if (p->x != 0 || p->y != 0)
+		if (p->x != 0 || p->y != 0) {
 			glTranslatef(p->x, p->y, 0);
+		}
+		break;
+	}
+	case CS_TRANS: {// parent , x,y,z 
+		TransCS *p = (TransCS *)cs;
+		gfx_opengl_coords(p->parent);
+		if (p->x != 0 || p->y != 0 || p->z != 0) {
+			printf("tr: %2.2f %2.2f\n", p->x, p->y);
+			glTranslatef(p->x, p->y, p->z);
+		}
 		break;
 	}
 	case CS_ORTHO:

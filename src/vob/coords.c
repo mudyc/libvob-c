@@ -26,7 +26,19 @@ Coordsys *vob_coords_box(Scene *vs, Coordsys *into,
 	ret->y = y;
 	ret->w = w;
 	ret->h = h;
-	//into->add(vs, ret);
+	//printf("box %f %f %fx%f\n", x,y,w,h);
+	return (Coordsys*) ret;
+}
+
+Coordsys *vob_coords_trans(Scene *vs, Coordsys *into, 
+			   float x, float y, float z)
+{
+	TransCS *ret = REGION(vs->reg, "vob.coords.Trans", TransCS); 
+	ret->base.type = CS_TRANS;
+	ret->parent = into;
+	ret->x = x;
+	ret->y = y;
+	ret->z = z;
 	//printf("box %f %f %fx%f\n", x,y,w,h);
 	return (Coordsys*) ret;
 }
@@ -61,6 +73,12 @@ void vob_coords_dump(Coordsys *cs)
 		vob_coords_dump(p->parent);
 		break;
 	}
+	case CS_TRANS: {
+		TransCS *p = (TransCS*)cs;
+		printf("-trans\n");
+		vob_coords_dump(p->parent);
+		break;
+	}
 	case CS_ORTHO:
 	default:
 		errx(1, "Unknowm coordsys: %d\n", cs->type);
@@ -76,6 +94,8 @@ static float wh(Coordsys *cs, bool w)
 		BoxCS *p = (BoxCS*)cs;
 		return w? p->w: p->h;
 	}
+	case CS_TRANS:
+		return wh(((OrthoCS*)cs)->parent, w);
 	case CS_ORTHO:
 		return wh(((OrthoCS*)cs)->parent, w);
 	default:
