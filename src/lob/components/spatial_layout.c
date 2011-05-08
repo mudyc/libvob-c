@@ -163,7 +163,7 @@ Lob *lob_vbox(Region *reg)
 
 void lob_vbox_add(Region *reg, LobVBox *vbox, Lob *lob)
 {
-	util_arr_add(reg, (void *)vbox, lob);
+	util_arr_add(reg, vbox->items, lob);
 }
 
 Lob *lob_hbox(Region *reg)
@@ -184,5 +184,5 @@ Lob *lob_hbox(Region *reg)
 
 void lob_hbox_add(Region *reg, LobHBox *hbox, Lob *lob)
 {
-	util_arr_add(reg, (void*)hbox, lob);
+	util_arr_add(reg, hbox->items, lob);
 }

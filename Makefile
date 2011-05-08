@@ -12,12 +12,17 @@ CFLAGS = -Wall -I src/ \
 	`pkg-config --cflags \
 		glib-2.0 \
 		x11 \
+		pango \
 		cairo`#
 
-LIBS = -lGL -lrt -lmcheck \
+LIBS = -lGL -lrt \
 	`pkg-config --libs \
 		x11 \
 		cairo \
+		pangocairo \
+		pangoxft \
+		pangoft2 \
+		pangox \
 		glib-2.0`#
 
 SRC = $(filter-out src/util/tester.c, $(shell find src/ -name "*.c"))

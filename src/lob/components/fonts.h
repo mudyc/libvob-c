@@ -3,7 +3,8 @@
 
 // (c): Matti Katila, 2011
 
-
+#include "lob/components/spatial_layout.h"
+#include "util/regions.h"
 #include "util/array.h"
 
 
@@ -12,18 +13,22 @@
  */
 
 struct lob_font {
-	char *family;
+	const char *family;
 };
 typedef struct lob_font LobFont;
 
 struct lob_glyph {
+	Lob base;
 	LobFont *font;
+	float size;
+	char *ch;
+	Size *tmp_size;
 };
 typedef struct lob_glyph LobGlyph;
 
 
 
-//LobFont *lob_font(Region *reg, char *family);
+LobFont *lob_font(Region *reg, char *family);
 
 //LobGlyph *lob_font_glyph(Region *reg, LobFont *f, char *UTF8characher);
 

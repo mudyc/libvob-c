@@ -69,3 +69,9 @@ prefix is enough for those but there is this region struct used
 everywhere. Let it be for now I can fix it later (I don't like LRegion
 nor VRegion - UtilRegion would fit but it's used extensively thus I
 like something short).
+
+
+Depencies
+---------
+
+sudo apt-get install libmesa-dev libelfg0-dev libpango1.0-dev

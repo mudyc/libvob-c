@@ -139,7 +139,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                 //printf("got arg...%%i\\n", idx);
                 PyObject *lob = PySequence_GetItem(list, idx);
                 //if (PyObject_TypeCheck(lob, &PyLobType))
-                    %s_add(region, ((%s*)self->obj)->items, ((PyLob*)lob)->obj);
+                    %s_add(region, (%s*)self->obj, ((PyLob*)lob)->obj);
                 //else printf("asdf\\n");
 
             }
