@@ -8,7 +8,7 @@
 #include "util/regions.h"
 
 //#define LOB_INF  (1 << 30)
-float LOB_INF;
+extern const float LOB_INF;// = 1073741824.0f; // 2^30
 
 struct lob_size {
 	float minw, natw, maxw;

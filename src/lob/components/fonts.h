@@ -23,6 +23,8 @@ struct lob_glyph {
 	float size;
 	char *ch;
 	Size *tmp_size;
+	
+	struct gfx_window *win;
 };
 typedef struct lob_glyph LobGlyph;
 

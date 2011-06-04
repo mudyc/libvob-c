@@ -29,11 +29,29 @@ int gfx_width(struct gfx_window *w)
 	return w->width(w->impl);
 }
 
+void gfx_font_list(struct gfx_window *w,
+		   int *length, char ***list) 
+{
+	w->font_list(length, list);
+}
+void gfx_font_glyph_size(struct gfx_window *win, 
+			 void *font_ptr, char *ch, 
+			 float size, float *w, float *h)
+{
+	win->font_glyph_size(font_ptr, ch, size, w, h);
+}
+
+
+
 struct gfx_callbacks *gfx_callbacks(struct gfx_window *w)
 {
 	return w->callbacks(w->impl);
 }
 
+static struct gfx_window* instance;
+/* Internal get function for win to prevent moving window instance around.
+ */
+struct gfx_window* gfx_window_instance() { return instance; }
 struct gfx_window* gfx_create_window(int x, int y, int w, int h)
 {
 	struct gfx_window *ret = NULL;
@@ -67,6 +85,7 @@ struct gfx_window* gfx_create_window(int x, int y, int w, int h)
 	ret->anim = gfx_anim_create();
 	ret->render = gfx_render_create();
 
+	instance = ret;
 	return ret;
 }
 

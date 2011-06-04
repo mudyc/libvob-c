@@ -15,6 +15,7 @@
 #include "gfx/gfx_api.h"
 #include "gfx/animation.h"
 #include "gfx/opengl/opengl.h"
+#include "gfx/opengl/glyph.h"
 
 
 void gfx_opengl_single_render(struct gfx_window *w, Scene *vs);
@@ -243,6 +244,9 @@ struct gfx_window* gfx_opengl_create_window(int x, int y, int w, int h)
 	ret->width = (int(*)(void *)) &getW;
 	ret->height = (int(*)(void *)) &getH;
 	ret->gui_fd = (int(*)(void *)) &getFD;
+
+	ret->font_list = &gfx_opengl_font_list;
+	ret->font_glyph_size = &gfx_opengl_font_glyph_size;
 
 	ret->single_render = &gfx_opengl_single_render;
 

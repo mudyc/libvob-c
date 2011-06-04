@@ -28,9 +28,10 @@ void util_arr_add(Region *reg, UtilArray *arr, void *data)
 		inc = inc > 4? inc: 4;
 		//arr->data = malloc(inc * sizeof(void *));
 		//arr->data = REGION(reg, "util.Array.data", /*inc*sizeof(*/void */*)*/);
-		arr->data = util_regs_data_increase(reg, arr, arr->data, 
-						    &arr->capacity,
-						    inc * sizeof(void *));
+		arr->data = 
+			util_regs_data_increase(reg, arr, arr->data, 
+						arr->capacity * sizeof(void *),
+						inc * sizeof(void *));
 		//for (i=0; i<arr->capacity; i++)
 		//	arr->data[i] = tmp[i];
 		//if (tmp != NULL)

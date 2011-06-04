@@ -160,9 +160,9 @@ void *util_regs_instantiate(Region *reg, void *id, size_t size)
 }
 
 void *util_regs_data_increase(Region *reg, void *owner, void *curr_mem,
-			      int *capacity, size_t size)
+			      size_t capacity, size_t size)
 {
-	//printf("util_regs_inc %d\n");
+	//printf("util_regs_inc\n");
 	void **data = g_hash_table_lookup(reg->owner2data, owner);
 	if (data != curr_mem) {
 		printf("FATAL: Region data increased with wrong data.");

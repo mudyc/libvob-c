@@ -3,6 +3,7 @@
 #include "util/regions.h"
 #include "vob/scene.h"
 #include <stdbool.h>
+#include <stdio.h>
 #include <err.h>
 
 
@@ -69,7 +70,7 @@ void vob_coords_dump(Coordsys *cs)
 		break;
 	case CS_BOX: {
 		BoxCS *p = (BoxCS*)cs;
-		printf("-box\n");
+		printf("-box %f %f %fx%f\n", p->x, p->y, p->w, p->h);
 		vob_coords_dump(p->parent);
 		break;
 	}

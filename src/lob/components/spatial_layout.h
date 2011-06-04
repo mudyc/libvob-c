@@ -15,9 +15,15 @@ Lob *lob_right(Lob *l);
 
 
 Lob *lob_glue();
+*/
+struct _lob_glue {
+	Lob base;
+	Size size;
+};
+typedef struct _lob_glue LobGlue;
 Lob *lob_vglue();
 Lob *lob_hglue();
-*/
+
 
 
 struct lob_vbox {

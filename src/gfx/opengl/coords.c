@@ -23,7 +23,7 @@ void gfx_opengl_coords(Coordsys *cs)
 		TransCS *p = (TransCS *)cs;
 		gfx_opengl_coords(p->parent);
 		if (p->x != 0 || p->y != 0 || p->z != 0) {
-			printf("tr: %2.2f %2.2f\n", p->x, p->y);
+			//printf("tr: %2.2f %2.2f\n", p->x, p->y);
 			glTranslatef(p->x, p->y, p->z);
 		}
 		break;

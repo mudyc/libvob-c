@@ -11,12 +11,14 @@ CFLAGS = -Wall -I src/ \
 	 -DNO_CPP_DEMANGLE\
 	`pkg-config --cflags \
 		glib-2.0 \
+		fontconfig \
 		x11 \
 		pango \
 		cairo`#
 
 LIBS = -lGL -lrt \
 	`pkg-config --libs \
+		fontconfig \
 		x11 \
 		cairo \
 		pangocairo \

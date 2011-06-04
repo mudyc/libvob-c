@@ -22,8 +22,6 @@ Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
 		reg = util_regs_create("lobs");
 	}
 
-
-
 	// rotate scenes as animation is done between two of them.
 	Scene* tmp = scene0;
 	scene0 = scene1;
@@ -46,7 +44,7 @@ Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
 		    gfx_width(win), gfx_height(win), scene0);
 
 	//util_regs_clear(reg);
-
+/*
 	// dump scene info
 	int i;
 	printf("Scene info: %d\n", scene0->vobs_arr->index);
@@ -70,7 +68,7 @@ Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
 			break;
 		}
 	}
-
+*/
 
 
 	return scene0;

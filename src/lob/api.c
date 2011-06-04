@@ -8,12 +8,15 @@
 #include "util/strings.h"
 
 
+const float LOB_INF = 1073741824.0f;
+/*
 static void _init_lob_INF() __attribute__ ((constructor));
 static void _init_lob_INF()
 {
-	LOB_INF = (const float) powf(2, 30);
+	float *ptr = (float *)&LOB_INF;
+	*ptr = (float) powf(2, 30);
 }
-
+*/
 
 void lob_render(Lob *l, Scene *sc) 
 {

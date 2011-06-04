@@ -4,9 +4,72 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
-
 #include "lob/components/spatial_layout.h"
 #include "vob/coords.h"
+
+static Size *glue_size(Lob *this)
+{
+	LobGlue *g = (LobGlue *) this;
+	return &g->size;
+}
+static Lob *glue_layout(Lob *this, float w, float h)
+{
+	return this;
+}
+static void render_none(Lob *this, Coordsys *into, 
+			float w, float h, Scene *vs)
+{
+	// nil
+}
+static LobGlue glue = {
+	.base.size = &glue_size,
+	.base.layout = &glue_layout,
+	.base.render = &render_none,
+};
+static LobGlue hglue = {
+	.base.size = &glue_size,
+	.base.layout = &glue_layout,
+	.base.render = &render_none,
+};
+static LobGlue vglue = {
+	.base.size = &glue_size,
+	.base.layout = &glue_layout,
+	.base.render = &render_none,
+};
+static void _init_glues() __attribute__ ((constructor));
+static void _init_glues()
+{
+	hglue.size.minw = 0;
+	hglue.size.natw = 0;
+	hglue.size.maxw = LOB_INF;
+	vglue.size.minh = 0;
+	vglue.size.nath = 0;
+	vglue.size.maxh = LOB_INF;
+
+	hglue.size.minw = 0;
+	hglue.size.natw = 0;
+	hglue.size.maxw = LOB_INF;
+	hglue.size.minh = -1;
+	hglue.size.nath = -1;
+	hglue.size.maxh = -1;
+
+	vglue.size.minw = -1;
+	vglue.size.natw = -1;
+	vglue.size.maxw = -1;
+	vglue.size.minh = 0;
+	vglue.size.nath = 0;
+	vglue.size.maxh = LOB_INF;
+}
+Lob *lob_glue() {
+	return (Lob*)&glue;
+}
+Lob *lob_hglue() {
+	return (Lob*)&hglue;
+}
+Lob *lob_vglue() {
+	return (Lob*)&vglue;
+}
+
 
 // -------------------------------------------
 // Lists - Boxes
@@ -25,16 +88,22 @@ static Size *box_size(Lob *this, bool horiz)
 			Lob *item = (Lob *)util_arr_get(box->items, i);
 			Size *size = item->size(item);
 			if (horiz) {
-				minw += size->minw;
-				natw += size->natw;
-				maxw += size->maxw;
+				if (size->minw > 0)
+					minw += size->minw;
+				if (size->natw > 0)
+					natw += size->natw;
+				if (size->maxw > 0)
+					maxw += size->maxw;
 				minh = fmaxf(minh, size->minh);
 				nath = fmaxf(nath, size->nath);
 				maxh = fmaxf(maxh, size->maxh);
 			} else {
-				minh += size->minh;
-				nath += size->nath;
-				maxh += size->maxh;
+				if (size->minh > 0)
+					minh += size->minh;
+				if (size->nath > 0)
+					nath += size->nath;
+				if (size->maxh > 0)
+					maxh += size->maxh;
 				minw = fmaxf(minw, size->minw);
 				natw = fmaxf(natw, size->natw);
 				maxw = fmaxf(maxw, size->maxw);
@@ -120,10 +189,14 @@ static void box_render(Lob *this, Coordsys *into,
 			float stretch = horiz? 
 				is->maxw - is->natw: is->maxh - is->nath;
 			diff = dH * (stretch / totalStretch);
+			if (isnan(diff))
+				diff = dH / box->items->size;;
 		} else if (dH < 0) { // shrink.. 
 			float shrink = horiz?
 				is->natw - is->minw: is->nath - is->minh;
 			diff = dH * (shrink / totalShrink);
+			if (isnan(diff))
+				diff = 0;
 		}
 		diff = horiz? is->natw + diff: is->nath + diff;
 		Coordsys *cs = vob_coords_trans(vs, into, 

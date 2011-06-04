@@ -19,10 +19,16 @@ static Lob* create_lob(Region *reg)
 	lob_vbox_add(reg, (LobVBox *)l,
 		     lob_rect(reg, lob_color(reg, 1.0, 0.5, 0.2)));
 	printf("create Lob\n");
+	int i; for (i=30; i<51; i++) {
 	UtilArray *fonts = lob_font_list(reg);
 	printf("create Lob\n");
-	lob_vbox_add(reg, (LobVBox *)l, 
-		     lob_font_text(reg, util_arr_get(fonts, 0), 20, "Eeti"));
+	LobHBox *text =
+		lob_font_text(reg, util_arr_get(fonts, i), 12, "The quick brown fox jumps over the lazy dog"); 
+	lob_hbox_add(reg, text, lob_hglue()); 
+	lob_vbox_add(reg, (LobVBox *)l, (Lob*)text); 
+	lob_vbox_add(reg, (LobVBox *)l, lob_vglue()); 
+		     
+	}
 	lob_vbox_add(reg, (LobVBox *)l,
 		     lob_rect(reg, lob_color(reg, 1.0, 0.5, 0.2)));
 
@@ -42,7 +48,7 @@ static void key_released()
 
 int main(int argc, char **argv) 
 {
-	struct gfx_window *win = gfx_create_window(0, 0, 320, 240);
+	struct gfx_window *win = gfx_create_window(0, 0, 2*320, 3*240);
 
 	struct gfx_callbacks *cb = gfx_callbacks(win);
 	cb->create_lob = &create_lob;

@@ -64,11 +64,11 @@ void vob_scene_put1(Scene *vs, Vob1 *v, Coordsys *cs)
 {
 	util_fastarr_add(vs->vobs_arr, v);
 	util_fastarr_add(vs->coords_arr, cs);
-	printf("vob_scene_put1 %p %d %d\n", cs, vs->vobs_arr->index, vs->coords_arr->index);
+	//printf("vob_scene_put1 %p %d %d\n", cs, vs->vobs_arr->index, vs->coords_arr->index);
 	Coordsys *css = util_fastarr_get(vs->coords_arr, 
 					 vs->coords_arr->index-1);
-	printf("cs %p\n", css);
-	vob_coords_dump(css);
+	//printf("cs %p\n", css);
+
 }
 
 struct cs_pair {
