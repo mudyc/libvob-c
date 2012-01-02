@@ -32,6 +32,9 @@ static void post_render_scene(struct impl *c)
 	glXSwapBuffers(c->dpy, c->glxWin);
 }
 
+void gfx_opengl_add_opengl_context_task()
+{
+}
 
 void gfx_opengl_single_render(struct gfx_window *w, Scene *vs)
 {

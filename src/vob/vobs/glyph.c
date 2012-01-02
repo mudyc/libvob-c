@@ -12,5 +12,5 @@ Vob1 *vob_glyph(Scene *vs, float size, char *family, char *ch)
 
 	ret->ch = ch;
 	ret->family = family;
-	return ret;
+	return (Vob1*)ret;
 }

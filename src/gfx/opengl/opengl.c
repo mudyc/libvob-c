@@ -221,6 +221,8 @@ struct gfx_window* gfx_opengl_create_window(int x, int y, int w, int h)
 
 	glXMakeContextCurrent(dpy, glxWin, glxWin, cx);
 
+gfx_opengl_paper_shaders_init();
+
 	glClearColor(1.0, 1.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -252,3 +254,5 @@ struct gfx_window* gfx_opengl_create_window(int x, int y, int w, int h)
 
 	return ret;
 }
+
+

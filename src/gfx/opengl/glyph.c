@@ -95,9 +95,7 @@ static GTexCoords *get_texture(char *family, char *ch) {
 
 		FT_Face face = glyphs->face;
 		FT_UInt idx = FT_Get_Char_Index(face, (FT_ULong) *ch);
-		FT_Set_Pixel_Sizes(face, 0, 32);
-		FT_Vector vec = {1,1};
-		//FT_Set_Transform(face, 0, &vec);
+		FT_Set_Pixel_Sizes(face, 0, 26.6f);
 		FT_Load_Glyph(face, idx, FT_LOAD_RENDER);
 		FT_Bitmap map = face->glyph->bitmap;
 		GLsizei  width = 1, height = 1;
@@ -139,12 +137,11 @@ void gfx_opengl_glyph(Vob1 *v, Coordsys *cs)
 	// get texture for the glyph
 	GTexCoords *gcoords = get_texture(g->family, g->ch);
 
-	float 
-		w = vob_coords_w(cs),
-		h = vob_coords_h(cs);
+	float h = vob_coords_h(cs);
 
 	/* Let's assume that height is the thing we want to think as
-	 * good one.
+	 * good one. See also
+	 * http://www.freetype.org/freetype2/docs/glyphs/glyphs-3.html
 	 */
 	float 
 		x0 = gcoords->bearingX * h,
@@ -235,7 +232,7 @@ static Glyphs * create_glyphs(void *font_ptr) {
 	FT_Face face;
 	if (FT_New_Face(library, file, 0, &face ))
 		errx(1, "FATAL: New FT face(%p) failed for font (%s).", 
-		     file, font_ptr);
+		     file, (char*)font_ptr);
 	ret->face = face;
 	ret->ch2coords = g_hash_table_new(&ch_hash, &ch_equal);
 	return ret;

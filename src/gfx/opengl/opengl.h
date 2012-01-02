@@ -33,6 +33,4 @@ struct impl {
 struct gfx_window* gfx_opengl_create_window(int x, int y, int w, int h);
 
 
-
-
 #endif

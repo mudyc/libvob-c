@@ -26,27 +26,20 @@ Lob *lob_hglue();
 
 
 
-struct lob_vbox {
+struct _lob_box {
 	Lob base;
 	UtilArray *items;
 	Size *tmp_size;
 };
-typedef struct lob_vbox LobVBox;
+typedef struct _lob_box LobBox;
 
 Lob *lob_vbox(Region *reg);
-void lob_vbox_add(Region *reg, LobVBox *vbox, Lob *lob);
+void lob_vbox_add(Region *reg, LobBox *vbox, Lob *lob);
 //void lob_vlist_addv(Region *reg, LobVList *vlist, int count, Lob **lobs);
 //Lob *lob_hlist();
 
-struct lob_hbox {
-	Lob base;
-	UtilArray *items;
-	Size *tmp_size;
-};
-typedef struct lob_hbox LobHBox;
-
 Lob *lob_hbox(Region *reg);
-void lob_hbox_add(Region *reg, LobHBox *hbox, Lob *lob);
+void lob_hbox_add(Region *reg, LobBox *hbox, Lob *lob);
 
 
 

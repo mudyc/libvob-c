@@ -25,6 +25,7 @@ LIBS = -lGL -lrt \
 		pangoxft \
 		pangoft2 \
 		pangox \
+		glu \
 		glib-2.0`#
 
 SRC = $(filter-out src/util/tester.c, $(shell find src/ -name "*.c"))

@@ -34,7 +34,7 @@ LobFont *lob_font(Region *reg, char *family);
 
 //LobGlyph *lob_font_glyph(Region *reg, LobFont *f, char *UTF8characher);
 
-LobHBox *lob_font_text(Region *reg, LobFont *f, float size, char *text);
+LobBox *lob_font_text(Region *reg, LobFont *f, float size, char *text);
 
 /** @return Array<LobFont>
  */

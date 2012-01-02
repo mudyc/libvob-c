@@ -40,6 +40,8 @@
 // text
 // color?
 
+#include "lob/components/paper.h"
+
 // animation key!
 // 
 

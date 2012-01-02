@@ -77,7 +77,7 @@ Lob *lob_vglue() {
 
 static Size *box_size(Lob *this, bool horiz)
 {
-	LobVBox *box = (LobVBox *) this;
+	LobBox *box = (LobBox *) this;
 	if (box->tmp_size->minh < 0) {
 		int i;
 		float minw,natw,maxw;
@@ -131,7 +131,7 @@ static Size *hbox_size(Lob *this)
 
 static Lob *box_layout(Lob *this, float w_, float h_, bool horiz)
 {
-	LobVBox *box = (LobVBox *) this;
+	LobBox *box = (LobBox *) this;
 	int i;
 	Size *s = box->base.size(this);
 	float dH = horiz? w_ - s->natw: h_ - s->nath;
@@ -172,7 +172,7 @@ static void box_render(Lob *this, Coordsys *into,
 		       float w_, float h_, Scene *vs, bool horiz)
 {
 	// compose needed vobs from this lob.
-	LobVBox *box = (LobVBox *) this;
+	LobBox *box = (LobBox *) this;
 
 	int i;
 	Size *s = box->base.size(this);
@@ -220,7 +220,7 @@ static void hbox_render(Lob *this, Coordsys *into,
 
 Lob *lob_vbox(Region *reg)
 {
-	LobVBox *ret = REGION(reg, "lob.component.VBox", LobVBox);
+	LobBox *ret = REGION(reg, "lob.component.VBox", LobBox);
 	ret->items = util_arr_create(reg);
 
 
@@ -234,14 +234,14 @@ Lob *lob_vbox(Region *reg)
 	return (Lob*)ret;
 }
 
-void lob_vbox_add(Region *reg, LobVBox *vbox, Lob *lob)
+void lob_vbox_add(Region *reg, LobBox *vbox, Lob *lob)
 {
 	util_arr_add(reg, vbox->items, lob);
 }
 
 Lob *lob_hbox(Region *reg)
 {
-	LobHBox *ret = REGION(reg, "lob.component.HBox", LobHBox);
+	LobBox *ret = REGION(reg, "lob.component.HBox", LobBox);
 	ret->items = util_arr_create(reg);
 
 
@@ -255,7 +255,7 @@ Lob *lob_hbox(Region *reg)
 	return (Lob*)ret;
 }
 
-void lob_hbox_add(Region *reg, LobHBox *hbox, Lob *lob)
+void lob_hbox_add(Region *reg, LobBox *hbox, Lob *lob)
 {
 	util_arr_add(reg, hbox->items, lob);
 }
