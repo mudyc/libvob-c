@@ -7,10 +7,9 @@
 /** All components that do layouting on spatial (read 2D) space.
  */ 
 
-
-Lob *lob_glue();
-Lob *lob_vglue();
-Lob *lob_hglue();
+//Lob *lob_glue();
+//Lob *lob_vglue();
+//Lob *lob_hglue();
 
 //Lob *
 

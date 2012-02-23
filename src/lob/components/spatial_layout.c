@@ -1,4 +1,4 @@
-// (c) Matti Katila 2011, based heavily on code by Benja Fallenstein 2005
+// (c) Matti Katila 2011,2012 based heavily on code by Benja Fallenstein 2005
 
 
 #include <stdarg.h>
@@ -9,8 +9,9 @@
 
 static Size *glue_size(Lob *this)
 {
+  printf("gluesize \n");
 	LobGlue *g = (LobGlue *) this;
-	return &g->size;
+	return &(g->size);
 }
 static Lob *glue_layout(Lob *this, float w, float h)
 {
@@ -39,12 +40,12 @@ static LobGlue vglue = {
 static void _init_glues() __attribute__ ((constructor));
 static void _init_glues()
 {
-	hglue.size.minw = 0;
-	hglue.size.natw = 0;
-	hglue.size.maxw = LOB_INF;
-	vglue.size.minh = 0;
-	vglue.size.nath = 0;
-	vglue.size.maxh = LOB_INF;
+	glue.size.minw = 0;
+	glue.size.natw = 0;
+	glue.size.maxw = LOB_INF;
+	glue.size.minh = 0;
+	glue.size.nath = 0;
+	glue.size.maxh = LOB_INF;
 
 	hglue.size.minw = 0;
 	hglue.size.natw = 0;
@@ -67,7 +68,9 @@ Lob *lob_hglue() {
 	return (Lob*)&hglue;
 }
 Lob *lob_vglue() {
-	return (Lob*)&vglue;
+	Lob *ret = (Lob*)&vglue;
+	printf("vglue %x\n", ret);
+	return ret;
 }
 
 
@@ -85,8 +88,11 @@ static Size *box_size(Lob *this, bool horiz)
 		minw=natw=maxw = 0;
 		minh=nath=maxh = 0;
 		for (i=0; i<box->items->size; i++) {
+		  printf("box size %d\n",i);
 			Lob *item = (Lob *)util_arr_get(box->items, i);
+			printf("box size. %d %x\n",i, item);
 			Size *size = item->size(item);
+		  printf("box size.. %d\n",i);
 			if (horiz) {
 				if (size->minw > 0)
 					minw += size->minw;
@@ -131,6 +137,7 @@ static Size *hbox_size(Lob *this)
 
 static Lob *box_layout(Lob *this, float w_, float h_, bool horiz)
 {
+  printf("box layout\n");
 	LobBox *box = (LobBox *) this;
 	int i;
 	Size *s = box->base.size(this);
@@ -138,6 +145,7 @@ static Lob *box_layout(Lob *this, float w_, float h_, bool horiz)
 	float totalStretch = horiz? s->maxw - s->natw: s->maxh - s->nath;
 	float totalShrink = horiz? s->natw - s->minw: s->nath - s->minh;
 	for (i=0; i<box->items->size; i++) {
+	  printf("box layout %d\n", i);
 		Lob *item = util_arr_get(box->items, i);
 		Size *is = item->size(item);
 
@@ -236,6 +244,7 @@ Lob *lob_vbox(Region *reg)
 
 void lob_vbox_add(Region *reg, LobBox *vbox, Lob *lob)
 {
+  printf("vbox_add %x \n", lob);
 	util_arr_add(reg, vbox->items, lob);
 }
 
@@ -258,4 +267,65 @@ Lob *lob_hbox(Region *reg)
 void lob_hbox_add(Region *reg, LobBox *hbox, Lob *lob)
 {
 	util_arr_add(reg, hbox->items, lob);
+}
+
+
+static Size *stack_size(Lob *this)
+{
+  LobStack *stack = (LobStack *) this;
+  int i = stack->items->size;
+  
+  stack->size.minh = stack->size.maxh = -1;
+  stack->size.minw = stack->size.maxw = -1;
+  stack->size.nath = stack->size.natw = LOB_INF;
+
+  for (i--; i >= 0; i--) {
+    Lob *item = util_arr_get(stack->items, i);
+    Size *is = item->size(item);
+    stack->size.minh = fminf(is->minh, stack->size.minh);
+    stack->size.nath = fmaxf(is->nath, stack->size.nath);
+    stack->size.maxh = fmaxf(is->maxh, stack->size.maxh);
+    stack->size.minw = fminf(is->minw, stack->size.minw);
+    stack->size.natw = fmaxf(is->natw, stack->size.natw);
+    stack->size.maxw = fmaxf(is->maxw, stack->size.maxw);
+  }
+  return &stack->size;
+}
+static Lob *stack_layout(Lob *this, float w, float h)
+{
+  LobStack *stack = (LobStack *) this;
+  int i = stack->items->size;
+  for (i--; i >= 0; i--) {
+    Lob *item = util_arr_get(stack->items, i);
+    Lob *lob = item->layout(item, w, h);
+    if (lob != item)
+      util_arr_set(stack->items, i, lob);
+  }
+  return box_layout(this, w, h, 1);
+}
+static void stack_render(Lob *this, Coordsys *into, 
+			float w, float h, Scene *vs)
+{
+  LobStack *stack = (LobStack *) this;
+  int i = stack->items->size;
+  for (i--; i >= 0; i--) {
+    Coordsys *cs = vob_coords_trans(vs, into, 0, 0, 1/(1+i));
+    Lob *item = util_arr_get(stack->items, i);
+    item->render(item, cs, w, h, vs);
+  }
+}
+Lob *lob_stack(Region *reg)
+{
+	LobStack *ret = REGION(reg, "lob.component.Stack", LobStack);
+	ret->items = util_arr_create(reg);
+
+	ret->base.size = &stack_size;
+	ret->base.layout = &stack_layout;
+	ret->base.render = &stack_render;
+
+	return (Lob*)ret;
+}
+void lob_stack_add(Region *reg, LobStack *stack, Lob *lob)
+{
+	util_arr_add(reg, stack->items, lob);
 }

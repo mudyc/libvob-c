@@ -36,7 +36,9 @@ LobFont *lob_font(Region *reg, char *family);
 
 LobBox *lob_font_text(Region *reg, LobFont *f, float size, char *text);
 
-/** @return Array<LobFont>
+/**
+ *  @classmethod
+ *  @return UtilArray<LobFont>
  */
 UtilArray *lob_font_list(Region *reg);
 

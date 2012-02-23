@@ -14,13 +14,13 @@ Lob *lob_center(Lob *l);
 Lob *lob_right(Lob *l);
 
 
-Lob *lob_glue();
 */
 struct _lob_glue {
 	Lob base;
 	Size size;
 };
 typedef struct _lob_glue LobGlue;
+Lob *lob_glue();
 Lob *lob_vglue();
 Lob *lob_hglue();
 
@@ -40,6 +40,20 @@ void lob_vbox_add(Region *reg, LobBox *vbox, Lob *lob);
 
 Lob *lob_hbox(Region *reg);
 void lob_hbox_add(Region *reg, LobBox *hbox, Lob *lob);
+
+
+struct lob_stack {
+	Lob base;
+	UtilArray *items;
+  Size size;
+};
+typedef struct lob_stack LobStack;
+
+/** Stacked, same size objects. First in is first rendered and last
+ * added is the most back.
+ */
+Lob *lob_stack(Region *reg);
+void lob_stack_add(Region *reg, LobStack *stack, Lob *lob);
 
 
 

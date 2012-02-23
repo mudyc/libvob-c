@@ -128,6 +128,7 @@ def t_COMMENT_MULTILINE(t):
         #strip prefixing whitespace
         v = re.sub("\n[\s]+\*", "\n*", v)
         doxygenCommentCache += v
+
 def t_NEWLINE(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
@@ -419,12 +420,19 @@ class CppVariable(dict):
 
 class FuncProto(dict):
     def __init__(self, ret, name, params):
+        global doxygenCommentCache
+        if len(doxygenCommentCache):
+            self["doxygen"] = doxygenCommentCache
+            print 'func doc', self['doxygen']
+            doxygenCommentCache = ""
+        else: self["doxygen"] = ''
         self['return'] = ret
         self['name'] = name
         self['parameters'] = params
 
     def __repr__(self):
-        rtn = self['return']
+        rtn = ""
+        rtn += self['return']
         rtn += " "+ self['name']+' ( '
         for t in self['parameters']:
             rtn += t['type']+" "+t['name']+', '
@@ -622,6 +630,7 @@ class CppHeader:
                 self.typedefs[self.nameStack[2]] = self.nameStack[3]
                 self.classes[self.nameStack[2]]['typedef'] = self.nameStack[3]
         elif (len(self.curClass) == 0):
+            print 'daa'
             if (debug): print "line ",lineno()
             if is_enum_namestack(self.nameStack):
                 self.evaluate_enum_stack()
@@ -652,6 +661,8 @@ class CppHeader:
         else:
             if (debug): print "line ",lineno()
             self.evaluate_property_stack()
+
+        print 'empty doc'
         self.nameStack = []
         doxygenCommentCache = ""
     
@@ -722,6 +733,9 @@ class CppHeader:
             and stack[-1] == ')'
 
     def evaluate_func_proto(self):
+        global doxygenCommentCache
+        pushPop = doxygenCommentCache
+
         stack = self.nameStack[self.nameStack.index('(')+1:-1]
         params = []
         while len(stack) > 0:
@@ -732,6 +746,7 @@ class CppHeader:
                 params.append(CppVariable(stack))
                 stack = []
 
+        doxygenCommentCache = pushPop
         name = self.nameStack[self.nameStack.index('(')-1]
         self.func_protos.append(FuncProto(self.nameStack[0], name,
             params))

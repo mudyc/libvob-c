@@ -2,6 +2,7 @@
 #include "structmember.h"
 
 #include "util/sigsegv.h"
+#include "util/array.h"
 #include "gfx/gfx_api.h"
 #include "gfx/animation.h"
 #include "lob/api.h"

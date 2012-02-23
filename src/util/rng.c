@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <math.h>
 
 static long long seed = 0;
 static long double nextNextGaussian;

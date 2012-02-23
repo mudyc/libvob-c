@@ -1,11 +1,18 @@
 from distutils.core import setup, Extension
 import os
+import popen2
+
+line = popen2.popen2('pkg-config --cflags glib-2.0')[0].readline()
+print line
+inc_dirs = ['../src/']
+for s in line.split(" "):
+    if s.startswith('-I'):
+        inc_dirs.append(s[2:])
+    
 
 module1 = Extension('libvob',
                     sources = ['libvob.c'],
-                    include_dirs = ['../src/',
-                                    '/usr/include/glib-2.0',
-                                    '/usr/lib/glib-2.0/include' ],
+                    include_dirs = inc_dirs,
                     library_dirs = ['../'],
                     libraries = ['vob-c', 'glib-2.0', 'mcheck'],
                     runtime_library_dirs = [os.path.abspath('..')],

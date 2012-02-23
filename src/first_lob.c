@@ -2,11 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <glib.h>
+#include <glib-object.h> //g_type_init
+
 #include "gfx/gfx_api.h"
 #include "vob/scene.h"
 #include "lob/api.h"
 #include "lob/lobs.h"
 #include "util/regions.h"
+#include "util/sigsegv.h"
 
 /*
 static Lob* create_lob(Region *reg)

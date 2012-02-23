@@ -5,11 +5,11 @@ import libvob.lob
 print dir(libvob.lob)
 
 
-from libvob.lob import Rect, Color, VBox
+from libvob.lob import Rect, Color, Vbox
 
 def create_lob(reg):
     print 'create lob in py'
-    lob = VBox([Rect(Color(.7, .8, .9)),
+    lob = Vbox([Rect(Color(.7, .8, .9)),
                 Rect(Color(.1, .2, .3)),
                 Rect(Color(.4, .5, .6))])
     return lob
