@@ -11,6 +11,7 @@ CFLAGS = -Wall -I src/ \
 	 -DNO_CPP_DEMANGLE\
 	`pkg-config --cflags \
 		glib-2.0 \
+		gobject-2.0 \
 		fontconfig \
 		x11 \
 		pango \
@@ -26,7 +27,8 @@ LIBS = -lGL -lrt \
 		pangoft2 \
 		pangox \
 		glu \
-		glib-2.0`#
+		glib-2.0 \
+		gobject-2.0`#
 
 SRC = $(filter-out src/util/tester.c, $(shell find src/ -name "*.c"))
 TEST = $(shell find src/ -name "*.test") 
@@ -43,7 +45,7 @@ run:
 	LD_LIBRARY_PATH=. ./first_lob
 
 example: bin/first_lob.o
-	gcc -o first_lob bin/first_lob.o -L. -lvob-c 
+	gcc -o first_lob bin/first_lob.o `pkg-config --libs gobject-2.0` -L. -lvob-c 
 
 lib: $(LIB_OBS)
 	gcc -shared -rdynamic -o libvob-c.so $(LIB_OBS) $(LIBS)
@@ -73,7 +75,7 @@ bind:
 
 PYTEST ?= py/examples/rect.py
 runpy:
-	mkdir -p py/build/lib.linux-i686-2.6/libvob/lob/
-	touch py/build/lib.linux-i686-2.6/libvob/lob.py
-	PYTHONPATH=py/build/lib.linux-i686-2.6/ python $(PYTEST)
+	mkdir -p py/build/lib.linux-i686-2.7/libvob/lob/
+	touch py/build/lib.linux-i686-2.7/libvob/lob.py
+	PYTHONPATH=py/build/lib.linux-i686-2.7/ python $(PYTEST)
 

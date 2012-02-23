@@ -74,4 +74,13 @@ like something short).
 Depencies
 ---------
 
-sudo apt-get install libmesa-dev libglu1-mesa-dev libelfg0-dev libpango1.0-dev
+sudo apt-get install \
+   make \
+   libglib2.0 \
+   libglib2.0-dev \
+   libglu1-mesa-dev \
+   libelfg0-dev \
+   libpango1.0-dev \
+   python-ply \
+   python2.7-dev
+
