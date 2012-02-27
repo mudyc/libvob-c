@@ -18,6 +18,21 @@ Vob1 *vob_rect(Scene *vs, float r, float g, float b)
 	ret->r = r;
 	ret->g = g;
 	ret->b = b;
+	printf("%f %f %f\n", ret->r, ret->g, ret->b);
+	return (Vob1*)ret;
+}
+
+Vob1 *vob_rounded_rect(Scene *vs, VobFill *fill)
+{
+	static char *id = "vob.vobs.RoundedRect";
+	VobRoundedRect *ret = (VobRoundedRect*) 
+		util_regs_instantiate(vs->reg, id, sizeof(VobRoundedRect));
+
+	ret->base.type = VOB1;
+	ret->base.id = id;
+
+	ret->fill = fill;
 
 	return (Vob1*)ret;
+
 }

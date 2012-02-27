@@ -35,6 +35,11 @@ Size *lob_size(Lob *l)
 	return ret;
 }
 
+Lob *lob_layout(Lob *this, float w, float h)
+{
+	return this;
+}
+
 int lob_min_size() { return 0; }
 int lob_pref_size() { return 0; }
 int lob_max_size() { return LOB_INF; }

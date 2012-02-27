@@ -5,7 +5,8 @@ import libvob.lob
 print dir(libvob.lob)
 
 
-from libvob.lob import Rect, Color, Vbox, Hbox, Font, FontText, Hglue, Vglue, Stack
+from libvob.lob import Rect, Vbox, Hbox, Font, FontText, Hglue, Vglue, Stack
+from libvob.vob import Color
 
 def create_lob(reg):
     print 'create lob in py'

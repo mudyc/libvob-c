@@ -4,11 +4,11 @@
 #include "vob/api.h"
 #include "vob/scene.h"
 
-struct _vob_paper {
+struct vob_paper {
 	Vob base;
 	unsigned long id;
 };
-typedef struct _vob_paper Paper;
+typedef struct vob_paper Paper;
 
 Vob1 *vob_paper(Scene *vs, unsigned long id);
 

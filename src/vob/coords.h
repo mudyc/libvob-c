@@ -3,6 +3,8 @@
 #ifndef VOB_COORDS_H
 #define VOB_COORDS_H
 
+/** @nopython */
+
 // we just need the prototypes
 #include "vob/api.h"
 //struct vob_scene;

@@ -30,7 +30,7 @@ struct lob {
 
 
 Size *lob_size(Lob *l);
-
+Lob *lob_layout(Lob *this, float w, float h);
 
 //Lob *lob_layout(Lob *l, int w, int h);
 void lob_render(Lob *l, Scene *sc);

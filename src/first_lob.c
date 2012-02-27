@@ -9,6 +9,7 @@
 #include "vob/scene.h"
 #include "lob/api.h"
 #include "lob/lobs.h"
+#include "vob/vobs.h"
 #include "util/regions.h"
 #include "util/sigsegv.h"
 
@@ -47,11 +48,11 @@ static Lob* create_lob(Region *reg)
 	printf("create Lob\n");
 	l = lob_vbox(reg);
 	lob_vbox_add(reg, (LobBox *)l,
-		     lob_rect(reg, lob_color(reg, 1.0, 0.5, 0.2)));
+		     lob_rect(reg, vob_color(reg, 1.0, 0.5, 0.2)));
 	lob_vbox_add(reg, (LobBox *)l, (Lob*)lob_paper(reg, 2340l));
 	//lob_rect(reg, lob_color(reg, 1.0, 1.0, 0.5)));
 	lob_vbox_add(reg, (LobBox *)l,
-		     lob_rect(reg, lob_color(reg, 1.0, 0.4, 0.2)));
+		     lob_rect(reg, vob_color(reg, 1.0, 0.4, 0.2)));
 	return l;
 }
 

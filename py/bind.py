@@ -27,14 +27,14 @@ def pyobj(fname):
 
 def add_attributes(clzz):
 
-    print 'Add attrs', clzz['name']
+    print 'Add attrs', clzz['name'], clzz['typedef']
     if not 'typedef' in clzz: return
     #if not 'access' in clzz['inherits'][0]: return
     attrs = ""
     obj_name = 'Py' + clzz['typedef']
     type_name = obj_name + 'Type'
     for att in clzz['properties']['public']:
-        if att['type'] in ['Region *', 'Lob', 'UtilArray *', 'Size', 'Size *', 'LobColor *', 'LobFont *']: continue
+        if att['type'] in ['Region *', 'Lob', 'UtilArray *', 'Size', 'Size *', 'LobColor *', 'LobFont *', 'VobColor *', 'Vob', 'VobFill','VobFill *']: continue
 
         structs_and_types.append("""
 PyObject *%s_%s(PyObject *obj, void *data)
@@ -220,7 +220,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                             s += '        float p'+str(idx)+';\n' 
                             types += 'f'
                             params += '&p'+str(idx)+', '
-                        elif param['type'].startswith('Lob'):
+                        elif param['type'].startswith('Lob') or param['type'].startswith('Vob'):
                             s += '        PyLob *p'+str(idx)+';\n' 
                             types += 'O'
                             params += '&p'+str(idx)+', '
@@ -228,9 +228,13 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                             s += '        const char *p'+str(idx)+';\n' 
                             types += 's'
                             params += '&p'+str(idx)+', '
+                        elif param['type'].startswith('enum '):
+                            s += '        int p'+str(idx)+';\n' 
+                            types += 'i'
+                            params += '&p'+str(idx)+', '
                         else:
                             print param
-                            raise 'asdf'
+                            raise RuntimeError('asdf'+param)
 
                 s += '        if (! PyArg_ParseTuple(args, "%s", %s)) {\n' \
                     %(types, params[:-2])
@@ -242,7 +246,8 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                     if i > 0:
                         s += ', '
                     s+= 'p'+str(i)
-                    if f['parameters'][i]['type'].startswith('Lob'):
+                    if f['parameters'][i]['type'].startswith('Lob') \
+                            or f['parameters'][i]['type'].startswith('Vob'):
                         s+= '->obj'
                 s += ');\n    }\n    return self;\n}\n\n'
                 structs_and_types.append(s)
@@ -311,7 +316,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 if __name__ == '__main__':
 
     headers = []
-    for path in ['src/lob', ]: #'src/vob']:
+    for path in ['src/lob', 'src/vob']:
         for root, dirs, files in os.walk(path):
             if root.find('src/gfx') >= 0: continue
 
@@ -326,6 +331,7 @@ if __name__ == '__main__':
     all_funcs = []
     all_classes = {}
     for f in files:
+        if f.doc != None and '@nopython' in f.doc: continue
         #print 'func: ',f
         for func in f.func_protos:
             print 'func: ',func

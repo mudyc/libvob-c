@@ -2,6 +2,8 @@
 #ifndef VOB_SCENE_H
 #define VOB_SCENE_H
 
+//! @nopython
+
 #include "util/regions.h"
 
 #include "vob/api.h"

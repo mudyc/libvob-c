@@ -526,6 +526,7 @@ class CppHeader:
         self.nameStack = []
         self.nameSpaces = []
         self.curAccessSpecifier = 'private'
+        self.doc = None
     
         if (len(self.headerFileName)):
             headerFileStr = "\n".join(open(self.headerFileName).readlines())
@@ -605,6 +606,9 @@ class CppHeader:
     def evaluate_stack(self):
         """Evaluates the current name stack"""
         global doxygenCommentCache
+        if self.doc == None:
+            self.doc = doxygenCommentCache
+
         if (debug): print "Evaluating stack %s at..."%self.nameStack
         if (len(self.curClass)):
             if (debug): print "%s (%s) "%(self.curClass, self.curAccessSpecifier), 

@@ -1,11 +1,14 @@
-# Shows a rectangles in a column.
+# Shows rectangles in a column.
 import libvob
 
 import libvob.lob
+import libvob.vob
 print dir(libvob.lob)
+print dir(libvob.vob)
 
 
-from libvob.lob import Rect, Color, Vbox
+from libvob.lob import Rect, Vbox
+from libvob.vob import Color
 
 def create_lob(reg):
     print 'create lob in py'
