@@ -6,7 +6,7 @@
 #include "util/array.h"
 
 struct vob_fill {
-
+	char *id;
 };
 typedef struct vob_fill VobFill;
 
@@ -32,7 +32,7 @@ typedef struct vob_color VobColor;
 
 
 VobShade *vob_shade(Region *reg, enum SHADE_TYPE type, float angle);
-VobShade *vob_shade_add(Region *reg, VobShade *shade, float step, VobColor *c);
+void vob_shade_add(Region *reg, VobShade *shade, float step, VobColor *c);
 
 VobColor *vob_color(Region *reg, float r, float g, float b);
 

@@ -25,6 +25,7 @@ struct impl {
 	struct gfx_callbacks cb;
 	struct gfx_window *delegate_win;
 
+	// vob id 2 impl
 	GHashTable *id2impl;
 };
 

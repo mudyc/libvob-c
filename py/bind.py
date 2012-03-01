@@ -25,6 +25,19 @@ def pyobj(fname):
     parts = fname.split('_')
     return 'Py' + "".join([ part[0].upper()+part[1:] for part in parts[:]])
 
+def to_c(param):
+    ret = {}
+    if param['type'] == 'float':
+        ret['pre'] = 'PyFloat_AsDouble('
+        ret['post'] = ')'
+    elif param['type'].startswith('Lob') or param['type'].startswith('Vob'):
+        ret['pre'] = '((PyLob*)'
+        ret['post'] = ')->obj'
+    else:
+        print param
+        raise RuntimeError('asdf'+param)
+    return ret
+
 def add_attributes(clzz):
 
     print 'Add attrs', clzz['name'], clzz['typedef']
@@ -67,8 +80,8 @@ static PyGetSetDef %s__getters[] = {
     {NULL}
 };
 """ %(type_name, attrs))
-        init_type_ready.append("""
-        %s.tp_getset = %s__getters;
+        init_type_ready.append(
+"""        %s.tp_getset = %s__getters;
 """ % (type_name, type_name))        
 
 def add_methods(func, funcs):
@@ -123,8 +136,8 @@ static PyMethodDef %s__methods[] = {
     {NULL}
 };
 """% (type_name, proto))
-        init_type_ready.append("""
-        %s.tp_methods = %s__methods;
+        init_type_ready.append(
+"""        %s.tp_methods = %s__methods;
 """ % (type_name, type_name))        
 
 def gen(name, clzz, funcs):
@@ -196,7 +209,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 """ % (typee, struct, struct, struct, f['name']))
 
                 init_type_ready.append(
-                    "        %s.tp_new = %s_new;" % (typee, typee))
+                    "        %s.tp_new = %s_new;\n" % (typee, typee))
 
             elif len(f['parameters']) > 1 \
                     and f['parameters'][0]['type'] == 'Region *':
@@ -210,6 +223,13 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     self = (%s *)type->tp_alloc(type, 0);
     if (self != NULL) {
 """ % (typee, struct, struct, struct))
+
+                adder = None
+                for func in funcs:
+                    if func['name'] == clzz['name']+'_add':
+                        adder = func
+                        print 'adder', adder
+                        break
 
                 for idx in range(len(f['parameters'])):
                     param = f['parameters'][idx]
@@ -235,7 +255,10 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                         else:
                             print param
                             raise RuntimeError('asdf'+param)
-
+                if adder != None:
+                    s += '        PyObject *list = NULL;\n'
+                    types += 'O'
+                    params += '&list  '
                 s += '        if (! PyArg_ParseTuple(args, "%s", %s)) {\n' \
                     %(types, params[:-2])
                 s += '            Py_DECREF(self);\n'
@@ -249,11 +272,39 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                     if f['parameters'][i]['type'].startswith('Lob') \
                             or f['parameters'][i]['type'].startswith('Vob'):
                         s+= '->obj'
-                s += ');\n    }\n    return self;\n}\n\n'
+                s += ');\n'
+                if adder != None:
+                    s += """
+        if (list != NULL && PySequence_Check(list)) {
+            Py_ssize_t len = PySequence_Size(list);
+            Py_ssize_t idx = 0;
+            for (; idx<len; idx++) {
+                //printf("got arg...%%i\\n", idx);
+"""
+                    pars = ""
+                    for i in range(len(adder['parameters'][2:])):
+                        p = adder['parameters'][2:][i]
+                        if i > 0:
+                            s += \
+"""                idx++;
+"""
+                            pars += ", "
+                        s += \
+"""                PyObject *lob%s = PySequence_GetItem(list, idx);
+""" % (str(i))
+                        pars += "%slob%s%s" % (to_c(p)['pre'], str(i), to_c(p)['post'])
+                #//if (PyObject_TypeCheck(lob, &PyLobType))
+                    s += \
+"""                %s_add(region, (%s*)self->obj, %s);
+            }
+        }
+""" % (clzz['name'], fakename, pars)
+
+                s += '    }\n    return self;\n}\n\n'
                 structs_and_types.append(s)
 
                 init_type_ready.append(
-                    "        %s.tp_new = %s_new;" % (typee, typee))
+                    "        %s.tp_new = %s_new;\n" % (typee, typee))
             elif len(f['parameters']) > 0 \
                     and f['parameters'][0]['type'] == 'Region *' \
                     and len(filter(lambda x: x['name'] == clzz['name']+'_add', funcs)) == 1:
@@ -292,18 +343,18 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 """ % (typee, typee, struct, struct, clzz['name'], clzz['name'], fakename))
 
                 init_type_ready.append(
-                    "        %s.tp_new = %s_new;" % (typee, typee))
+                    "        %s.tp_new = %s_new;\n" % (typee, typee))
                 
             else:
                 init_type_ready.append(
-                    "        %s.tp_new = PyType_GenericNew;"\
+                    "        %s.tp_new = PyType_GenericNew;\n"\
                         % (typee))
                 
     add_methods(clzz['name'], funcs)
     add_attributes(clzz)
 
-    init_type_ready.append("""
-        %s.tp_flags = Py_TPFLAGS_DEFAULT;
+    init_type_ready.append(
+"""        %s.tp_flags = Py_TPFLAGS_DEFAULT;
         if (PyType_Ready(&%s) < 0)
             return;\n
 """ % (typee,typee))
