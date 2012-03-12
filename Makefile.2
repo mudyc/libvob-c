@@ -1,0 +1,63 @@
+CFLAGS -> str
+	-Wall -I src/ 
+	-DGFX_API_CAIRO 
+	-DGFX_API_OPENGL 
+	-DNO_CPP_DEMANGLE
+	`pkg-config --cflags 
+		glib-2.0 
+		gobject-2.0 
+		fontconfig 
+		x11 
+		pango 
+		cairo`
+
+LIBS -> str
+	-lGL -lrt 
+	`pkg-config --libs 
+		fontconfig
+		x11
+		cairo
+		pangocairo
+		pangoxft
+		pangoft2
+		pangox
+		glu
+		glib-2.0
+		gobject-2.0`
+
+
+c_files -> [f]
+	find src/ -name "*.c" | grep -v src/util/tester.c 
+
+deps(c_file): -> [f]
+	gcc -MM $CFLAGS $c_file | sed -e 's/.*: //' -e 's# #\n#g' -e 's#\\##' | grep -v '/usr' | sed -e '/^$/d'
+
+object_files(c_file): deps(c_file) -> [f]
+	!py: o_file = 'bin'+c_file[3:-1]+'o'
+	py: dir = os.path.dirname(o_file)
+	py: if not os.path.isdir(dir): os.makedirs(dir)
+	gcc -c $CFLAGS -o $o_file $c_file
+
+prepare: -> *
+	mkdir -p $(dir $(OBS))
+
+lib: object_files(c_files) -> f
+	!py: "libvob-c.so"
+	gcc -shared -rdynamic -o libvob-c.so $object_files $LIBS
+
+bind: lib -> *
+	python py/bind.py $(HDRS)
+	(cd py && python setup.py build)
+	echo "Done"
+
+
+PYTEST: -> str
+	py/examples/rect.py
+
+runpy: bind -> *
+	mkdir -p py/build/lib.linux-i686-2.7/libvob/lob/
+	touch py/build/lib.linux-i686-2.7/libvob/lob.py
+	PYTHONPATH=py/build/lib.linux-i686-2.7/ python $PYTEST
+
+clean: -> *
+	rm -rf bin/ first_lob libvob-c.so py/build
