@@ -22,7 +22,7 @@ Vob1 *vob_rect(Scene *vs, float r, float g, float b)
 	return (Vob1*)ret;
 }
 
-Vob1 *vob_rounded_rect(Scene *vs, VobFill *fill)
+Vob1 *vob_rounded_rect(Scene *vs, VobFill *fill, float t, float b, float l, float r)
 {
 	static char *id = "vob.vobs.RoundedRect";
 	VobRoundedRect *ret = (VobRoundedRect*) 
@@ -32,6 +32,11 @@ Vob1 *vob_rounded_rect(Scene *vs, VobFill *fill)
 	ret->base.id = id;
 
 	ret->fill = fill;
+
+	ret->t = t;
+	ret->b = b;
+	ret->l = l;
+	ret->r = r;
 
 	return (Vob1*)ret;
 

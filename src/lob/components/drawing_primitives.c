@@ -86,7 +86,7 @@ static void rounded_render(Lob *this, Coordsys *into,
 {
 	// compose needed vobs from this lob.
 	LobRoundedRect *r = (LobRoundedRect *) this;
-	Vob1 *vob = vob_rounded_rect(vs, r->fill);
+	Vob1 *vob = vob_rounded_rect(vs, r->fill, r->t, r->b, r->l, r->r);
 
 	// create a sufficient transformation for the vob
 	Coordsys *cs = vob_coords_box(vs, into, 0,0,w, h);

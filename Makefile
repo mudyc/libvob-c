@@ -51,7 +51,8 @@ lib: $(LIB_OBS)
 	gcc -shared -rdynamic -o libvob-c.so $(LIB_OBS) $(LIBS)
 
 
-$(OBS):
+$(OBS): $(SRC) $(HDRS)
+	#$(shell gcc -MM $(CFLAGS) $(subst .o,.c, $(subst bin/,src/,$@)) | sed 's//.*: /')
 	gcc -c $(CFLAGS) -o $@ $(subst .o,.c, $(subst bin/,src/,$@))
 
 prepare:

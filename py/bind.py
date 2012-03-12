@@ -47,7 +47,7 @@ def add_attributes(clzz):
     obj_name = 'Py' + clzz['typedef']
     type_name = obj_name + 'Type'
     for att in clzz['properties']['public']:
-        if att['type'] in ['Region *', 'Lob', 'UtilArray *', 'Size', 'Size *', 'LobColor *', 'LobFont *', 'VobColor *', 'Vob', 'VobFill','VobFill *']: continue
+        if att['type'] in ['Region *', 'Lob *', 'Lob', 'UtilArray *', 'Size', 'Size *', 'LobColor *', 'LobFont *', 'VobColor *', 'Vob', 'VobFill','VobFill *']: continue
 
         structs_and_types.append("""
 PyObject *%s_%s(PyObject *obj, void *data)

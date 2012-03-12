@@ -142,9 +142,10 @@ static int doubleBufferAttributes[] = {
 	GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
 	GLX_RENDER_TYPE,   GLX_RGBA_BIT,
 	GLX_DOUBLEBUFFER,  True,  /* Request a double-buffered color buffer with */
-	GLX_RED_SIZE,      1,     /* the maximum number of bits per component    */
-	GLX_GREEN_SIZE,    1, 
-	GLX_BLUE_SIZE,     1,
+	GLX_RED_SIZE,      8,     /* the maximum number of bits per component    */
+	GLX_GREEN_SIZE,    8, 
+	GLX_BLUE_SIZE,     8,
+	GLX_ALPHA_SIZE,     8,
 	None
 };
 

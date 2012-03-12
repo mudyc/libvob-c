@@ -45,7 +45,7 @@ void lob_hbox_add(Region *reg, LobBox *hbox, Lob *lob);
 struct lob_stack {
 	Lob base;
 	UtilArray *items;
-  Size size;
+	Size size;
 };
 typedef struct lob_stack LobStack;
 
@@ -55,6 +55,15 @@ typedef struct lob_stack LobStack;
 Lob *lob_stack(Region *reg);
 void lob_stack_add(Region *reg, LobStack *stack, Lob *lob);
 
+
+struct lob_margin {
+	Lob base;
+	Lob *delegate;
+	float t,b,l,r;
+	Size size;
+};
+typedef struct lob_margin LobMargin;
+Lob *lob_margin(Region *reg, Lob *delegate, float t, float b, float l, float r);
 
 
 #endif

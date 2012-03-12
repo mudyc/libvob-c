@@ -10,7 +10,9 @@
 //#define LOB_INF  (1 << 30)
 extern const float LOB_INF;// = 1073741824.0f; // 2^30
 
-struct lob_size {
+struct lob_size { 
+	// these values shall be only readable outside of an object
+	// (think what happens for glue..)
 	float minw, natw, maxw;
 	float minh, nath, maxh;
 };

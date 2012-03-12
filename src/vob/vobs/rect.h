@@ -20,7 +20,7 @@ struct vob_rounded_rect {
 };
 typedef struct vob_rounded_rect VobRoundedRect;
 
-Vob1 *vob_rounded_rect(Scene *vs, VobFill *fill);
+Vob1 *vob_rounded_rect(Scene *vs, VobFill *fill, float t, float b, float l, float r);
 
 
 #endif
