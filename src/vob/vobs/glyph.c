@@ -2,7 +2,7 @@
 #include "vob/vobs/glyph.h"
 
 
-Vob1 *vob_glyph(Scene *vs, float size, char *family, char *ch)
+Vob1 *vob_glyph(Scene *vs, float size, char *family, char *ch, VobColor *c)
 {
 	static char *id = "vob.vobs.Glyph";
 	Glyph *ret = (Glyph*) 
@@ -12,5 +12,6 @@ Vob1 *vob_glyph(Scene *vs, float size, char *family, char *ch)
 
 	ret->ch = ch;
 	ret->family = family;
+	ret->color = c;
 	return (Vob1*)ret;
 }

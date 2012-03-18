@@ -19,6 +19,7 @@ struct gfx_callbacks {
 	Lob *(*create_lob)(Region *reg);
 	void (*key_pressed)(void);
 	void (*key_released)(void);
+	void (*event)(struct gfx_window *, LobEv *event);
 };
 
 struct gfx_window {

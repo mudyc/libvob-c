@@ -2,6 +2,7 @@
 #ifndef LOB_API_H
 #define LOB_API_H
 
+#include <stdbool.h>
 #include <math.h>
 
 #include "vob/scene.h"
@@ -18,6 +19,20 @@ struct lob_size {
 };
 typedef struct lob_size Size;
 
+enum EV_TYPE {
+	LOB_PTR_PRESS = 1,
+	LOB_PTR_RELEASE,
+	LOB_PTR_MOVE,
+	LOB_KEY
+};
+
+struct lob_ev {
+	enum EV_TYPE type;
+	int x,y;
+	bool used;
+};
+typedef struct lob_ev LobEv;
+
 
 struct lob;
 typedef struct lob Lob;
@@ -25,12 +40,15 @@ typedef struct lob Lob;
 struct lob {
 	Region *reg;
 
+	void (*event)(Lob *l, LobEv *event);
+
 	Size *(*size)(Lob *l);
 	Lob * (*layout)(Lob *l, float w, float h);
 	void (*render)(Lob *l, Coordsys *into, float w, float h, Scene *vs);
 };
 
 
+void lob_event(Lob *l, LobEv *event);
 Size *lob_size(Lob *l);
 Lob *lob_layout(Lob *this, float w, float h);
 

@@ -1,3 +1,4 @@
+#include <stdio.h>
 
 #include "vob/api.h"
 #include "vob/vobs/rect.h"

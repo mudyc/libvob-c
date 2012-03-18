@@ -9,7 +9,6 @@
 
 static Size *glue_size(Lob *this)
 {
-  printf("gluesize \n");
 	LobGlue *g = (LobGlue *) this;
 	return &(g->size);
 }
@@ -19,16 +18,19 @@ static void render_none(Lob *this, Coordsys *into,
 	// nil
 }
 static LobGlue glue = {
+	.base.event = &lob_event,
 	.base.size = &glue_size,
 	.base.layout = &lob_layout,
 	.base.render = &render_none,
 };
 static LobGlue hglue = {
+	.base.event = &lob_event,
 	.base.size = &glue_size,
 	.base.layout = &lob_layout,
 	.base.render = &render_none,
 };
 static LobGlue vglue = {
+	.base.event = &lob_event,
 	.base.size = &glue_size,
 	.base.layout = &lob_layout,
 	.base.render = &render_none,
@@ -65,7 +67,6 @@ Lob *lob_hglue() {
 }
 Lob *lob_vglue() {
 	Lob *ret = (Lob*)&vglue;
-	printf("vglue %x\n", ret);
 	return ret;
 }
 
@@ -73,6 +74,25 @@ Lob *lob_vglue() {
 // -------------------------------------------
 // Lists - Boxes
 // -------------------------------------------
+
+static Lob *box_event(Lob *this, LobEv *ev, bool horiz)
+{
+	printf("box event\n");
+	LobBox *box = (LobBox *) this;
+}
+
+static Lob *hbox_event(Lob *this, LobEv *ev)
+{
+	printf("hbox event\n");
+	LobBox *box = (LobBox *) this;
+	box_event(box, ev, 1);
+}
+static Lob *vbox_event(Lob *this, LobEv *ev)
+{
+	printf("vbox event\n");
+	LobBox *box = (LobBox *) this;
+	box_event(box, ev, 0);
+}
 
 static Size *box_size(Lob *this, bool horiz)
 {
@@ -84,11 +104,8 @@ static Size *box_size(Lob *this, bool horiz)
 		minw=natw=maxw = 0;
 		minh=nath=maxh = 0;
 		for (i=0; i<box->items->size; i++) {
-		  printf("box size %d\n",i);
 			Lob *item = (Lob *)util_arr_get(box->items, i);
-			printf("box size. %d %x\n",i, item);
 			Size *size = item->size(item);
-		  printf("box size.. %d\n",i);
 			if (horiz) {
 				if (size->minw > 0)
 					minw += size->minw;
@@ -141,7 +158,6 @@ static Lob *box_layout(Lob *this, float w_, float h_, bool horiz)
 	float totalStretch = horiz? s->maxw - s->natw: s->maxh - s->nath;
 	float totalShrink = horiz? s->natw - s->minw: s->nath - s->minh;
 	for (i=0; i<box->items->size; i++) {
-	  printf("box layout %d\n", i);
 		Lob *item = util_arr_get(box->items, i);
 		Size *is = item->size(item);
 
@@ -227,7 +243,7 @@ Lob *lob_vbox(Region *reg)
 	LobBox *ret = REGION(reg, "lob.component.VBox", LobBox);
 	ret->items = util_arr_create(reg);
 
-
+	ret->base.event = &vbox_event;
 	ret->base.size = &vbox_size;
 	ret->base.layout = &vbox_layout;
 	ret->base.render = &vbox_render;
@@ -249,7 +265,7 @@ Lob *lob_hbox(Region *reg)
 	LobBox *ret = REGION(reg, "lob.component.HBox", LobBox);
 	ret->items = util_arr_create(reg);
 
-
+	ret->base.event = &hbox_event;
 	ret->base.size = &hbox_size;
 	ret->base.layout = &hbox_layout;
 	ret->base.render = &hbox_render;
@@ -266,6 +282,16 @@ void lob_hbox_add(Region *reg, LobBox *hbox, Lob *lob)
 }
 
 
+static Lob *stack_event(Lob *this, LobEv *ev)
+{
+	printf("stack event\n");
+	LobStack *stack = (LobStack *) this;
+	int i;
+	for (i=0; i < stack->items->size; i++) {
+		Lob *item = util_arr_get(stack->items, i);
+		item->event(item, ev);
+	}
+}
 static Size *stack_size(Lob *this)
 {
 	LobStack *stack = (LobStack *) this;
@@ -305,7 +331,7 @@ static void stack_render(Lob *this, Coordsys *into,
 	LobStack *stack = (LobStack *) this;
 	int i = stack->items->size;
 	for (i--; i >= 0; i--) {
-		Coordsys *cs = vob_coords_trans(vs, into, 0, 0, 1/(1+i));
+		Coordsys *cs = vob_coords_trans(vs, into, 0, 0, -i);//1/(1+i));
 		Lob *item = util_arr_get(stack->items, i);
 		item->render(item, cs, w, h, vs);
 	}
@@ -315,6 +341,7 @@ Lob *lob_stack(Region *reg)
 	LobStack *ret = REGION(reg, "lob.component.Stack", LobStack);
 	ret->items = util_arr_create(reg);
 
+	ret->base.event = &stack_event;
 	ret->base.size = &stack_size;
 	ret->base.layout = &stack_layout;
 	ret->base.render = &stack_render;
@@ -327,7 +354,12 @@ void lob_stack_add(Region *reg, LobStack *stack, Lob *lob)
 }
 
 
-
+static void margin_event(Lob *this, LobEv *event)
+{
+	printf("margin event\n");
+	LobMargin *m = (LobMargin *) this;
+	m->delegate->event(m->delegate, event);
+}
 static Size *margin_size(Lob *this)
 {
 	LobMargin *m = (LobMargin *) this;
@@ -361,6 +393,7 @@ Lob *lob_margin(Region *reg, Lob *delegate, float t, float b, float l, float r)
 {
 	LobMargin *ret = REGION(reg, "lob.component.Margin", LobMargin);
 
+	ret->base.event = &margin_event;
 	ret->base.size = &margin_size;
 	ret->base.layout = &margin_layout;
 	ret->base.render = &margin_render;

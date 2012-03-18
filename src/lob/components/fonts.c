@@ -33,7 +33,7 @@ static Lob *glyph_layout(Lob *l, float w, float h)
 static void glyph_render(Lob *l, Coordsys *into, float w, float h, Scene *vs)
 {
 	LobGlyph *g = (LobGlyph*)l;
-	Vob1 *vob = vob_glyph(vs, g->size, (void*)g->font->family, g->ch);
+	Vob1 *vob = vob_glyph(vs, g->size, (void*)g->font->family, g->ch, g->color);
 
 	// create a sufficient transformation for the vob
 	Coordsys *cs = vob_coords_box(vs, into, 0,0,w, h);
@@ -42,7 +42,8 @@ static void glyph_render(Lob *l, Coordsys *into, float w, float h, Scene *vs)
 	vob_scene_put1(vs, vob, cs);
 }
 
-static Lob *lob_glyph(Region *reg, LobFont *font, float size, char *text)
+static Lob *lob_glyph(Region *reg, LobFont *font, float size, 
+		char *text, VobColor *c)
 {
 	LobGlyph *ret = REGION(reg, "lob.Glyph", LobGlyph);
 	ret->base.size = glyph_size;
@@ -54,6 +55,7 @@ static Lob *lob_glyph(Region *reg, LobFont *font, float size, char *text)
 	ret->font = font;
 	ret->size = size;
 	ret->ch = text;
+	ret->color = c;
 	return (Lob*)ret;
 }
 
@@ -66,12 +68,13 @@ LobFont *lob_font(Region *reg, char *family)
 }
 
 
-LobBox *lob_font_text(Region *reg, LobFont *f, float size, char *text)
+LobBox *lob_font_text(Region *reg, LobFont *f, float size, 
+		char *text, VobColor *c)
 {
 	LobBox *ret = (LobBox*)lob_hbox(reg);
 	int i;
 	for (i=0; text[i]; i++) {
-		Lob *glyph = lob_glyph(reg, f, size, &text[i]);
+		Lob *glyph = lob_glyph(reg, f, size, &text[i], c);
 		lob_hbox_add(reg, ret, glyph);
 	}
 	return ret;

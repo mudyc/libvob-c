@@ -10,7 +10,7 @@ import libvob.vob
 print dir(libvob.vob)
 
 
-from libvob.lob import RoundedRect, Margin, Stack
+from libvob.lob import RoundedRect, Margin, Stack, Font,Vglue, Hglue,Hbox, Vbox,FontText
 from libvob.vob import Shade, Color
 
 def c(s):
@@ -33,13 +33,23 @@ def create_lob(reg):
 
     lob = RoundedRect(shade, 10.,20.,30.,40.)
 
+
+
     center = Margin(RoundedRect(Shade(1,0,
                                       [0, c("58595b"),
                                        0.60, c("fefefe"),
                                        1, c("53525b"),
                                        ]), 
-                                40,40,40,40), 20,20,20,20)
-    lob = Stack([center, lob])
+                                40,40,40,40), 10,10,10,10)
+
+    fonts = Font.list()
+    texts = [Vglue()]
+    texts.append(Hbox([Hglue(),
+                       FontText(fonts[10], 30, "Button", c("000000")),
+                       Hglue()]))
+    texts.append(Vglue())
+
+    lob = Stack([Vbox(texts), center, lob])
 
     return lob
 

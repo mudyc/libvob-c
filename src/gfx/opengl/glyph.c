@@ -16,6 +16,7 @@
 #include "vob/coords.h"
 #include "vob/vobs/glyph.h"
 #include "gfx/opengl/glyph.h"
+#include "gfx/opengl/util.h"
 
 static int ch_len(const char *ch) 
 {
@@ -90,7 +91,7 @@ static GHashTable *font2glyphs = NULL;
 static GTexCoords *get_texture(char *family, char *ch) {
 	Glyphs *glyphs = g_hash_table_lookup(font2glyphs, family);
 	GTexCoords *gcoords = g_hash_table_lookup(glyphs->ch2coords, ch);
-	if (gcoords->tex == ~0) {
+	if (gcoords->tex == 0) {
 		glGenTextures(1, &gcoords->tex);
 
 		FT_Face face = glyphs->face;
@@ -119,8 +120,9 @@ static GTexCoords *get_texture(char *family, char *ch) {
 		glBindTexture(GL_TEXTURE_2D, gcoords->tex);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
-			     GL_LUMINANCE, GL_UNSIGNED_BYTE, data );
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width, height, 0,
+			     GL_ALPHA, GL_UNSIGNED_BYTE, data );
+		glError();
 	}
 	return gcoords;
 }
@@ -133,6 +135,8 @@ void gfx_opengl_glyph(Vob1 *v, Coordsys *cs)
 	//printf("gfx_opengl_glyph\n");
 	Glyph *g = (Glyph*)v;
 	
+	glColor3f(g->color->r, g->color->g, g->color->b);
+
 
 	// get texture for the glyph
 	GTexCoords *gcoords = get_texture(g->family, g->ch);
@@ -152,12 +156,35 @@ void gfx_opengl_glyph(Vob1 *v, Coordsys *cs)
 	//printf("%c wh %2.2fx%2.2f\n", *(g->ch),w,h);
 	//printf("%c %f %f %f %f\n", *(g->ch), x0, x1, y0, y1);
 
-	//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_);
+
+	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
 	glAlphaFunc(GL_GREATER, 0.15f);
 	glEnable(GL_ALPHA_TEST);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
+
+
+#if 1
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+#else
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
+	glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
+	glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_CONSTANT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
+
+	glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
+	glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_TEXTURE);
+	glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
+
+	float mycolor[] = {g->color->r, g->color->g, g->color->b, 1};
+	glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, mycolor);
+	printf("font rgb %f %f %f\n", g->color->r, g->color->g, g->color->b);
+
+#endif	
+	
+	glError();
+
 
 	glBindTexture(GL_TEXTURE_2D, gcoords->tex);
 
@@ -173,6 +200,9 @@ void gfx_opengl_glyph(Vob1 *v, Coordsys *cs)
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
+
+	glError();
+
 }
 
 
@@ -263,7 +293,7 @@ void gfx_opengl_font_glyph_size(void *font_ptr, char *ch,
 		 coords->w = (float) m.width / 26.6f / 64.0f;
 		 coords->h = (float) m.height / 26.6f / 64.0f;
 		 coords->adv = (float) m.horiAdvance / 26.6f / 64.0f;
-		 coords->tex = ~0;
+		 coords->tex = 0;
 	 }
 
 	 *w = coords->adv * size;

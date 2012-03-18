@@ -1,4 +1,6 @@
 
+#include <stdio.h>
+
 #include "lob/api.h"
 #include "lob/components/drawing_primitives.h"
 #include "vob/vobs.h"
@@ -16,7 +18,6 @@ VobColor *vob_color(Region *reg, float r, float g, float b)
 	ret->r = r;
 	ret->g = g;
 	ret->b = b;
-	printf("col %f %f %f\n", ret->r, ret->g, ret->b);
 	return ret;
 }
 
@@ -26,7 +27,6 @@ VobColor *vob_color(Region *reg, float r, float g, float b)
 
 VobShade *vob_shade(Region *reg, enum SHADE_TYPE type, float angle) 
 {
-	printf("shade\n");
 	VobShade *ret = REGION(reg, "vob.primitive.Shade", VobShade);
 	ret->type = type;
 	ret->angle = angle;
@@ -36,8 +36,6 @@ VobShade *vob_shade(Region *reg, enum SHADE_TYPE type, float angle)
 }
 void vob_shade_add(Region *reg, VobShade *shade, float step, VobColor *c)
 {
-	printf("shade add...\n");
-
 	UtilF *f = util_float(reg, step);
 	util_arr_add(reg, shade->steps, f);
 	util_arr_add(reg, shade->colors, c);

@@ -76,9 +76,34 @@ static void read_event(struct impl *c)
 		if (c->cb.key_released)
 			c->cb.key_released();
 		break;
-	}	
+	}
 	case ButtonPress:
-	case ButtonRelease:
+	case ButtonRelease: {
+		XButtonEvent me = event.xbutton;
+		printf("button: %d,%d %d %d %d\n",
+			me.x, me.y, me.state, me.button, me.type);
+		LobEv event;
+		if (me.type == ButtonPress)
+			event.type = LOB_PTR_PRESS;
+		else if (me.type == ButtonRelease)
+			event.type = LOB_PTR_RELEASE;
+		event.x = me.x;
+		event.y = me.y;
+		event.used = FALSE;
+		if (c->cb.event) {
+			c->cb.event(c->delegate_win, &event);
+		}
+
+		/* XI2 is the way to go
+		printf("button codes: %d %d %d %d %p",
+			event.xgeneric.extension,
+			event.xcookie.extension,
+			event.xcookie.evtype,
+			event.xcookie.cookie,
+			event.xcookie.data);
+		*/
+		break;
+	}
 	case MotionNotify:
 	case EnterNotify:
 	case LeaveNotify:
@@ -191,8 +216,13 @@ struct gfx_window* gfx_opengl_create_window(int x, int y, int w, int h)
 	swa.border_pixel = 0;
 	swa.event_mask = 
 		MotionNotify |
-		ExposureMask | 
+		ExposureMask |
+		ButtonPressMask |
+		ButtonReleaseMask |
+		ButtonMotionMask |
+		PointerMotionMask |
 		KeyPressMask |
+		KeyReleaseMask |
 		PropertyChangeMask |
 		StructureNotifyMask |
 		SubstructureNotifyMask |

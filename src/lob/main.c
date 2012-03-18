@@ -4,6 +4,25 @@
 #include "vob/scene.h"
 #include "util/dbg.h"
 
+static Region *reg = NULL;
+
+
+void lob_main_handle_event(struct gfx_window *win, LobEv* event)
+{
+	if (reg == NULL)
+		return;
+
+	struct gfx_callbacks *cb = gfx_callbacks(win);
+
+	printf("lob.main.create_lob for events\n");
+	Lob *lob = cb->create_lob(reg);
+	printf("lob.main.layout for events\n");
+	lob = lob->layout(lob, gfx_width(win), gfx_height(win));
+	printf("lob.main.event\n");
+	lob->event(lob, event);
+}
+
+
 Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
 	// Reserving the scenes in here limits the implementation 
 	// to one window. Who cares..
@@ -12,7 +31,6 @@ Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
 		*scene0 = NULL,
 		*scene1 = NULL,
 		*scene2 = NULL;
-	static Region *reg = NULL;
 
 	if (scene0 == NULL) { // do initialize 
 		scene0 = vob_scene_create();

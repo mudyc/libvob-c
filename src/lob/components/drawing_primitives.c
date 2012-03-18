@@ -1,45 +1,10 @@
+#include <stdio.h>
 
 #include "lob/api.h"
 #include "lob/components/drawing_primitives.h"
 #include "vob/vobs.h"
 #include "vob/coords.h"
 
-
-// -------------------------------------------
-// Color
-// -------------------------------------------
-/*
-LobColor *lob_color(Region *reg, float r, float g, float b)
-{
-	LobColor *ret = REGION(reg, "lob.component.Color", LobColor);
-	ret->r = r;
-	ret->g = g;
-	ret->b = b;
-	return ret;
-}
-
-// -------------------------------------------
-// Shade
-// -------------------------------------------
-
-LobShade *lob_shade(Region *reg, enum SHADE_TYPE type, float angle) 
-{
-	LobShade *ret = REGION(reg, "lob.component.Shade", LobShade);
-	ret->type = type;
-	ret->angle = angle;
-	ret->steps = util_arr_create(reg);
-	ret->colors = util_arr_create(reg);
-	return ret;
-}
-LobShade *lob_shade_add(Region *reg, LobShade *shade, float step, LobColor *c)
-{
-	void **ptr = &step;
-	
-	util_arr_add(reg, shade->steps, *ptr);
-	util_arr_add(reg, shade->colors, c);
-}
-
-*/
 // -------------------------------------------
 // Rect
 // -------------------------------------------
@@ -65,8 +30,9 @@ static Lob *rect_layout(Lob *lob, float a, float h)
 Lob *lob_rect(Region *reg, VobColor *c_)
 {
 	LobRect *ret = REGION(reg, "lob.component.Rect", LobRect);
-
 	ret->lob.reg = reg;
+
+	ret->lob.event = &lob_event;
 	ret->lob.size = &lob_size;
 	ret->lob.layout = &rect_layout;
 	ret->lob.render = &rect_render;
@@ -102,6 +68,8 @@ Lob *lob_rounded_rect(Region *reg, VobFill *fill,
 				LobRoundedRect);
 
 	ret->lob.reg = reg;
+
+	ret->lob.event = &lob_event;
 	ret->lob.size = &lob_size;
 	ret->lob.layout = &lob_layout;
 	ret->lob.render = &rounded_render;

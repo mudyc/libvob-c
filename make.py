@@ -230,7 +230,8 @@ class Target:
                 all = [env+cmd]
                 if dbg: print all
 
-                print all
+                if fullrun:
+                    print all
                 p = subprocess.Popen(all, stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE, shell=True)
                 stdout, stderr = p.communicate()

@@ -47,7 +47,7 @@ def add_attributes(clzz):
     obj_name = 'Py' + clzz['typedef']
     type_name = obj_name + 'Type'
     for att in clzz['properties']['public']:
-        if att['type'] in ['Region *', 'Lob *', 'Lob', 'UtilArray *', 'Size', 'Size *', 'LobColor *', 'LobFont *', 'VobColor *', 'Vob', 'VobFill','VobFill *']: continue
+        if att['type'] in ['Region *', 'Lob *', 'Lob', 'UtilArray *', 'Size', 'Size *', 'LobEv','LobColor *', 'LobFont *', 'VobColor *', 'Vob', 'VobFill','VobFill *']: continue
 
         structs_and_types.append("""
 PyObject *%s_%s(PyObject *obj, void *data)
@@ -62,9 +62,17 @@ PyObject *%s_%s(PyObject *obj, void *data)
             structs_and_types.append("""
     return PyFloat_FromDouble(self->obj->%s);
 """ % (att['name']))
+        elif att['type'] == 'int':
+            structs_and_types.append("""
+    return PyInt_FromLong(self->obj->%s);
+""" % (att['name']))
         elif att['type'] == 'unsigned long':
             structs_and_types.append("""
     return PyLong_FromUnsignedLong(self->obj->%s);
+""" % (att['name']))
+        elif att['type'] == 'bool':
+            structs_and_types.append("""
+    return PyBool_FromLong(self->obj->%s);
 """ % (att['name']))
         else: raise RuntimeError('unimpl, '+att['type']+", "+att['name'])
         structs_and_types.append("""
@@ -318,7 +326,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     self = (%s *)type->tp_alloc(type, 0);
     if (self != NULL) {
         self->obj = %s(region);
-    
+
         PyObject *list = NULL;
         if (! PyArg_ParseTuple(args, "O", &list)) {
             Py_DECREF(self);

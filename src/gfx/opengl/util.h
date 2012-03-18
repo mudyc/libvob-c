@@ -3,6 +3,16 @@
 
 #include <GL/glu.h>
 
+#define glError() { \
+	GLenum err = glGetError(); \
+	while (err != GL_NO_ERROR) { \
+		fprintf(stdout, "glError: %s caught at %s:%u\n", (char *)gluErrorString(err), __FILE__, __LINE__); \
+		err = glGetError(); \
+	} \
+}
+
+
+
 #define gfx_opengl_check_error(x)		\
 	do { \
 	int _flag = glGetError(); \

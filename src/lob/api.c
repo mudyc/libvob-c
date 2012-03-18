@@ -23,7 +23,11 @@ void lob_render(Lob *l, Scene *sc)
 	UNIMPL
 }
 
-
+void lob_event(Lob *l, LobEv *event)
+{
+	printf("lob event\n");
+	// do nothing but dance around the floor.
+}
 Size *lob_size(Lob *l) 
 {
 	Size *ret = REGION(l->reg, "lob.Size", Size);

@@ -1,0 +1,6 @@
+py/gen*
+*.c~
+*.h~
+*.py~
+*.pyc
+py/build

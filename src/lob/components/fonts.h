@@ -4,6 +4,7 @@
 // (c): Matti Katila, 2011
 
 #include "lob/components/spatial_layout.h"
+#include "vob/vobs/draw_primitives.h"
 #include "util/regions.h"
 #include "util/array.h"
 
@@ -23,6 +24,7 @@ struct lob_glyph {
 	float size;
 	char *ch;
 	Size *tmp_size;
+	VobColor *color;
 	
 	struct gfx_window *win;
 };
@@ -34,7 +36,8 @@ LobFont *lob_font(Region *reg, char *family);
 
 //LobGlyph *lob_font_glyph(Region *reg, LobFont *f, char *UTF8characher);
 
-LobBox *lob_font_text(Region *reg, LobFont *f, float size, char *text);
+LobBox *lob_font_text(Region *reg, LobFont *f, 
+		float size, char *text, VobColor *c);
 
 /**
  *  @classmethod

@@ -81,6 +81,7 @@ struct gfx_window* gfx_create_window(int x, int y, int w, int h)
 	cb->generate_scene = &lob_main_generate_vob_scene;
 	cb->key_pressed = NULL;
 	cb->key_released = NULL;
+	cb->event = &lob_main_handle_event;
 
 	ret->anim = gfx_anim_create();
 	ret->render = gfx_render_create();
