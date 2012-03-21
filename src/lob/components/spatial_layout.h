@@ -50,7 +50,7 @@ struct lob_stack {
 typedef struct lob_stack LobStack;
 
 /** Stacked, same size objects. First in is first rendered and last
- * added is the most back.
+ * added is the most back. This should be non-spatial, though.
  */
 Lob *lob_stack(Region *reg);
 void lob_stack_add(Region *reg, LobStack *stack, Lob *lob);

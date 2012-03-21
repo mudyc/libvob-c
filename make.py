@@ -28,6 +28,7 @@
 import ply.lex as lex
 import subprocess
 import sys, os
+import threading
 
 __version__ = "1.9"
 version = "1.9"
@@ -142,9 +143,21 @@ class Dep:
             return targets[self.name].reduce([])
         else: # target, function like dependant
             #   just call it right away with reduced params.
+            class DepWorker(threading.Thread):
+                def __init__(self, t, r, p):
+                    threading.Thread.__init__(self)
+                    self.t, self.r, self.p = t,r,p
+                def run(self):
+                    self.r += targets[self.t].reduce(self.p)
+
             ret = []
+            workers = []
             for pars in self.flat(params):
-                ret += targets[self.name].reduce(pars)
+                #ret += targets[self.name].reduce(pars)
+                workers.append(DepWorker(self.name, ret, pars))
+                workers[-1].start()
+            for w in workers: w.join()
+                
             if dbg: print 'depreduce ret',ret
             return ret
 

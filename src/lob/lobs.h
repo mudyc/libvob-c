@@ -41,15 +41,18 @@
 // color?
 
 #include "lob/components/paper.h"
+// paper
 
 // animation key!
 // 
 
+// events
 
 
-// Composed widgets
+// Composited widgets
 // ----------------
 
+#include "lob/composites/button.h"
 // button
 // label
 // text area
