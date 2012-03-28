@@ -17,6 +17,8 @@
 #include "gfx/opengl/opengl.h"
 #include "gfx/opengl/glyph.h"
 
+#include "gfx/opengl/paper/shaders.h"
+
 
 void gfx_opengl_single_render(struct gfx_window *w, Scene *vs);
 

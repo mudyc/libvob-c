@@ -101,9 +101,31 @@ sudo apt-get install \
    make \
    libglib2.0 \
    libglib2.0-dev \
-   libglu1-mesa-dev \
+   libglu1-mesa-dev \ 
    libelfg0-dev \
    libpango1.0-dev \
    python-ply \
    python2.7-dev
+
+
+Region programming
+------------------
+
+Regions are areas of memory and they provide one way to manage it. In
+it's simplicity it's a big area which can be released. The point is
+not about releasing but reusing the area. For layoutable objects this
+is great: they are build so often that reusing the same or close
+memory is unavoidable.
+
+In C side you have all the control for the regions. However, python
+side should work just out of the box. In C side there's a temporary
+region which is given to python program while layoutable objects are
+created.
+
+In python all layoutable objects are created within given
+region. However, model objects are bound to python instances because
+of that's where the lifecycle is. Finer region tuning will be
+implemented later if needed.
+
+
 

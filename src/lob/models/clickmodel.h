@@ -4,13 +4,16 @@
 
 #include "lob/api.h"
 
+/**
+ * @model
+ */
 struct lob_clickmodel {
 	LobModel base;
-
+	int state;
 };
 typedef struct lob_clickmodel LobClickModel;
 
-LobClickModel *lob_clickmodel();
+LobClickModel *lob_clickmodel(Region *reg);
 
 
 #endif

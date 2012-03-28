@@ -55,6 +55,7 @@ Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
 	Lob *lob = cb->create_lob(reg);
 
 	printf("lob.main.layout\n");
+	printf("%p %d %d\n", lob, gfx_width(win), gfx_height(win));
 	lob = lob->layout(lob, gfx_width(win), gfx_height(win));
 
 	printf("lob.main.render\n");

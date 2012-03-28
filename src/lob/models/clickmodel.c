@@ -2,7 +2,8 @@
 #include "lob/models/clickmodel.h"
 
 
-LobClickModel *lob_clickmodel()
+LobClickModel *lob_clickmodel(Region *reg)
 {
-	return 0;
+	LobClickModel *ret = REGION(reg, "lob.model.Click", LobClickModel);
+	return ret;
 }

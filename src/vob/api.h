@@ -1,6 +1,9 @@
 #ifndef VOB_API_H
 #define VOB_API_H
 
+/** @nopython */
+
+
 // we present the prototypes of Scene and Coordsys here as they are
 // part of the main parts. Problems arises if scene.h imports coords.h
 // before Scene is declared explicitly.

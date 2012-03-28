@@ -156,6 +156,10 @@ def gen(name, clzz, funcs):
     if clzz not in all_classes.values():
         fakename = clzz['inherits'][0]['typedef']
 
+    region = ""
+    if 'doxygen' in clzz and '@model' in clzz['doxygen']:
+        region = 'Region *pyRegion;'
+
     struct = 'Py'+name
     typee = 'Py'+name+'Type'
     py_name = 'libvob.'+name
@@ -181,6 +185,7 @@ def gen(name, clzz, funcs):
 
     typedef struct {
         PyObject_HEAD
+        %s
         %s *obj;
     } %s;
 
@@ -191,7 +196,7 @@ def gen(name, clzz, funcs):
         sizeof(%s),\t\t\t/*tp_basicsize*/
     };
 
-""" % ( struct, fakename, struct, typee, py_name, struct))
+""" % ( struct, region, fakename, struct, typee, py_name, struct))
 
     for f in funcs:
         if f['name'] == clzz['name']:
@@ -219,7 +224,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                 init_type_ready.append(
                     "        %s.tp_new = %s_new;\n" % (typee, typee))
 
-            elif len(f['parameters']) > 1 \
+            elif len(f['parameters']) >= 1 \
                     and f['parameters'][0]['type'] == 'Region *':
                 structs_and_types.append("""
 PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
@@ -242,7 +247,11 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                 for idx in range(len(f['parameters'])):
                     param = f['parameters'][idx]
                     if idx == 0 and param['type'] == 'Region *':
-                        s += '        Region *p0 = region;\n'
+                        if 'doxygen' in clzz and '@model' in clzz['doxygen']:
+                            s += '        self->pyRegion = util_regs_create("'+py_name+'");\n'              
+                            s += '        Region *p0 = self->pyRegion;\n'
+                        else:
+                            s += '        Region *p0 = region;\n'
                     else:
                         if param['type'] == 'float':
                             s += '        float p'+str(idx)+';\n' 
@@ -267,11 +276,13 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                     s += '        PyObject *list = NULL;\n'
                     types += 'O'
                     params += '&list  '
-                s += '        if (! PyArg_ParseTuple(args, "%s", %s)) {\n' \
-                    %(types, params[:-2])
-                s += '            Py_DECREF(self);\n'
-                s += '            return NULL;\n'
-                s += '        }\n'
+
+                if len(f['parameters']) > 1:
+                    s += '        if (! PyArg_ParseTuple(args, "%s", %s)) {\n' \
+                        %(types, params[:-2])
+                    s += '            Py_DECREF(self);\n'
+                    s += '            return NULL;\n'
+                    s += '        }\n'
                 s += '        self->obj = '+f['name']+'('
                 for i in range(len(f['parameters'])): 
                     if i > 0:
@@ -463,3 +474,6 @@ if __name__ == '__main__':
     write('py/gen_structs.c', structs_and_types)
     write('py/gen_init_types.c', init_type_ready)
     write('py/gen_add_obs.c', init_add_objects)
+
+
+
