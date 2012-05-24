@@ -16,6 +16,7 @@
 #include "gfx/animation.h"
 #include "gfx/opengl/opengl.h"
 #include "gfx/opengl/glyph.h"
+#include "gfx/opengl/image.h"
 
 #include "gfx/opengl/paper/shaders.h"
 
@@ -282,6 +283,8 @@ gfx_opengl_paper_shaders_init();
 
 	ret->font_list = &gfx_opengl_font_list;
 	ret->font_glyph_size = &gfx_opengl_font_glyph_size;
+
+	ret->image_size = &gfx_opengl_image_size;
 
 	ret->single_render = &gfx_opengl_single_render;
 

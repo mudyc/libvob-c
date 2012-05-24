@@ -42,6 +42,8 @@ struct gfx_window {
 		void *font_ptr, char *ch, float size, 
 		float *w, float *h); 
 
+	void (*image_size)(char *file, int *w, int *h);
+
 	struct gfx_animation *anim;
 	struct gfx_render *render;
 };
@@ -72,6 +74,9 @@ void gfx_font_list(struct gfx_window *win,
 		   int *length, char ***list);
 void gfx_font_glyph_size(struct gfx_window *win, 
 			 void *font_ptr, char *ch, float size, float *w, float *h); 
+
+// Image
+void gfx_image_size(struct gfx_window *win, char *file, int *w, int *h);
 
 
 #endif

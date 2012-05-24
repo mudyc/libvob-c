@@ -8,6 +8,7 @@ sys.path = ["./py/"] + sys.path
 import CppHeaderParser
 #CppHeaderParser.debug = True
 
+just_structs = []
 structs_and_types = []
 init_type_ready = []
 init_add_objects = []
@@ -47,7 +48,7 @@ def add_attributes(clzz):
     obj_name = 'Py' + clzz['typedef']
     type_name = obj_name + 'Type'
     for att in clzz['properties']['public']:
-        if att['type'] in ['Region *', 'Lob *', 'Lob', 'UtilArray *', 'Size', 'Size *', 'LobEv','LobModel', 'LobFont *', 'VobColor *', 'Vob', 'VobFill','VobFill *']: continue
+        if att['type'] in ['Region *', 'Lob *', 'Lob', 'UtilArray *', 'Size', 'Size *', 'LobEv','LobModel', 'LobClickModel *', 'LobFont *', 'VobColor *', 'Vob', 'VobFill','VobFill *']: continue
 
         structs_and_types.append("""
 PyObject *%s_%s(PyObject *obj, void *data)
@@ -176,9 +177,7 @@ def gen(name, clzz, funcs):
             nice_name = name[3:]
         py_name = 'libvob.vob.'+nice_name
     
-
-    
-    structs_and_types.append("""
+    just_structs.append("""
     /* *********************
     * %s stucture 
     ************************ */
@@ -229,7 +228,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                 structs_and_types.append("""
 PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-    //printf("%s_new\\n");
+    printf("%s_new\\n");
 
     %s *self;
 
@@ -257,7 +256,13 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                             s += '        float p'+str(idx)+';\n' 
                             types += 'f'
                             params += '&p'+str(idx)+', '
-                        elif param['type'].startswith('Lob') or param['type'].startswith('Vob'):
+                        elif param['type'].startswith('Lob') \
+                                and 'Model' in param['type']:
+                            s += '        PyLobModel *p'+str(idx)+';\n' 
+                            types += 'O'
+                            params += '&p'+str(idx)+', '
+                        elif param['type'].startswith('Lob') \
+                                or param['type'].startswith('Vob'):
                             s += '        PyLob *p'+str(idx)+';\n' 
                             types += 'O'
                             params += '&p'+str(idx)+', '
@@ -277,7 +282,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                     types += 'O'
                     params += '&list  '
 
-                if len(f['parameters']) > 1:
+                if len(f['parameters']) > 1 or adder != None:
                     s += '        if (! PyArg_ParseTuple(args, "%s", %s)) {\n' \
                         %(types, params[:-2])
                     s += '            Py_DECREF(self);\n'
@@ -298,7 +303,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
             Py_ssize_t len = PySequence_Size(list);
             Py_ssize_t idx = 0;
             for (; idx<len; idx++) {
-                //printf("got arg...%%i\\n", idx);
+                printf("got arg...%%i\\n", idx);
 """
                     pars = ""
                     for i in range(len(adder['parameters'][2:])):
@@ -330,7 +335,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                 structs_and_types.append("""
 PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-    //printf("%s_new\\n");
+    printf("%s_new\\n");
 
     %s *self;
 
@@ -347,7 +352,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
             Py_ssize_t len = PySequence_Size(list);
             Py_ssize_t idx = 0;
             for (; idx<len; idx++) {
-                //printf("got arg...%%i\\n", idx);
+                printf("got arg...%%i\\n", idx);
                 PyObject *lob = PySequence_GetItem(list, idx);
                 //if (PyObject_TypeCheck(lob, &PyLobType))
                     %s_add(region, (%s*)self->obj, ((PyLob*)lob)->obj);
@@ -437,11 +442,28 @@ if __name__ == '__main__':
                 if name == clzz['inherits'][0]['typedef']:
                     tree(nam, ind+'   ')
 
-    for name, clzz in all_classes.items():
+    import copy
+    items = copy.copy(all_classes.items())
+    items = filter(lambda x: len(x[1]['inherits']) == 0, items)
+    def needs(c):
+        if 'doxygen' in c and '@needs' in c['doxygen']:
+            s = c['doxygen'].split()
+            return s[s.index('@needs')+1]
+        return ""
+        
+    for i in range(len(items)):
+        for j in range(i, len(items)):
+            a, b = items[i], items[j]
+            if needs(a[1]) == b[0]:
+                items[j] = a
+                items[i] = b
+
+    # bind those without children
+    for name, clzz in items:
         if len(list(children(name))) == 0 and len(clzz['inherits']) == 0:
             #print name
             gen(name, clzz, all_funcs)
-    for name, clzz in all_classes.items():
+    for name, clzz in items:
         if len(list(children(name))) > 0:
             tree(name, '')
     #print all_classes
@@ -471,6 +493,7 @@ if __name__ == '__main__':
 
     # Add static functions to classes.
 
+    write('py/gen_protos.c', just_structs)
     write('py/gen_structs.c', structs_and_types)
     write('py/gen_init_types.c', init_type_ready)
     write('py/gen_add_obs.c', init_add_objects)

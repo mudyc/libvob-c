@@ -7,6 +7,7 @@
 struct lob_button {
 	Lob base;
 	Lob *delegate;
+	LobClickModel *model;
 };
 typedef struct lob_button LobButton;
 

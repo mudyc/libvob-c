@@ -3,6 +3,7 @@
 #include "gfx/opengl/coords.h"
 #include "gfx/opengl/vobs.h"
 #include "gfx/opengl/glyph.h"
+#include "gfx/opengl/image.h"
 #include "gfx/opengl/paper/paper.h"
 #include "vob/coords.h"
 #include "vob/vobs/rect.h"
@@ -47,6 +48,8 @@ void gfx_opengl_vobs_render1(GHashTable *id2impl,
 			value = &gfx_opengl_paper;
 		else if (strcmp(key, "vob.vobs.RoundedRect") == 0)
 			value = &gfx_opengl_rounded_rect;
+		else if (strcmp(key, "vob.vobs.Image") == 0)
+			value = &gfx_opengl_image;
 
 		if (value != NULL)
 			g_hash_table_insert(id2impl, key, value);

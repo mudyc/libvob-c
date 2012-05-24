@@ -27,7 +27,7 @@ Coordsys *vob_coords_box(Scene *vs, Coordsys *into,
 	ret->y = y;
 	ret->w = w;
 	ret->h = h;
-	//printf("box %f %f %fx%f\n", x,y,w,h);
+	printf("box %f %f %fx%f\n", x,y,w,h);
 	return (Coordsys*) ret;
 }
 
@@ -105,8 +105,12 @@ static float wh(Coordsys *cs, bool w)
 	}
 }
 float vob_coords_w(Coordsys *cs) {
-	return wh(cs, TRUE);
+	float ret = wh(cs, TRUE);
+	printf("ret %f\n",ret);
+	return ret;
 }
 float vob_coords_h(Coordsys *cs) {
-	return wh(cs, FALSE);
+	float ret = wh(cs, FALSE);
+	printf("ret %f\n", ret);
+	return ret;
 }

@@ -145,12 +145,13 @@ static Size *vbox_size(Lob *this)
 }
 static Size *hbox_size(Lob *this)
 {
+	printf("hbox size\n");
 	return box_size(this, 1);
 }
 
 static Lob *box_layout(Lob *this, float w_, float h_, bool horiz)
 {
-	//printf("box layout\n");
+	printf("box layout\n");
 	LobBox *box = (LobBox *) this;
 	int i;
 	Size *s = box->base.size(this);
@@ -172,6 +173,7 @@ static Lob *box_layout(Lob *this, float w_, float h_, bool horiz)
 			diff = dH * (shrink / totalShrink);
 		}
 
+		printf("next item layout\n");
 		Lob *lob = item->layout(item, 
 					horiz? is->natw+diff: w_, 
 					horiz? h_: is->nath + diff);
@@ -193,6 +195,8 @@ static void box_render(Lob *this, Coordsys *into,
 {
 	// compose needed vobs from this lob.
 	LobBox *box = (LobBox *) this;
+	printf("box render %d\n", box->items->size);
+
 
 	int i;
 	Size *s = box->base.size(this);
@@ -223,6 +227,7 @@ static void box_render(Lob *this, Coordsys *into,
 						horiz?step:0, 
 						horiz?0:step, 0);
 		step += diff;
+		printf("next item render\n");
 		item->render(item, cs, (horiz?diff: w_), (horiz?h_: diff), vs);
 	}
 }
@@ -262,6 +267,8 @@ void lob_vbox_add(Region *reg, LobBox *vbox, Lob *lob)
 
 Lob *lob_hbox(Region *reg)
 {
+	printf("lob hbox..\n");
+
 	LobBox *ret = REGION(reg, "lob.component.HBox", LobBox);
 	ret->items = util_arr_create(reg);
 

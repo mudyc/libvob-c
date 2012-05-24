@@ -87,7 +87,7 @@ static void calculate_shade(int i, int step,float *rgba, float *delta,
 	UtilF *f = util_arr_get(shade->steps, step);
 	int j =  f->value * SHADE_SLIDE;
 	int d = j - i;
-	printf("i %d, j %d, d %d, step %d\n", i, j, d, step);
+	//printf("i %d, j %d, d %d, step %d\n", i, j, d, step);
 	VobColor *c = util_arr_get(shade->colors, step);
 	VobColor *prev = c;
 	if (step - 1 >= 0)
@@ -143,10 +143,10 @@ static GLuint tex4shade(VobShade *shade)
 			for (j=0; j<4; j++)
 				rgba[j] += drgba[j];
 		}
-		///*
+		/*
 		for (i=0; i<SHADE_SLIDE; i+=2)
 			printf("%0.2f %0.2f %0.2f %1.0f\n", data[i*4], data[i*4+1], data[i*4+2], data[i*4+3]);
-		//*/
+		*/
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, SHADE_SLIDE, 
 			0, GL_RGBA, GL_FLOAT, data);
 		glBindTexture(GL_TEXTURE_2D, 0);

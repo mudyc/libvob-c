@@ -35,6 +35,7 @@
 
 // ---- missing ----
 // image
+#include "lob/components/image.h"
 // font
 #include "lob/components/fonts.h"
 // text

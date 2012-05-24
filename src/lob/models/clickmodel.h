@@ -4,12 +4,18 @@
 
 #include "lob/api.h"
 
+enum CLICK_STATE {
+	PRESSED = 1,
+	RELEASED = 2
+};
+
+
 /**
  * @model
  */
 struct lob_clickmodel {
 	LobModel base;
-	int state;
+	enum CLICK_STATE state;
 };
 typedef struct lob_clickmodel LobClickModel;
 

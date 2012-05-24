@@ -12,6 +12,7 @@
 static Region *region;
 
 
+#include "gen_protos.c"
 #include "gen_structs.c"
 
 

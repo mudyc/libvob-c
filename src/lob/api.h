@@ -33,6 +33,9 @@ struct lob_ev {
 };
 typedef struct lob_ev LobEv;
 
+/**
+ * @model
+ */
 struct lob_model {
 
 };
@@ -43,6 +46,9 @@ typedef struct lob_model LobModel;
 struct lob;
 typedef struct lob Lob;
 
+/**
+ * @needs LobModel
+ */
 struct lob {
 	Region *reg;
 

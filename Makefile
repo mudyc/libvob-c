@@ -8,7 +8,7 @@
 CFLAGS = -Wall -I src/ \
 	 -DGFX_API_CAIRO \
 	 -DGFX_API_OPENGL \
-	 -DNO_CPP_DEMANGLE\
+	 -DNO_CPP_DEMANGLE \
 	`pkg-config --cflags \
 		glib-2.0 \
 		gobject-2.0 \
@@ -17,7 +17,7 @@ CFLAGS = -Wall -I src/ \
 		pango \
 		cairo`#
 
-LIBS = -lGL -lrt \
+LIBS = -lGL -lrt /usr/lib/libpnglite.a \
 	`pkg-config --libs \
 		fontconfig \
 		x11 \

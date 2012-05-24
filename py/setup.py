@@ -8,7 +8,7 @@ inc_dirs = ['../src/']
 for s in line.split(" "):
     if s.startswith('-I'):
         inc_dirs.append(s[2:])
-    
+#print inc_dirs
 
 module1 = Extension('libvob',
                     sources = ['libvob.c'],

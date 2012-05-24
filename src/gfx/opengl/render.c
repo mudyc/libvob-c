@@ -3,12 +3,12 @@
 #include <GL/gl.h> 
 
 #include "vob/scene.h"
+#include "vob/coords.h"
 #include "gfx/gfx_api.h"
 #include "gfx/opengl/opengl.h"
 #include "gfx/opengl/coords.h"
 #include "gfx/opengl/vobs.h"
 #include "util/dbg.h"
-
 
 static void pre_render_scene(struct impl *c)
 {
@@ -60,9 +60,10 @@ void gfx_opengl_single_render(struct gfx_window *w, Scene *vs)
 			printf("vob0\n");
 			break;
 		case VOB1: {
-			//printf("vob1 %s %p\n", v->id, v);
+			printf("vob1 %s %p\n", v->id, v);
 			Coordsys *cs = util_fastarr_get(vs->coords_arr, i);
-
+			//printf("%f %f\n", vob_coords_w(cs), vob_coords_h(cs));
+			vob_coords_dump(cs);
 			gfx_opengl_vobs_render1(c->id2impl, (Vob1*)v, cs);
 			//printf("vob1.. %s\n", v->id);
 			break;
