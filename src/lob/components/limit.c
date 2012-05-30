@@ -11,12 +11,6 @@
 
 
 
-static void natsize_event(Lob *this, LobEv *event)
-{
-	printf("natsize event\n");
-	LobNatSize *m = (LobNatSize *) this;
-	m->delegate->event(m->delegate, event);
-}
 static Size *natsize_size(Lob *this)
 {
 	LobNatSize *m = (LobNatSize *) this;
@@ -24,31 +18,30 @@ static Size *natsize_size(Lob *this)
 }
 static Lob *natsize_layout(Lob *this, float w, float h)
 {
-	LobNatSize *m = (LobNatSize *) this;
-	m->delegate = m->delegate->layout(m->delegate, w, h);
-	Size *s = m->delegate->size(m->delegate);
-	m->size.maxw = s->natw;
-	m->size.maxh = s->nath;
-	return (Lob*)m;
+	LobNatSize *nat = (LobNatSize *) this;
+	LobDelegate *nat_d = (LobDelegate *) nat;
+	nat_d->delegate = nat_d->delegate->layout(nat_d->delegate, w, h);
+	Size *s = nat_d->delegate->size(nat_d->delegate);
+	nat->size.natw = s->natw;
+	nat->size.nath = s->nath;
+	nat->size.maxw = s->natw;
+	nat->size.maxh = s->nath;
+	return (Lob*)nat;
 }
-static void natsize_render(Lob *this, Coordsys *into, 
-			float w, float h, Scene *vs) 
-{
-	LobNatSize *m = (LobNatSize *) this;
-	m->delegate->render(m->delegate, into, w, h, vs);
-} 
 Lob *lob_natsize(Region *reg, Lob *delegate)
 {
 	LobNatSize *ret = REGION(reg, "lob.component.NatSize", LobNatSize);
+	LobDelegate *ret_d = (LobDelegate *) ret;
+	Lob *ret_l = (Lob *) ret;
 
-	ret->base.event = &natsize_event;
-	ret->base.size = &natsize_size;
-	ret->base.layout = &natsize_layout;
-	ret->base.render = &natsize_render;
+	ret_l->event = &lob_delegate_event;
+	ret_l->size = &natsize_size;
+	ret_l->layout = &natsize_layout;
+	ret_l->render = &lob_delegate_render;
 
-	ret->delegate = delegate;
+	ret_d->delegate = delegate;
 
-	Size *s = ret->delegate->size(ret->delegate);
+	Size *s = ret_d->delegate->size(ret_d->delegate);
 	ret->size.minw = s->minw;
 	ret->size.natw = s->natw;
 	ret->size.maxw = s->maxw;
@@ -62,10 +55,16 @@ Lob *lob_natsize(Region *reg, Lob *delegate)
 
 static Size *samew_size(Lob *this)
 {
-	LobSameW *m = (LobSameW *) this;
-	if (m->model->count > 0)
-		m->size.natw = m->model->summ / (float) m->model->count;
-	return &m->size;
+	LobSameW *same = (LobSameW *) this;
+	LobDelegate *d = (LobDelegate *) same;
+	Size *s = d->delegate->size(d->delegate);
+	same->size.minw = s->minw;
+	same->size.natw = same->model->summ / (float) same->model->count;
+	same->size.maxw = s->maxw;
+	same->size.minh = s->minh;
+	same->size.nath = s->nath;
+	same->size.maxh = s->maxh;
+	return (Size *)&same->size;
 }
 
 Lob *lob_samew(Region *reg, Lob *delegate, LobSameModel *m)
@@ -76,14 +75,14 @@ Lob *lob_samew(Region *reg, Lob *delegate, LobSameModel *m)
 
 	l->event = &lob_delegate_event;
 	l->size = &samew_size;
-	l->layout = &lob_delegate_layout;//&samew_layout;
+	l->layout = &lob_delegate_layout;
 	l->render = &lob_delegate_render;
 
 	d->delegate = delegate;
 
 	ret->model = m;
 
-	Size *s = ret->base2.delegate->size(ret->base2.delegate);
+	Size *s = d->delegate->size(d->delegate);
 	ret->size.minw = s->minw;
 	ret->size.natw = s->natw;
 	lob_samemodel_tick(ret->model, s->natw);

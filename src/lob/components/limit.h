@@ -5,8 +5,7 @@
 #include "lob/models/samemodel.h"
 
 struct lob_natsize {
-	Lob base;
-	Lob *delegate;
+	LobDelegate base;
 	Size size;
 };
 typedef struct lob_natsize LobNatSize;

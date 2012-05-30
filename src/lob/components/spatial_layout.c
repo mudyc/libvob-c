@@ -129,10 +129,10 @@ static Size *box_size(Lob *this, bool horiz)
 		}
 		Size *s = box->tmp_size;
 		s->minw = minw;
-		s->natw = natw;
+		s->natw = fminf(natw, maxw);
 		s->maxw = maxw;
 		s->minh = minh;
-		s->nath = nath;
+		s->nath = fminf(nath, maxh);
 		s->maxh = maxh;
 	}
 	
