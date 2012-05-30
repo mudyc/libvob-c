@@ -85,5 +85,7 @@ void *util_regs_data_increase(Region *reg, void *owner, void *curr_mem,
  */
 void util_regs_clear(Region *reg);
 
+/** return name of the object in some region. */
+char *util_regs_dbg(void *object);
 
 #endif

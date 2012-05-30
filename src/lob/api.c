@@ -49,3 +49,26 @@ int lob_pref_size() { return 0; }
 int lob_max_size() { return LOB_INF; }
 
 
+
+void lob_delegate_event(Lob *this, LobEv *event)
+{
+	LobDelegate *l = (LobDelegate *) this;
+	l->delegate->event(l->delegate, event);
+}
+Size *lob_delegate_size(Lob *this)
+{
+	LobDelegate *l = (LobDelegate *) this;
+	return l->delegate->size(l->delegate);
+}
+Lob *lob_delegate_layout(Lob *this, float w, float h)
+{
+	LobDelegate *l = (LobDelegate *) this;
+	l->delegate = l->delegate->layout(l->delegate, w, h);
+	return (Lob*)l;
+}
+void lob_delegate_render(Lob *this, Coordsys *into, 
+			float w, float h, Scene *vs) 
+{
+	LobDelegate *l = (LobDelegate *) this;
+	l->delegate->render(l->delegate, into, w, h, vs);
+} 

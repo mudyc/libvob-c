@@ -16,6 +16,9 @@
 // rrotate
 // scale
 
+#include "lob/components/limit.h"
+// natsize
+
 #include "lob/components/spatial_layout.h"
 // left, center, right
 // top, middle, bottom

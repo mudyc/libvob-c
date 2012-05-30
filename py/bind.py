@@ -48,7 +48,7 @@ def add_attributes(clzz):
     obj_name = 'Py' + clzz['typedef']
     type_name = obj_name + 'Type'
     for att in clzz['properties']['public']:
-        if att['type'] in ['Region *', 'Lob *', 'Lob', 'UtilArray *', 'Size', 'Size *', 'LobEv','LobModel', 'LobClickModel *', 'LobFont *', 'VobColor *', 'Vob', 'VobFill','VobFill *']: continue
+        if att['type'] in ['Region *', 'Lob *', 'Lob', 'LobDelegate', 'UtilArray *', 'Size', 'Size *', 'LobEv','LobModel', 'LobClickModel *', 'LobSameModel *', 'LobFont *', 'VobColor *', 'Vob', 'VobFill','VobFill *']: continue
 
         structs_and_types.append("""
 PyObject *%s_%s(PyObject *obj, void *data)
@@ -303,7 +303,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
             Py_ssize_t len = PySequence_Size(list);
             Py_ssize_t idx = 0;
             for (; idx<len; idx++) {
-                printf("got arg...%%i\\n", idx);
+                //printf("got arg...%i\\n", idx);
 """
                     pars = ""
                     for i in range(len(adder['parameters'][2:])):

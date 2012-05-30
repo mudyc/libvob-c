@@ -6,7 +6,7 @@
 
 #define UNIMPL printf("Unimplemented: %s -> %s(...)\n", __FILE__, __FUNCTION__);
 
-#define DBG(str) printf("Dbg: %s -> %s: %s\n", __FILE__, __FUNCTION__, str)
+#define DBG(...) { printf("dbg %s(%d) ", __FUNCTION__, __LINE__); printf(__VA_ARGS__); printf("\n"); }
 
 
 #endif

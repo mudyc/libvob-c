@@ -19,6 +19,8 @@ static const int ARRAY_MAX = 4096;
 static const int ARRAY_SIZES[] = {0, 4, 16, 64, 256, 1024, 4096 };
 static const int ARRAY_SIZES_N = sizeof(ARRAY_SIZES) / sizeof (ARRAY_SIZES[0]);
 
+static GHashTable *dbg_objects = NULL;
+
 FastArray *util_fastarr_create(size_t size)
 {
 	FastArray *ret = malloc(sizeof(FastArray));
@@ -156,6 +158,10 @@ void *util_regs_instantiate(Region *reg, void *id, size_t size)
 	//printf("instantiate: %x %s %d %d\n", id, id, arr->index, size);
 	void *ret = array_next(arr);
 	//printf("instantiated: %s %p %p\n", id, ret, arr);
+
+	if (dbg_objects)
+		g_hash_table_insert(dbg_objects, ret, id);
+
 	return ret;
 }
 
@@ -193,4 +199,10 @@ void util_regs_clear(Region *reg)
 		FastArray *arr = (FastArray*) value;
 		util_fastarr_clear(arr);
 	}
+}
+
+char *util_regs_dbg(void *object) {
+	if (dbg_objects == NULL)
+		dbg_objects = g_hash_table_new(&g_direct_hash, &g_direct_equal);
+	return g_hash_table_lookup(dbg_objects, object);
 }

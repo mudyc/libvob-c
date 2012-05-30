@@ -6,7 +6,7 @@
 struct lob_image {
 	Lob base;
 	char *file;
-
+	float ratio; // w / h
 	Size size;
 };
 typedef struct lob_image LobImage;

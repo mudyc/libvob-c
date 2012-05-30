@@ -60,6 +60,7 @@ struct lob {
 };
 
 
+
 void lob_event(Lob *l, LobEv *event);
 Size *lob_size(Lob *l);
 Lob *lob_layout(Lob *this, float w, float h);
@@ -69,6 +70,16 @@ void lob_render(Lob *l, Scene *sc);
 
 
 
+struct lob_delegate {
+	Lob base;
+	Lob *delegate;
+};
+typedef struct lob_delegate LobDelegate;
+
+void lob_delegate_event(Lob *l, LobEv *event);
+Size *lob_delegate_size(Lob *l);
+Lob *lob_delegate_layout(Lob *l, float w, float h);
+void lob_delegate_render(Lob *l, Coordsys *into, float w, float h, Scene *vs);
 
 
 

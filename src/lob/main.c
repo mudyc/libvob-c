@@ -6,6 +6,17 @@
 
 static Region *reg = NULL;
 
+static void debug_objects_recursive(void *o, int indent) {
+	int i;
+	for (i=0; i<indent; i++) {
+		printf("  ");
+	}
+	//DBG("%s w(%f %f) h(%f %f)", util_regs_dbg(o), );
+}
+static void debug_objects(void *o) {
+	debug_objects_recursive(o, 0);   
+}
+
 
 void lob_main_handle_event(struct gfx_window *win, LobEv* event)
 {
@@ -24,6 +35,7 @@ void lob_main_handle_event(struct gfx_window *win, LobEv* event)
 
 
 Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
+	util_regs_dbg(NULL);
 	// Reserving the scenes in here limits the implementation 
 	// to one window. Who cares..
 
@@ -57,6 +69,8 @@ Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
 	printf("lob.main.layout\n");
 	printf("%p %d %d\n", lob, gfx_width(win), gfx_height(win));
 	lob = lob->layout(lob, gfx_width(win), gfx_height(win));
+
+	debug_objects(lob);
 
 	printf("lob.main.render\n");
 	lob->render(lob, scene0->rootCS,
@@ -92,3 +106,5 @@ Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
 
 	return scene0;
 }
+
+

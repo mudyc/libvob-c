@@ -52,7 +52,7 @@ void gfx_opengl_image_size(char *file, int *w, int *h)
 	struct img *i = (struct img *)img;
 	*w = i->png.width;
 	*h = i->png.height;
-	printf("opengl img size %d %d\n", *w, *h);
+	//printf("opengl img size %d %d\n", *w, *h);
 }
 void gfx_opengl_image(Image *img, Coordsys *cs)
 {

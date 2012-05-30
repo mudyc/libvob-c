@@ -6,6 +6,7 @@
 
 #include "lob/components/spatial_layout.h"
 #include "vob/coords.h"
+#include "util/dbg.h"
 
 static Size *glue_size(Lob *this)
 {
@@ -75,23 +76,21 @@ Lob *lob_vglue() {
 // Lists - Boxes
 // -------------------------------------------
 
-static Lob *box_event(Lob *this, LobEv *ev, bool horiz)
+static void box_event(Lob *this, LobEv *ev, bool horiz)
 {
 	printf("box event\n");
 	LobBox *box = (LobBox *) this;
 }
 
-static Lob *hbox_event(Lob *this, LobEv *ev)
+static void hbox_event(Lob *this, LobEv *ev)
 {
 	printf("hbox event\n");
-	LobBox *box = (LobBox *) this;
-	box_event(box, ev, 1);
+	box_event(this, ev, 1);
 }
-static Lob *vbox_event(Lob *this, LobEv *ev)
+static void vbox_event(Lob *this, LobEv *ev)
 {
 	printf("vbox event\n");
-	LobBox *box = (LobBox *) this;
-	box_event(box, ev, 0);
+	box_event(this, ev, 0);
 }
 
 static Size *box_size(Lob *this, bool horiz)
@@ -145,13 +144,11 @@ static Size *vbox_size(Lob *this)
 }
 static Size *hbox_size(Lob *this)
 {
-	printf("hbox size\n");
 	return box_size(this, 1);
 }
 
 static Lob *box_layout(Lob *this, float w_, float h_, bool horiz)
 {
-	printf("box layout\n");
 	LobBox *box = (LobBox *) this;
 	int i;
 	Size *s = box->base.size(this);
@@ -173,13 +170,16 @@ static Lob *box_layout(Lob *this, float w_, float h_, bool horiz)
 			diff = dH * (shrink / totalShrink);
 		}
 
-		printf("next item layout\n");
 		Lob *lob = item->layout(item, 
-					horiz? is->natw+diff: w_, 
+					horiz? is->natw + diff: w_, 
 					horiz? h_: is->nath + diff);
+		//DBG("%s %f %f", util_regs_dbg(lob), (horiz? is->natw+diff: w_), (horiz? h_: is->nath + diff));
 		if (lob != item)
 			util_arr_set(box->items, i, lob);
 	}
+	// invalidate size cache
+	box->tmp_size->minh = -1;
+
 	return this;
 }
 static Lob *vbox_layout(Lob *this, float w, float h)
@@ -195,11 +195,12 @@ static void box_render(Lob *this, Coordsys *into,
 {
 	// compose needed vobs from this lob.
 	LobBox *box = (LobBox *) this;
-	printf("box render %d\n", box->items->size);
-
-
+	// invalidate size cache
+	box->tmp_size->minh = -1;
 	int i;
+
 	Size *s = box->base.size(this);
+	DBG("Box w %f %f  h %f %f", s->natw, s->maxw, s->nath,s->maxh);
 	float dH = horiz? w_ - s->natw: h_ - s->nath;
 	float totalStretch = horiz? s->maxw - s->natw: s->maxh - s->nath;
 	float totalShrink = horiz? s->natw - s->minw: s->nath - s->minh;
@@ -207,6 +208,7 @@ static void box_render(Lob *this, Coordsys *into,
 	for (i=0; i<box->items->size; i++) {
 		Lob *item = util_arr_get(box->items, i);
 		Size *is = item->size(item);
+		DBG("Box %p item %s w %f %f  h %f %f", box, util_regs_dbg(item), is->natw, is->maxw, is->nath,is->maxh);
 
 		float diff = 0;
 		if (dH > 0) { // stretch
@@ -222,12 +224,13 @@ static void box_render(Lob *this, Coordsys *into,
 			if (isnan(diff))
 				diff = 0;
 		}
+
 		diff = horiz? is->natw + diff: is->nath + diff;
 		Coordsys *cs = vob_coords_trans(vs, into, 
 						horiz?step:0, 
 						horiz?0:step, 0);
 		step += diff;
-		printf("next item render\n");
+		DBG("%s %f %f", util_regs_dbg(item), (horiz?diff: w_), (horiz?h_: diff));
 		item->render(item, cs, (horiz?diff: w_), (horiz?h_: diff), vs);
 	}
 }
@@ -267,8 +270,6 @@ void lob_vbox_add(Region *reg, LobBox *vbox, Lob *lob)
 
 Lob *lob_hbox(Region *reg)
 {
-	printf("lob hbox..\n");
-
 	LobBox *ret = REGION(reg, "lob.component.HBox", LobBox);
 	ret->items = util_arr_create(reg);
 
@@ -289,7 +290,7 @@ void lob_hbox_add(Region *reg, LobBox *hbox, Lob *lob)
 }
 
 
-static Lob *stack_event(Lob *this, LobEv *ev)
+static void stack_event(Lob *this, LobEv *ev)
 {
 	printf("stack event\n");
 	LobStack *stack = (LobStack *) this;
@@ -306,7 +307,7 @@ static Size *stack_size(Lob *this)
   
 	stack->size.minh = stack->size.maxh = -1;
 	stack->size.minw = stack->size.maxw = -1;
-	stack->size.nath = stack->size.natw = LOB_INF;
+	stack->size.nath = stack->size.natw = -1;
 
 	for (i--; i >= 0; i--) {
 		Lob *item = util_arr_get(stack->items, i);
@@ -330,7 +331,7 @@ static Lob *stack_layout(Lob *this, float w, float h)
 		if (lob != item)
 			util_arr_set(stack->items, i, lob);
 	}
-	return box_layout(this, w, h, 1);
+	return this;
 }
 static void stack_render(Lob *this, Coordsys *into, 
 			float w, float h, Scene *vs)

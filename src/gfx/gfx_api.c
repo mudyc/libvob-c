@@ -43,7 +43,6 @@ void gfx_font_glyph_size(struct gfx_window *win,
 
 void gfx_image_size(struct gfx_window *win, char *file, int *w, int *h)
 {
-	printf("get img size..\n");
 	win->image_size(file, w, h);
 }
 
