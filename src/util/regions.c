@@ -148,7 +148,7 @@ Region *util_regs_create(char *name)
 
 void *util_regs_instantiate(Region *reg, void *id, size_t size)
 {
-	//printf("util_regs_instantiate: %s %x %x %x\n", id, reg, id, size);
+	//printf("util_regs_instantiate: %s %x %x %d\n", id, reg, id, size);
 
 	FastArray *arr = g_hash_table_lookup(reg->regid2fastarr, id);
 	if (arr == NULL)

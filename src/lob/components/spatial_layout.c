@@ -78,18 +78,22 @@ Lob *lob_vglue() {
 
 static void box_event(Lob *this, LobEv *ev, bool horiz)
 {
-	printf("box event\n");
 	LobBox *box = (LobBox *) this;
+	int i;
+	for (i=0; i<box->items->size; i++) {
+		Lob *item = (Lob *)util_arr_get(box->items, i);
+		item->event(item, ev);
+	}
 }
 
 static void hbox_event(Lob *this, LobEv *ev)
 {
-	printf("hbox event\n");
+	//printf("hbox event\n");
 	box_event(this, ev, 1);
 }
 static void vbox_event(Lob *this, LobEv *ev)
 {
-	printf("vbox event\n");
+	//printf("vbox event\n");
 	box_event(this, ev, 0);
 }
 
@@ -200,7 +204,7 @@ static void box_render(Lob *this, Coordsys *into,
 	int i;
 
 	Size *s = box->base.size(this);
-	DBG("Box w %f %f  h %f %f", s->natw, s->maxw, s->nath,s->maxh);
+	//DBG("Box w %f %f  h %f %f", s->natw, s->maxw, s->nath,s->maxh);
 	float dH = horiz? w_ - s->natw: h_ - s->nath;
 	float totalStretch = horiz? s->maxw - s->natw: s->maxh - s->nath;
 	float totalShrink = horiz? s->natw - s->minw: s->nath - s->minh;
@@ -208,7 +212,7 @@ static void box_render(Lob *this, Coordsys *into,
 	for (i=0; i<box->items->size; i++) {
 		Lob *item = util_arr_get(box->items, i);
 		Size *is = item->size(item);
-		DBG("Box %p item %s w %f %f  h %f %f", box, util_regs_dbg(item), is->natw, is->maxw, is->nath,is->maxh);
+		//DBG("Box %p item %s w %f %f  h %f %f", box, util_regs_dbg(item), is->natw, is->maxw, is->nath,is->maxh);
 
 		float diff = 0;
 		if (dH > 0) { // stretch
@@ -229,9 +233,9 @@ static void box_render(Lob *this, Coordsys *into,
 		Coordsys *cs = vob_coords_trans(vs, into, 
 						horiz?step:0, 
 						horiz?0:step, 0);
-		step += diff;
-		DBG("%s %f %f", util_regs_dbg(item), (horiz?diff: w_), (horiz?h_: diff));
+		//DBG("%s %f %f", util_regs_dbg(item), (horiz?diff: w_), (horiz?h_: diff));
 		item->render(item, cs, (horiz?diff: w_), (horiz?h_: diff), vs);
+		step += diff;
 	}
 }
 static void vbox_render(Lob *this, Coordsys *into, 

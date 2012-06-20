@@ -18,9 +18,9 @@ static Lob *image_layout(Lob *this, float w, float h)
 		if (r < m->ratio) {// h too much
 			m->size.natw = w;
 			m->size.nath = w / m->ratio;
-			printf("h too much %f %f %f\n", w, h, m->size.nath);
+			//printf("h too much %f %f %f\n", w, h, m->size.nath);
 		} else { // w too much
-			printf("w too much\n");
+			//printf("w too much\n");
 			m->size.natw = h * m->ratio;
 			m->size.nath = h;
 		}

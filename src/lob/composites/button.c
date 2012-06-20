@@ -1,6 +1,7 @@
 #include "lob/composites/button.h"
 #include "lob/lobs.h"
 #include "vob/vobs.h"
+#include "vob/coords.h"
 #include "gfx/gfx_api.h"
 #include "gfx/animation.h"
 
@@ -94,18 +95,22 @@ static Lob *text_lob(Region *r, char *text) {
 static void button_event(Lob *this, LobEv *event)
 {
 	LobButton *m = (LobButton *) this;
-	struct gfx_window *win = gfx_window_instance();
-	if (event->type == LOB_PTR_PRESS) {
-		m->model->state = PRESSED;
-		gfx_anim_chg(win->anim, 
-			CHG_SWITCH_VOB_SCENE);
+	Lob *lob = (Lob *)m;
+	printf("button event %p\n", lob->cs);
+	if (vob_coords_is_inside(lob->cs, (float)event->x, (float)event->y)) {
+		struct gfx_window *win = gfx_window_instance();
+		if (event->type == LOB_PTR_PRESS) {
+			m->model->state = PRESSED;
+			gfx_anim_chg(win->anim, 
+				CHG_SWITCH_VOB_SCENE);
+		}
+		if (event->type == LOB_PTR_RELEASE) {
+			m->model->state = RELEASED;
+			gfx_anim_chg(win->anim, 
+				CHG_SWITCH_VOB_SCENE);
+		}
+		m->delegate->event(m->delegate, event);
 	}
-	if (event->type == LOB_PTR_RELEASE) {
-		m->model->state = RELEASED;
-		gfx_anim_chg(win->anim, 
-			CHG_SWITCH_VOB_SCENE);
-	}
-	m->delegate->event(m->delegate, event);
 }
 static Size *button_size(Lob *this)
 {
@@ -123,6 +128,8 @@ static void button_render(Lob *this, Coordsys *into,
 			float w, float h, Scene *vs) 
 {
 	LobButton *m = (LobButton *) this;
+	Lob *lob = (Lob *)m;
+	lob->cs = vob_coords_box(vs, into, 0, 0, w, h);
 	m->delegate->render(m->delegate, into, w, h, vs);
 } 
 Lob *lob_button(Region *reg, char *text, LobClickModel *click)

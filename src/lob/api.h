@@ -51,6 +51,7 @@ typedef struct lob Lob;
  */
 struct lob {
 	Region *reg;
+	Coordsys *cs;
 
 	void (*event)(Lob *l, LobEv *event);
 

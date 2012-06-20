@@ -6,6 +6,9 @@
 
 static Region *reg = NULL;
 
+// Store lob for events.
+static Lob *currentLob = NULL; 
+
 static void debug_objects_recursive(void *o, int indent) {
 	int i;
 	for (i=0; i<indent; i++) {
@@ -20,17 +23,10 @@ static void debug_objects(void *o) {
 
 void lob_main_handle_event(struct gfx_window *win, LobEv* event)
 {
-	if (reg == NULL)
+	if (reg == NULL )
 		return;
-
-	struct gfx_callbacks *cb = gfx_callbacks(win);
-
-	printf("lob.main.create_lob for events\n");
-	Lob *lob = cb->create_lob(reg);
-	printf("lob.main.layout for events\n");
-	lob = lob->layout(lob, gfx_width(win), gfx_height(win));
-	printf("lob.main.event\n");
-	lob->event(lob, event);
+	printf("lob.main.event %d %d\n", event->x, event->y);
+	currentLob->event(currentLob, event);
 }
 
 
@@ -75,6 +71,8 @@ Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
 	printf("lob.main.render\n");
 	lob->render(lob, scene0->rootCS,
 		    gfx_width(win), gfx_height(win), scene0);
+
+	currentLob = lob;
 
 	//util_regs_clear(reg);
 /*

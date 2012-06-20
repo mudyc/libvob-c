@@ -46,6 +46,7 @@ static Lob *lob_glyph(Region *reg, LobFont *font, float size,
 		char *text, VobColor *c)
 {
 	LobGlyph *ret = REGION(reg, "lob.Glyph", LobGlyph);
+	ret->base.event = lob_event;
 	ret->base.size = glyph_size;
 	ret->base.layout = glyph_layout;
 	ret->base.render = glyph_render;
