@@ -39,7 +39,7 @@ static Lob *lob(Region *r, Lob *text)
 	lob_stack_add(r, (LobStack *)ret, text);
 	lob_stack_add(r, (LobStack *)ret, center);
 	lob_stack_add(r, (LobStack *)ret, edge);
-	printf("lob done %x\n", ret);
+	//printf("lob done %x\n", ret);
 	return ret;
 }
 
@@ -67,7 +67,7 @@ static Lob *lob_pressed(Region *r, Lob *text)
 	lob_stack_add(r, (LobStack *)ret, text);
 	lob_stack_add(r, (LobStack *)ret, center);
 	lob_stack_add(r, (LobStack *)ret, edge);
-	printf("lob done %x\n", ret);
+	//printf("lob done %x\n", ret);
 	return ret;
 }
 
@@ -96,18 +96,18 @@ static void button_event(Lob *this, LobEv *event)
 {
 	LobButton *m = (LobButton *) this;
 	Lob *lob = (Lob *)m;
-	printf("button event %p\n", lob->cs);
+	//printf("button event %p\n", lob->cs);
 	if (vob_coords_is_inside(lob->cs, (float)event->x, (float)event->y)) {
 		struct gfx_window *win = gfx_window_instance();
 		if (event->type == LOB_PTR_PRESS) {
-			m->model->state = PRESSED;
-			gfx_anim_chg(win->anim, 
-				CHG_SWITCH_VOB_SCENE);
+			if (lob_clickmodel_set(m->model, PRESSED))
+				gfx_anim_chg(win->anim, 
+					CHG_SWITCH_VOB_SCENE);
 		}
 		if (event->type == LOB_PTR_RELEASE) {
-			m->model->state = RELEASED;
-			gfx_anim_chg(win->anim, 
-				CHG_SWITCH_VOB_SCENE);
+			if (lob_clickmodel_set(m->model, RELEASED))
+				gfx_anim_chg(win->anim, 
+					CHG_SWITCH_VOB_SCENE);
 		}
 		m->delegate->event(m->delegate, event);
 	}
@@ -149,6 +149,6 @@ Lob *lob_button(Region *reg, char *text, LobClickModel *click)
 	else
 		ret->delegate = lob_pressed(reg, text_lob(reg, text));
 
-	printf("button: %p %p %d\n",ret, click, click->state);
+	//printf("button: %p %p %d\n",ret, click, click->state);
 	return (Lob*)ret;
 }

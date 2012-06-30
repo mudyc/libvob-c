@@ -1,4 +1,5 @@
 #include <Python.h>
+#include <glib.h>
 #include "structmember.h"
 
 #include "util/sigsegv.h"

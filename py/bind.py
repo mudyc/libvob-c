@@ -39,6 +39,7 @@ def to_c(param):
         raise RuntimeError('asdf'+param)
     return ret
 
+
 def add_attributes(clzz):
 
     print 'Add attrs', clzz['name'], clzz['typedef']
@@ -82,6 +83,62 @@ PyObject *%s_%s(PyObject *obj, void *data)
         attrs += """    {"%s", %s_%s, NULL, "", NULL }, \n""" %(att['name'], obj_name, att['name'])
 
 
+
+    # callacks
+    for att in clzz['methods']['public']:
+        if not 'doxygen' in att or \
+                not '@callback' in att['doxygen']: continue
+
+        method_name = att['name']
+        #obj_name = pyobj(clzz['name'])
+        #type_name = obj_name + "Type"
+        print 'cb:',method_name, obj_name, att['parameters']
+        params = ", ".join(map(lambda x: x['type']+" "+x['name'], att['parameters']))
+        paramNames = ", ".join(map(lambda x: x['name'], att['parameters']))
+
+        attrs += """    {"%s", NULL, %s_%s, "", NULL }, \n""" % (method_name, obj_name, method_name)#, f['doxygen'])
+
+
+        structs_and_types.append("""
+static GHashTable *%s_%s_model2pyobj = NULL;
+static %s %s_%s__wrap(%s)
+{
+    // find py obj by what? ...model
+    %s *pyobj = g_hash_table_lookup(%s_%s_model2pyobj, %s);
+    PyObject *arglist = Py_BuildValue("(O)", pyobj);
+    PyObject_CallObject(pyobj->%s, arglist);
+    Py_DECREF(arglist);
+}
+""" % (obj_name, method_name, att['rtnType'], obj_name, method_name, params,
+       obj_name, obj_name, method_name, paramNames, method_name))
+
+        structs_and_types.append("""
+static int %s_%s(PyObject *lob, PyObject *cb, void *v)
+{
+    PyObject *ret = NULL;
+    %s *self = (%s *)lob;
+""" % (obj_name, method_name, obj_name, obj_name))
+        structs_and_types.append("""
+    if (!PyCallable_Check(cb)) {
+        PyErr_SetString(PyExc_TypeError, "must be callable");
+        return NULL;
+    }
+    if (%s_%s_model2pyobj == NULL)
+        %s_%s_model2pyobj = g_hash_table_new(&g_direct_hash,
+					      &g_direct_equal);
+    g_hash_table_insert(%s_%s_model2pyobj, self->obj, self);
+""" % (obj_name, method_name, obj_name, method_name, obj_name, method_name))
+        structs_and_types.append("""
+    Py_XINCREF(cb);           /* Add a reference to new callback */
+
+    Py_XDECREF(self->%s);     /* Dispose of previous callback */
+    self->%s = cb;            /* Remember new callback */
+    self->obj->%s = &%s_%s__wrap;
+    return 0;
+}
+""" % (method_name, method_name, method_name, obj_name, method_name))
+
+
     if attrs != "":
         structs_and_types.append("""
 static PyGetSetDef %s__getters[] = {
@@ -93,7 +150,7 @@ static PyGetSetDef %s__getters[] = {
 """        %s.tp_getset = %s__getters;
 """ % (type_name, type_name))        
 
-def add_methods(func, funcs):
+def add_methods(func, funcs, clzz):
     print 'fakename', func
 
     type_name = ""
@@ -161,6 +218,20 @@ def gen(name, clzz, funcs):
     if 'doxygen' in clzz and '@model' in clzz['doxygen']:
         region = 'Region *pyRegion;'
 
+    callbacks = ""
+    for att in clzz['methods']['public']:
+        if not 'doxygen' in att or \
+                not '@callback' in att['doxygen']: continue
+
+        method_name = att['name']
+        obj_name = pyobj(clzz['name'])
+        params = ", ".join(map(lambda x: "PyObject *"+x['name'], att['parameters']))
+        callbacks += """%s (*%s)(%s);
+""" %(att['rtnType'], method_name, params)
+        type_name = obj_name + "Type"
+        print 'cb:',method_name, obj_name, 
+
+
     struct = 'Py'+name
     typee = 'Py'+name+'Type'
     py_name = 'libvob.'+name
@@ -186,6 +257,7 @@ def gen(name, clzz, funcs):
         PyObject_HEAD
         %s
         %s *obj;
+        %s
     } %s;
 
     static PyTypeObject %s = {
@@ -195,7 +267,7 @@ def gen(name, clzz, funcs):
         sizeof(%s),\t\t\t/*tp_basicsize*/
     };
 
-""" % ( struct, region, fakename, struct, typee, py_name, struct))
+""" % ( struct, region, fakename, callbacks, struct, typee, py_name, struct))
 
     for f in funcs:
         if f['name'] == clzz['name']:
@@ -374,7 +446,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                     "        %s.tp_new = PyType_GenericNew;\n"\
                         % (typee))
                 
-    add_methods(clzz['name'], funcs)
+    add_methods(clzz['name'], funcs, clzz)
     add_attributes(clzz)
 
     init_type_ready.append(
@@ -422,7 +494,11 @@ if __name__ == '__main__':
             var = clzz['properties']['public'][0]
             var_type = clzz['properties']['public'][0]['type']
             if var_type in all_classes.keys():
-                clzz['inherits'].append(all_classes[var_type])
+                inherits = all_classes[var_type]
+                inherits['access'] = 'public'
+                inherits['class'] = inherits['name']
+                print 'inherits', inherits['name']
+                clzz['inherits'].append(inherits)
 
 
     def children(name):
@@ -473,7 +549,7 @@ if __name__ == '__main__':
     for func in all_funcs:
         n = func['name']
         try:
-            print 'doc2', func['doxygen']
+            pass#print 'doc2', func['doxygen']
         except: pass
         if n.endswith('_add'):
             continue
@@ -487,7 +563,10 @@ if __name__ == '__main__':
             continue
         print 'need',needClzz
         clzz = CppHeaderParser.CppClass(['struct', parts[0].lower()])
-        clzz['inherits'].append(all_classes[func['return']])
+        inherits = all_classes[func['return']]
+        inherits['access'] = 'public'
+        inherits['class'] = inherits['name']
+        clzz['inherits'].append(inherits)
         clzz['name'] = n
         gen(needClzz, clzz, all_funcs)
 

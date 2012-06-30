@@ -267,6 +267,7 @@ class CppClass(dict):
         if "inherits" in self.keys():
             rtn += "Inherits: "
             for inheritClass in self["inherits"]:
+                print inheritClass.keys(), inheritClass['name']
                 rtn += "%s %s, "%(inheritClass["access"], inheritClass["class"])
             rtn += "\n"
         rtn += "{\n"
@@ -308,6 +309,10 @@ class CppMethod(dict):
         if "operator" in nameStack:
             self["rtnType"] = " ".join(nameStack[:nameStack.index('operator')])
             self["name"] = "".join(nameStack[nameStack.index('operator'):nameStack.index('(')])
+        elif  nameStack.count('(') == 2 and nameStack[nameStack.index('(')+1] == '*':
+            self["rtnType"] = " ".join(nameStack[:nameStack.index('(') - 1])
+            self["name"] = " ".join(nameStack[nameStack.index('(') + 2: nameStack.index(')')])
+            nameStack = nameStack[nameStack.index(')')+1:]
         else:
             self["rtnType"] = " ".join(nameStack[:nameStack.index('(') - 1])
             self["name"] = " ".join(nameStack[nameStack.index('(') - 1:nameStack.index('(')])
@@ -358,7 +363,7 @@ class CppMethod(dict):
                     params.append(param)
                 break
         self["parameters"] = params
-
+        print self['rtnType'], self['name'],params
 
 class CppVariable(dict):
     """Takes a name stack and turns it into a method
@@ -634,7 +639,6 @@ class CppHeader:
                 self.typedefs[self.nameStack[2]] = self.nameStack[3]
                 self.classes[self.nameStack[2]]['typedef'] = self.nameStack[3]
         elif (len(self.curClass) == 0):
-            print 'daa'
             if (debug): print "line ",lineno()
             if is_enum_namestack(self.nameStack):
                 self.evaluate_enum_stack()
@@ -666,7 +670,7 @@ class CppHeader:
             if (debug): print "line ",lineno()
             self.evaluate_property_stack()
 
-        print 'empty doc'
+        #print 'empty doc'
         self.nameStack = []
         doxygenCommentCache = ""
     
