@@ -19,6 +19,11 @@ struct lob_size {
 };
 typedef struct lob_size Size;
 
+Size *lob_size(Region *r, 
+	float minw, float natw, float maxw,
+	float minh, float nath, float maxh);
+
+
 enum EV_TYPE {
 	LOB_PTR_PRESS = 1,
 	LOB_PTR_RELEASE,
@@ -63,7 +68,7 @@ struct lob {
 
 
 void lob_event(Lob *l, LobEv *event);
-Size *lob_size(Lob *l);
+Size *lob_size_default(Lob *l);
 Lob *lob_layout(Lob *this, float w, float h);
 
 //Lob *lob_layout(Lob *l, int w, int h);

@@ -4,8 +4,8 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
-#include "lob/models/samemodel.h"
 #include "lob/components/limit.h"
+#include "lob/models/samemodel.h"
 #include "vob/coords.h"
 #include "util/dbg.h"
 
@@ -49,6 +49,29 @@ Lob *lob_natsize(Region *reg, Lob *delegate)
 	ret->size.nath = s->nath;
 	ret->size.maxh = s->maxh;
 	
+	return (Lob*)ret;
+}
+
+static Size *reqsize_size(Lob *this)
+{
+	LobReqSize *r = (LobReqSize *) this;
+	return r->size;
+}
+Lob *lob_reqsize(Region *reg, Lob *delegate, Size *s)
+{
+	LobReqSize *ret = REGION(reg, "lob.component.ReqSize", LobReqSize);
+	LobDelegate *ret_d = (LobDelegate *) ret;
+	Lob *ret_l = (Lob *) ret;
+
+	ret_l->event = &lob_delegate_event;
+	ret_l->size = &reqsize_size;
+	ret_l->layout = &lob_delegate_layout;
+	ret_l->render = &lob_delegate_render;
+
+	ret_d->delegate = delegate;
+
+	ret->size = s;
+
 	return (Lob*)ret;
 }
 

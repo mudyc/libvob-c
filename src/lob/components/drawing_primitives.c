@@ -33,7 +33,7 @@ Lob *lob_rect(Region *reg, VobColor *c_)
 	ret->lob.reg = reg;
 
 	ret->lob.event = &lob_event;
-	ret->lob.size = &lob_size;
+	ret->lob.size = &lob_size_default;
 	ret->lob.layout = &rect_layout;
 	ret->lob.render = &rect_render;
 
@@ -70,7 +70,7 @@ Lob *lob_rounded_rect(Region *reg, VobFill *fill,
 	ret->lob.reg = reg;
 
 	ret->lob.event = &lob_event;
-	ret->lob.size = &lob_size;
+	ret->lob.size = &lob_size_default;
 	ret->lob.layout = &lob_layout;
 	ret->lob.render = &rounded_render;
 

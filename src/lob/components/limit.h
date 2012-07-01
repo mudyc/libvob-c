@@ -11,6 +11,13 @@ struct lob_natsize {
 typedef struct lob_natsize LobNatSize;
 Lob *lob_natsize(Region *reg, Lob *delegate);
 
+struct lob_reqsize {
+	LobDelegate base;
+	Size *size;
+};
+typedef struct lob_reqsize LobReqSize;
+Lob *lob_reqsize(Region *reg, Lob *delegate, Size *s);
+
 struct lob_samew {
 	LobDelegate base2;
 	LobSameModel *model;

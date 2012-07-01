@@ -390,7 +390,7 @@ static Lob *margin_layout(Lob *this, float w, float h)
 	LobMargin *m = (LobMargin *) this;
 	m->delegate = m->delegate->layout(m->delegate,
 					w - m->l - m->r, h - m->t - m->b);
-	return m;
+	return (Lob *)m;
 }
 static void margin_render(Lob *this, Coordsys *into, 
 			float w, float h, Scene *vs) 

@@ -18,6 +18,8 @@
 
 #include "lob/components/limit.h"
 // natsize
+// reqsize
+// samew(idth)
 
 #include "lob/components/spatial_layout.h"
 // left, center, right

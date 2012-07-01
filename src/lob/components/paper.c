@@ -26,7 +26,7 @@ LobPaper *lob_paper(Region *reg, unsigned long id)
 	LobPaper *ret = REGION(reg, "lob.component.Paper", LobPaper);
 
 	ret->lob.reg = reg;
-	ret->lob.size = &lob_size;
+	ret->lob.size = &lob_size_default;
 	ret->lob.layout = &paper_layout;
 	ret->lob.render = &paper_render;
 

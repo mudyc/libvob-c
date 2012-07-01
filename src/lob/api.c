@@ -18,6 +18,22 @@ static void _init_lob_INF()
 }
 */
 
+Size *lob_size(Region *reg,
+	float minw, float natw, float maxw,
+	float minh, float nath, float maxh) 
+{
+	Size *ret = REGION(reg, "lob.Size", Size);
+
+	ret->minw = minw;
+	ret->minh = minh;
+	ret->natw = natw;
+	ret->nath = nath;
+	ret->maxw = maxw;
+	ret->maxh = maxh;
+
+	return ret;
+}
+
 void lob_render(Lob *l, Scene *sc) 
 {
 	UNIMPL
@@ -27,7 +43,7 @@ void lob_event(Lob *l, LobEv *event)
 {
 	// do nothing but dance around the floor.
 }
-Size *lob_size(Lob *l) 
+Size *lob_size_default(Lob *l) 
 {
 	Size *ret = REGION(l->reg, "lob.Size", Size);
 

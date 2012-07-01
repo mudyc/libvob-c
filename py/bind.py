@@ -338,6 +338,10 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                             s += '        PyLob *p'+str(idx)+';\n' 
                             types += 'O'
                             params += '&p'+str(idx)+', '
+                        elif param['type'] == 'Size *':
+                            s += '        PySize *p'+str(idx)+';\n' 
+                            types += 'O'
+                            params += '&p'+str(idx)+', '
                         elif param['type'] == 'char *':
                             s += '        const char *p'+str(idx)+';\n' 
                             types += 's'
@@ -366,8 +370,9 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                         s += ', '
                     s+= 'p'+str(i)
                     if f['parameters'][i]['type'].startswith('Lob') \
-                            or f['parameters'][i]['type'].startswith('Vob'):
-                        s+= '->obj'
+                            or f['parameters'][i]['type'].startswith('Vob') \
+                            or f['parameters'][i]['type'].startswith('Size'):
+                        s += '->obj'
                 s += ');\n'
                 if adder != None:
                     s += """
@@ -396,7 +401,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         }
 """ % (clzz['name'], fakename, pars)
 
-                s += '    }\n    return self;\n}\n\n'
+                s += '    }\n    return (PyObject *) self;\n}\n\n'
                 structs_and_types.append(s)
 
                 init_type_ready.append(
