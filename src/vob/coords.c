@@ -166,3 +166,52 @@ bool vob_coords_is_inside(Coordsys *cs, float x, float y)
 	return 0 <= X && X <= w 
 		&& 0 <= Y && Y <= h;
 }
+
+
+void vob_coords_info(Coordsys *cs,
+		float *x, float *y, float *z, 
+		float *w, float *h,
+		float *sx, float *sy)
+{
+	switch (cs->type) {
+	case CS_ROOT: {
+		*x = 0;	*y = 0;	*z = 0;
+		*w = 1; *h = 1;
+		*sx = 1; *sy = 1;
+		//DBG("root cs(%f %f)", *cs_x, *cs_y);
+		break;
+	}
+	case CS_BOX: {
+		BoxCS *p = (BoxCS*)cs;
+		vob_coords_info(p->parent, x,y,z,  w,h, sx,sy);
+		*x += p->x;
+		*y += p->y;
+		*w = p->w;
+		*h = p->h;
+		//DBG("box cs(%f %f)", *cs_x, *cs_y);
+		break;
+	}
+	case CS_TRANS: {
+		TransCS *p = (TransCS*)cs;
+		vob_coords_info(p->parent, x,y,z,  w,h, sx,sy);
+		*x += p->x;
+		*y += p->y;
+		//DBG("trans cs(%f %f)", *cs_x, *cs_y);
+		break;
+	}
+	case CS_ORTHO: {
+		OrthoCS *p = (OrthoCS*)cs;
+		vob_coords_info(p->parent, x,y,z,  w,h, sx,sy);
+		*x += p->x;
+		*y += p->y;
+		*z += p->z;
+		*sx *= p->sx;
+		*sy *= p->sy;
+		DBG("ortho cs(%f %f)", *sx, *sy);
+		break;
+	}
+	default:
+		errx(1, "No width or height implemented for cs: %d\n", 
+		     cs->type);
+	}
+}

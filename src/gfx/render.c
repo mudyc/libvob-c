@@ -7,6 +7,7 @@
 #include "gfx/render.h"
 #include "util/dbg.h"
 
+#include "lob/models/keyanimmodel.h"
 
 
 
@@ -14,6 +15,7 @@ struct gfx_render *gfx_render_create()
 {
 	struct gfx_render *ret = malloc(sizeof(struct gfx_render));
 	memset(ret, 0, sizeof(struct gfx_render));
+	ret->current = NULL;
 	return ret;
 }
 
@@ -31,17 +33,20 @@ static int time_cmp(struct timespec a, struct timespec b)
 
 static float get_anim_fract(struct gfx_render *render, struct timespec *now)
 {
-	long D = render->t1.tv_sec - render->t0.tv_sec;
-	D *= 1000 * 1000;
+	//DBG("t0  %ld.%ld", render->t0.tv_sec, render->t0.tv_nsec)
+	//DBG("now %ld.%ld", now->tv_sec, now->tv_nsec)
+	//DBG("t1  %ld.%ld", render->t1.tv_sec, render->t1.tv_nsec)
+	long long D = render->t1.tv_sec - render->t0.tv_sec;
+	D *= 1000 * 1000 * 1000;
 	D += render->t1.tv_nsec - render->t0.tv_nsec;
 	
-	long d = now->tv_sec - render->t0.tv_sec;
-	d *= 1000 * 1000;
+	long long d = now->tv_sec - render->t0.tv_sec;
+	d *= 1000 * 1000 * 1000;
 	d += now->tv_nsec - render->t0.tv_nsec;
 	
-	DBG("1");
-	float persentage = d/D;
-	DBG("2");
+	//DBG("1 %lld %lld", d, D);
+	float persentage = (double)d/(double)D;
+	//DBG("2 %f", persentage);
 	// gnuplot: 
 	//  set xrange[0:2]
 	//  plot (1+sin((x*3.7-pi/2)))*0.55
@@ -55,10 +60,12 @@ static float get_anim_fract(struct gfx_render *render, struct timespec *now)
 	return ret;
 }
 
+
 void gfx_render(struct gfx_window *w, 
 		enum GFX_ANIM_TYPE chg, 
 		long anim_time)
 {
+	//DBG("%d",chg)
 	struct timespec now;
 
 	struct gfx_callbacks *cb = gfx_callbacks(w);
@@ -69,41 +76,95 @@ void gfx_render(struct gfx_window *w,
 
 	switch (chg) {
 	case CHG_SWITCH_VOB_SCENE: {
-		render->prev = NULL;
+		render->prev = render->current;
 		render->current = cb->generate_scene(w);
 		clock_gettime(CLOCK_REALTIME, &render->t0);
 		memcpy(&render->t1, &render->t0, sizeof(struct timespec));
-		render->matcher = NULL;
 		break;
 	}
 	case CHG_ANIMATE: {
 		render->prev = render->current;
 		render->current = cb->generate_scene(w);
 
-		// XXX todo matcher..
-		render->matcher = NULL;
-
 		clock_gettime(CLOCK_REALTIME, &render->t0);
 		memcpy(&render->t1, &render->t0, sizeof(struct timespec));
 		render->t1.tv_sec += anim_time / 1000;
 		render->t1.tv_nsec += (anim_time % 1000)*1000;
+		DBG("t0 %d.%d  t1 %d.%d",render->t0.tv_sec ,render->t0.tv_nsec, render->t1.tv_sec ,render->t1.tv_nsec )
 		break;
 	}
-        case CHG_RERENDER: break;
+        case CHG_RERENDER:
+	default:
+		break;
 	}
 
 	// just render in here.
 
 	clock_gettime(CLOCK_REALTIME, &now);
+	render->t_since_ms = (now.tv_sec - render->t_frame.tv_sec) * 1000
+		+ (now.tv_nsec - render->t_frame.tv_nsec)/1000000.0f;
+	render->t_frame.tv_sec = now.tv_sec;
+	render->t_frame.tv_nsec = now.tv_nsec;
 
 	if (time_cmp(render->t0, render->t1) < 0 
-	    && time_cmp(render->t1, now) < 0) {
-		/*float d = */get_anim_fract(render, &now);
+		&& time_cmp(render->t_frame, render->t1) < 0) {
+		//float d = get_anim_fract(render, &now);
+		//DBG("fract: %f",render->t_frame)
+		gfx_render_frame(w);
 		//w->anim_render(w, d);
 	} else {
 		// no anim...
-		printf("no anim\n");
+
+		GHashTableIter iter;
+		gpointer key, value;
+
+		g_hash_table_iter_init (&iter, render->current->anim_set);
+		while (g_hash_table_iter_next (&iter, &key, &value)) 
+		{
+			float ms = render->t_since_ms;
+			LobAnimModel *m = (LobAnimModel *)key;
+			if (m->tick(m, ms)) {
+				g_hash_table_iter_remove(&iter);
+				DBG("remove %p",m);
+			}
+		}
+
+
+
+		//printf("no anim\n");
 		w->single_render(w, render->current);
 	}
 
+}
+
+
+
+void gfx_render_frame(struct gfx_window *w)
+{
+	struct timespec now;
+	clock_gettime(CLOCK_REALTIME, &now);
+
+	struct gfx_render *render = w->render;
+	float d = get_anim_fract(render, &now);
+	DBG("fract: %f",d);
+	w->anim_render(w, render->prev, render->current, d);
+}
+bool gfx_render_is_animating(struct gfx_window *w)
+{
+	struct timespec now;
+	clock_gettime(CLOCK_REALTIME, &now);
+
+	struct gfx_render *render = w->render;
+	if (time_cmp(render->t0, render->t1) < 0 
+		&& time_cmp(now, render->t1) < 0)
+		return true;
+	return false;
+}
+
+bool gfx_render_has_animation_models(struct gfx_window *w)
+{
+	struct gfx_render *render = w->render;
+	if (render->current == NULL)
+		return false;
+	return g_hash_table_size(render->current->anim_set) > 0;
 }

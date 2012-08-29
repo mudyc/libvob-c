@@ -35,7 +35,7 @@ struct gfx_window {
 	int (*gui_fd)(void *);
 
 	void (*single_render)(struct gfx_window *w, Scene *vs);
-	void (*anim_render)(Scene *vs, float fract);
+	void (*anim_render)(struct gfx_window *w, Scene *vs0, Scene *vs1, float fract);
 
 	void (*font_list)(int *len, char ***list);
 	void (*font_glyph_size)(//void *, 

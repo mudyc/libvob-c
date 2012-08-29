@@ -74,7 +74,14 @@ Lob *lob_layout(Lob *this, float w, float h);
 //Lob *lob_layout(Lob *l, int w, int h);
 void lob_render(Lob *l, Scene *sc);
 
-
+/**
+ *  @classmethod
+ */
+void lob_animate();
+/**
+ *  @classmethod
+ */
+void lob_switch();
 
 struct lob_delegate {
 	Lob base;

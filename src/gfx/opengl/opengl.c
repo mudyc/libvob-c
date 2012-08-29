@@ -15,13 +15,12 @@
 #include "gfx/gfx_api.h"
 #include "gfx/animation.h"
 #include "gfx/opengl/opengl.h"
+#include "gfx/opengl/render.h"
 #include "gfx/opengl/glyph.h"
 #include "gfx/opengl/image.h"
 
 #include "gfx/opengl/paper/shaders.h"
 
-
-void gfx_opengl_single_render(struct gfx_window *w, Scene *vs);
 
 /*
 static void paint(Display *dpy, GLXWindow glxWin)
@@ -65,7 +64,8 @@ static void read_event(struct impl *c)
 			paint(c->dpy, c->glxWin);
 		}
 		*/
-		gfx_anim_chg(c->delegate_win->anim, CHG_ANIMATE);
+		//gfx_anim_chg(c->delegate_win->anim, CHG_ANIMATE);
+		gfx_anim_chg(c->delegate_win->anim, CHG_SWITCH_VOB_SCENE);
 		break;
 	}
 
@@ -287,6 +287,7 @@ gfx_opengl_paper_shaders_init();
 	ret->image_size = &gfx_opengl_image_size;
 
 	ret->single_render = &gfx_opengl_single_render;
+	ret->anim_render = &gfx_opengl_frame_render;
 
 	return ret;
 }

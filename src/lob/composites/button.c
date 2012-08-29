@@ -100,12 +100,14 @@ static void button_event(Lob *this, LobEv *event)
 	if (vob_coords_is_inside(lob->cs, (float)event->x, (float)event->y)) {
 		struct gfx_window *win = gfx_window_instance();
 		if (event->type == LOB_PTR_PRESS) {
-			if (lob_clickmodel_set(m->model, PRESSED))
+			if (lob_clickmodel_set(m->model, PRESSED)
+			    && !gfx_anim_is_chg_incoming(win->anim))
 				gfx_anim_chg(win->anim, 
 					CHG_SWITCH_VOB_SCENE);
 		}
 		if (event->type == LOB_PTR_RELEASE) {
-			if (lob_clickmodel_set(m->model, RELEASED))
+			if (lob_clickmodel_set(m->model, RELEASED)
+			    && !gfx_anim_is_chg_incoming(win->anim))
 				gfx_anim_chg(win->anim, 
 					CHG_SWITCH_VOB_SCENE);
 		}

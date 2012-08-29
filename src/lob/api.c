@@ -7,6 +7,8 @@
 #include "util/dbg.h"
 #include "util/strings.h"
 
+#include "gfx/gfx_api.h"
+#include "gfx/animation.h"
 
 const float LOB_INF = 1073741824.0f;
 /*
@@ -58,6 +60,18 @@ Lob *lob_layout(Lob *this, float w, float h)
 {
 	return this;
 }
+
+void lob_animate() 
+{
+	DBG("animate");
+	gfx_anim_chg(gfx_window_instance()->anim, CHG_ANIMATE); 
+}
+void lob_switch() 
+{
+	DBG("switch");
+	gfx_anim_chg(gfx_window_instance()->anim, CHG_SWITCH_VOB_SCENE); 
+}
+
 
 int lob_min_size() { return 0; }
 int lob_pref_size() { return 0; }

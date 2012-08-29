@@ -4,10 +4,13 @@
 
 //! @nopython
 
+#include <glib.h>
+
 #include "util/regions.h"
 
 #include "vob/api.h"
 //#include "vob/coords.h"
+#include "vob/matcher.h"
 
 /** Vob scene which holds visual objects (vobs) within a map. A vob
  * may be placed according to coordinates (i.e. translations suchs as
@@ -20,12 +23,19 @@ struct vob_scene {
 	// vob map or list
 	// coords
 	// matcher
+	VobMatcher *matcher;
+
 	FastArray *vobs_arr;
 	FastArray *coords_arr;
+	//FastArray *anims_arr;
+	GHashTable *anim_set;
 
 	Coordsys *rootCS; // coordinates
 
 	Region *reg;
+
+	Scene *previous;
+
 };
 //typedef struct vob_scene Scene;
 

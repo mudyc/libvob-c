@@ -147,8 +147,12 @@ class Dep:
                 def __init__(self, t, r, p):
                     threading.Thread.__init__(self)
                     self.t, self.r, self.p = t,r,p
+                    self.ok = True
                 def run(self):
-                    self.r += targets[self.t].reduce(self.p)
+                    try:
+                        self.r += targets[self.t].reduce(self.p)
+                    except:
+                        self.ok = False
 
             ret = []
             workers = []
@@ -156,7 +160,9 @@ class Dep:
                 #ret += targets[self.name].reduce(pars)
                 workers.append(DepWorker(self.name, ret, pars))
                 workers[-1].start()
-            for w in workers: w.join()
+            for w in workers: 
+                w.join()
+                if not w.ok: raise RuntimeError('dep failed in thread')
                 
             if dbg: print 'depreduce ret',ret
             return ret

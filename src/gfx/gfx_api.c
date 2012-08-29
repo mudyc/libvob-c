@@ -109,7 +109,15 @@ void gfx_main_loop(struct gfx_window *win)
 		FD_SET(gui_fd, &fds);
 		FD_SET(gfx_chg_fd, &fds);
 
-		val = select(max, &fds, NULL, NULL, NULL);
+		struct timespec waitUntil;
+		waitUntil.tv_sec = 1;
+		waitUntil.tv_nsec = 0;
+		if (gfx_render_is_animating(win) 
+			|| gfx_render_has_animation_models(win)) {
+			waitUntil.tv_sec = 0;
+			waitUntil.tv_nsec = 5*1000000; // ms
+		}
+		val = pselect(max, &fds, NULL, NULL, &waitUntil, NULL);
 		if (val == -1)
 			break;
 
@@ -132,6 +140,10 @@ void gfx_main_loop(struct gfx_window *win)
 			//int chg = 213; // fetch/pop GFX_ANIM_CHG..
 
 			gfx_render(win, chg, anim);
+		} else if (gfx_render_has_animation_models(win)) {
+			gfx_render(win, CHG_RERENDER, 0);
+		} else if (gfx_render_is_animating(win)) {
+			gfx_render_frame(win);
 		}
 	}
 

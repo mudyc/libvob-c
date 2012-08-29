@@ -32,6 +32,7 @@ enum GFX_ANIM_TYPE {
 	 */
 	CHG_RERENDER,
 
+	CHG_NOTHING = -1
 };
 
 struct gfx_animation *gfx_anim_create();
@@ -40,6 +41,7 @@ void gfx_anim_chg(struct gfx_animation *animation,
 		  enum GFX_ANIM_TYPE type);
 int gfx_anim_chg_reset(struct gfx_animation *animation);
 
+bool gfx_anim_is_chg_incoming();
 
 void gfx_anim_time(struct gfx_animation *animation,
 		   long time_in_ms, bool temporary);

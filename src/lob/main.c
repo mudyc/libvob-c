@@ -56,6 +56,8 @@ Scene* lob_main_generate_vob_scene(struct gfx_window *win) {
 
 	vob_scene_clear(scene0);
 
+	scene0->previous = scene1;
+
 	struct gfx_callbacks *cb = gfx_callbacks(win);
 
 	// do lobs

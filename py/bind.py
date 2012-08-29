@@ -49,7 +49,7 @@ def add_attributes(clzz):
     obj_name = 'Py' + clzz['typedef']
     type_name = obj_name + 'Type'
     for att in clzz['properties']['public']:
-        if att['type'] in ['Region *', 'Lob *', 'Lob', 'LobDelegate', 'UtilArray *', 'Size', 'Size *', 'Coordsys *','LobEv','LobModel', 'LobClickModel *', 'LobSameModel *', 'LobFont *', 'VobColor *', 'Vob', 'VobFill','VobFill *']: continue
+        if att['type'] in ['Region *', 'Lob *', 'Lob', 'LobDelegate', 'UtilArray *', 'Size', 'Size *', 'Coordsys *','OrthoCS *','LobEv','LobModel', 'LobClickModel *', 'LobAnimModel','LobAnimModel *','LobKeyAnimModel *', 'LobSameModel *', 'LobFont *', 'VobColor *', 'Vob', 'VobFill','VobFill *']: continue
 
         structs_and_types.append("""
 PyObject *%s_%s(PyObject *obj, void *data)
@@ -173,6 +173,14 @@ static PyObject *%s_%s(PyObject *a, PyObject *b)
 {
     PyObject *ret = NULL;
 """ % (obj_name, method_name))
+
+        print f.keys()
+        if f['return'] == 'void':
+            structs_and_types.append("""
+    %s();
+    Py_INCREF(Py_None);
+    ret = Py_None;
+""" % (f['name']));
 
         if '@return UtilArray' in f['doxygen']:
             params = []
@@ -345,6 +353,10 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                         elif param['type'] == 'char *':
                             s += '        const char *p'+str(idx)+';\n' 
                             types += 's'
+                            params += '&p'+str(idx)+', '
+                        elif param['type'] == 'bool':
+                            s += '        bool p'+str(idx)+';\n' 
+                            types += 'i'
                             params += '&p'+str(idx)+', '
                         elif param['type'].startswith('enum '):
                             s += '        int p'+str(idx)+';\n' 

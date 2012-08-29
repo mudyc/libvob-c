@@ -50,7 +50,7 @@
 // paper
 
 // animation key!
-// 
+#include "lob/components/animation.h" 
 
 // events
 

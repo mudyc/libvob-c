@@ -172,6 +172,15 @@ Animation
 
 lob_key();
 
+enum ANIM{
+     SHADE_OUT,
+     SHADE_IN,
+     POP_IN,
+     POP_OUT
+};
+lob_anim(Lob *l, enum ANIM);
+
+
 Misc
 ----
 

@@ -75,4 +75,11 @@ float vob_coords_h(Coordsys *cs);
 
 void vob_coords_dump(Coordsys *cs);
 
+
+void vob_coords_info(Coordsys *into, 
+		float *x, float *y, float *z, 
+		float *w, float *h,
+		float *sx, float *sy);
+
+
 #endif

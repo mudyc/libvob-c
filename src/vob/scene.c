@@ -3,6 +3,7 @@
 
 #include "vob/scene.h"
 #include "vob/coords.h"
+#include "vob/matcher.h"
 #include "util/dbg.h"
 #include "util/regions.h"
 
@@ -11,12 +12,17 @@
 Scene *vob_scene_create()
 {
 	Scene *ret = malloc(sizeof(Scene));
+	ret->matcher = vob_matcher(ret->reg);
 
 	ret->reg = util_regs_create("scene");
+
 
 	ret->rootCS = (Coordsys*) vob_coords_root(ret);
 	ret->vobs_arr = util_fastarr_create(sizeof(void *));
 	ret->coords_arr = util_fastarr_create(sizeof(void *));
+
+	ret->anim_set = g_hash_table_new_full(
+		g_direct_hash,g_direct_equal,NULL,NULL);
 
 	return ret;
 }
@@ -53,6 +59,12 @@ void vob_scene_clear(Scene *sc)
 
 	util_fastarr_clear(sc->vobs_arr);
 	util_fastarr_clear(sc->coords_arr);
+
+	g_hash_table_remove_all(sc->anim_set);
+
+	vob_matcher_clear(sc->matcher);
+
+	sc->previous = NULL;
 }
 
 void vob_scene_put0(Scene *vs, Vob0 *v)
