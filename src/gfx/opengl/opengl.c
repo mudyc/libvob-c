@@ -21,6 +21,7 @@
 
 #include "gfx/opengl/paper/shaders.h"
 
+#include "util/dbg.h"
 
 /*
 static void paint(Display *dpy, GLXWindow glxWin)
@@ -38,7 +39,7 @@ static void read_event(struct impl *c)
 {
 	XEvent event;
 	XNextEvent(c->dpy, &event);
-
+	//DBG("event: %d", event.type);
 	switch (event.type) {
 
 	// paint events.
@@ -49,7 +50,8 @@ static void read_event(struct impl *c)
 	case VisibilityNotify:
 	case MapRequest: {
 		//paint(c->dpy, c->glxWin);
-		gfx_anim_chg(c->delegate_win->anim, CHG_ANIMATE);
+		gfx_anim_chg(c->delegate_win->anim, CHG_SWITCH_VOB_SCENE);
+		//gfx_anim_chg(c->delegate_win->anim, CHG_ANIMATE);
 		break;
 	}
 
@@ -83,7 +85,7 @@ static void read_event(struct impl *c)
 	case ButtonPress:
 	case ButtonRelease: {
 		XButtonEvent me = event.xbutton;
-		printf("button: %d,%d %d %d %d\n",
+		DBG("button: %d,%d %d %d %d\n",
 			me.x, me.y, me.state, me.button, me.type);
 		LobEv event;
 		if (me.type == ButtonPress)
@@ -130,7 +132,7 @@ static void read_event(struct impl *c)
 	case ClientMessage:
 	case MappingNotify:
 	default:
-		printf("Un handled.. event! type: %d\n", event.type);
+		;//printf("Un handled.. event! type: %d\n", event.type);
 	}
 
 }
@@ -154,7 +156,8 @@ static void event_handler(struct impl *c)
 		if (select(fd+1, &read, NULL, NULL, NULL) < 0)
 			perror("Connection error!");
 */
-	read_event(c);
+	if (XPending(c->dpy))
+		read_event(c);
 }
 
 

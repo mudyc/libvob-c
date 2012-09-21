@@ -308,7 +308,7 @@ PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                 structs_and_types.append("""
 PyObject *%s_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-    printf("%s_new\\n");
+    //printf("%s_new\\n");
 
     %s *self;
 

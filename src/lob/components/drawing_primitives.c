@@ -14,7 +14,7 @@ static void rect_render(Lob *this, Coordsys *into,
 {
 	// compose needed vobs from this lob.
 	LobRect *r = (LobRect *) this;
-	printf("rectrend: %f %f %f \n", r->color->r, r->color->g, r->color->b);
+	//printf("rectrend: %f %f %f \n", r->color->r, r->color->g, r->color->b);
 	Vob1 *vob = vob_rect(vs, r->color->r, r->color->g, r->color->b);
 
 	// create a sufficient transformation for the vob
@@ -38,7 +38,7 @@ Lob *lob_rect(Region *reg, VobColor *c_)
 	ret->lob.render = &rect_render;
 
 	ret->color = c_;
-	printf("c %f %f %f\n", ret->color->r, ret->color->g, ret->color->b);
+	//printf("c %f %f %f\n", ret->color->r, ret->color->g, ret->color->b);
 	return (Lob*)ret;
 }
 

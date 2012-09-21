@@ -2,6 +2,7 @@
 #define LOB_MODELS_KEYANIMMODEL_H
 
 #include <stdbool.h>
+#include <time.h>
 
 #include "lob/api.h"
 
@@ -13,8 +14,10 @@ struct lob_animmodel {
 	float time; // seconds
 	float t; // 0 < t < time
 
+	struct timespec start_time;
+
 	// return true if done - no more ticks
-	bool (*tick)(struct lob_animmodel* m, float ms);
+	bool (*tick)(struct lob_animmodel* m, struct timespec *now);
 };
 typedef struct lob_animmodel LobAnimModel;
 

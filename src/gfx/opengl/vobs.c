@@ -19,7 +19,7 @@ static void rect(Rect *r, Coordsys *cs) {
 	float 
 		w = vob_coords_w(cs),
 		h = vob_coords_h(cs);
-	printf("rect: %2.1fx%2.1f %0.2f,%0.2f,%0.2f\n", w,h, r->r, r->g, r->b);
+	//printf("rect: %2.1fx%2.1f %0.2f,%0.2f,%0.2f\n", w,h, r->r, r->g, r->b);
 
 	glBegin(GL_QUADS);
 	glVertex2f(0, h);

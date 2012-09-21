@@ -117,33 +117,37 @@ void gfx_main_loop(struct gfx_window *win)
 			waitUntil.tv_sec = 0;
 			waitUntil.tv_nsec = 5*1000000; // ms
 		}
+
 		val = pselect(max, &fds, NULL, NULL, &waitUntil, NULL);
 		if (val == -1)
 			break;
 
 		// handle gui first
 		if (FD_ISSET(gui_fd, &fds)) {
-			printf("gui indication\n");
+			DBG("gui indication\n");
 			win->event_handler(win->impl);
 		}
 		
 		// then handle animation changes
 		if (FD_ISSET(gfx_chg_fd, &fds)) {
-			printf("chg indication\n");
+			DBG("chg indication\n");
 			// make pipe empty..
 			read(gfx_chg_fd, buff, sizeof(buff));
 
 			int chg = gfx_anim_chg_reset(win->anim);
 			long anim = gfx_anim_time_reset(win->anim);
-			printf("chg: %d\n", chg);
+			DBG("chg: %d\n", chg);
 
 			//int chg = 213; // fetch/pop GFX_ANIM_CHG..
 
 			gfx_render(win, chg, anim);
-		} else if (gfx_render_has_animation_models(win)) {
-			gfx_render(win, CHG_RERENDER, 0);
 		} else if (gfx_render_is_animating(win)) {
 			gfx_render_frame(win);
+		}
+
+		if (gfx_render_has_animation_models(win)) {
+			//DBG("rerender")
+			gfx_render(win, CHG_RERENDER, 0);
 		}
 	}
 

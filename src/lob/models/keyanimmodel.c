@@ -7,17 +7,21 @@
 
 #include "lob/models/keyanimmodel.h"
 
-static bool keyanimmodel_tick(LobKeyAnimModel *m, float ms)
+static bool keyanimmodel_tick(LobKeyAnimModel *m, struct timespec *now)
 {
 	//DBG("tick");
 
 	LobAnimModel *ma = (LobAnimModel *)m;
-	ma->t += ms / 1000.0f;
+	float ms = (now->tv_sec - ma->start_time.tv_sec)*1000.0f;
+	ms += (now->tv_nsec - ma->start_time.tv_nsec)/1000000;
+	float dT = ma->t;
+	ma->t = ms / 1000.0f;
+	dT = (ma->t - dT)*1000.0f;
 	//DBG("ms %f %f %f %d", ms, ma->t, ma->time, (ma->t > ma->time));
 	if (ma->t > ma->time) {
 		return true;
 	}
-	float mul = ms;
+	float mul = dT;
 	m->cs->x += m->dx * mul;
 	m->cs->y += m->dy * mul;
 	m->cs->z += m->dy * mul;
@@ -63,16 +67,11 @@ void lob_keyanimmodel_render(LobKeyAnimModel *m, Lob *that,
 		m->dz = (tz - z) / ms;
 		m->dsx = (tsx - m->cs->sx) / ms;
 		m->dsy = (tsy - m->cs->sy) / ms;
-		DBG("moving.. %f %f %f %f  %f %f", x, y, sx, sy, w,h );
-		DBG("moving.. %f %f %f %f  %f %f", tx, ty, tsx, tsy, tw, th );
-		DBG("moving.. %f %f %f %f", m->dx, m->dy, m->dsx, m->dsy );
-	} else {
-		float mul = gfx_window_instance()->render->t_since_ms;
-		m->cs->x += m->dx * mul;
-		m->cs->y += m->dy * mul;
-		m->cs->z += m->dy * mul;
-		m->cs->sx += m->dsx * mul;
-		m->cs->sy += m->dsy * mul;
+		//DBG("moving.. %f %f %f %f  %f %f", x, y, sx, sy, w,h );
+		//DBG("moving.. %f %f %f %f  %f %f", tx, ty, tsx, tsy, tw, th );
+		//DBG("moving.. %f %f %f %f", m->dx, m->dy, m->dsx, m->dsy );
+
+		clock_gettime(CLOCK_REALTIME, &ma->start_time);
 	}
 	g_hash_table_insert(vs->anim_set, m, m);
 	that->render(that, m->cs, w_, h_, vs);

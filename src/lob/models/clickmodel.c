@@ -1,5 +1,6 @@
 
 #include "lob/models/clickmodel.h"
+#include "util/dbg.h"
 
 
 LobClickModel *lob_clickmodel(Region *reg)
@@ -15,7 +16,9 @@ bool lob_clickmodel_set(LobClickModel *c, enum CLICK_STATE next)
 {
 	bool chg = c->state != next;
 	c->state = next;
-	if (chg && c->state == RELEASED && c->clicked != NULL)
+	if (chg && c->state == RELEASED && c->clicked != NULL) {
+		DBG("clicked");
 		c->clicked(c);
+	}
 	return chg;
 }

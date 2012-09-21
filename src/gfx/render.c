@@ -123,7 +123,7 @@ void gfx_render(struct gfx_window *w,
 		{
 			float ms = render->t_since_ms;
 			LobAnimModel *m = (LobAnimModel *)key;
-			if (m->tick(m, ms)) {
+			if (m->tick(m, &now)) {
 				g_hash_table_iter_remove(&iter);
 				DBG("remove %p",m);
 			}
@@ -166,5 +166,6 @@ bool gfx_render_has_animation_models(struct gfx_window *w)
 	struct gfx_render *render = w->render;
 	if (render->current == NULL)
 		return false;
+	//DBG("has animmodels? %d", g_hash_table_size(render->current->anim_set))
 	return g_hash_table_size(render->current->anim_set) > 0;
 }
